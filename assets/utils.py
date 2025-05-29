@@ -10,10 +10,10 @@ def init_log() -> bool:
         log("logging Init complete")
     except Exception as e:
         log(f"Error while initing log: {e}")
-
 def log(msg, user=-1, ip="internal"):
-    print(e)
     try:
         LoggingDB.execute("INSERT INTO logs (user_id, user_ip, message) VALUES(?, ?, ?)", (user, ip, msg))
+        if bool(os.environ.get("DEBUG")):
+            print(f"[{user}], [{ip}], [{msg}]")
     except Exception as e:
         print(f"Error while Logging: {e}")
