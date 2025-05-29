@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS events(
 
 CREATE TABLE IF NOT EXISTS rooms(
     room_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    room_name TEXT
+    room_name TEXT,
+    capacity INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS guides(
@@ -62,7 +63,8 @@ CREATE TABLE IF NOT EXISTS users(
     user_name TEXT,
     user_mail TEXT,
     user_auth TEXT,
-    user_pass TEXT
+    user_pass TEXT,
+    cookie TEXT
 );
 
 CREATE TABLE IF NOT EXISTS admins(
