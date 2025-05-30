@@ -24,9 +24,10 @@ class AbstractDB(ABC):
         return cls._cursor.fetchall()
 
     @classmethod
-    def execute(cls, sql, params=()) -> None:
+    def execute(cls, sql, params=()) -> int:
         cls._cursor.execute(sql, params)
         cls._conn.commit()
+        return cls._cursor.lastrowid
 
     @classmethod
     def execute_script(cls, sql_script: str) -> None:

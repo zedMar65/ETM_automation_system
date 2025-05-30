@@ -10,6 +10,7 @@ def init():
 
 def main():
     log("starting main script")
+    Users.new_user("bronius", "bronius@gmail.com", "super_seacret_pass")
     pass
 
 if __name__ == "__main__":

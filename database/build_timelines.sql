@@ -16,6 +16,22 @@ CREATE TABLE IF NOT EXISTS guides(
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
+CREATE TABLE IF NOT EXISTS room_event_relation (
+    event_id INT,
+    room_id INT,
+    PRIMARY KEY (event_id, room_id),
+    FOREIGN KEY (event_id) REFERENCES events(event_id),
+    FOREIGN KEY (room_id) REFERENCES rooms(room_id)
+);
+
+CREATE TABLE IF NOT EXISTS event_guide_relation (
+    event_id INT,
+    guide_id INT,
+    PRIMARY KEY (event_id, guide_id),
+    FOREIGN KEY (event_id) REFERENCES events(event_id),
+    FOREIGN KEY (guide_id) REFERENCES guides(guide_id)
+);
+
 CREATE TABLE IF NOT EXISTS available_events (
     availabe_event_id INTEGER PRIMARY KEY AUTOINCREMENT NOT null,
     event_id INT,
@@ -64,6 +80,7 @@ CREATE TABLE IF NOT EXISTS users(
     user_mail TEXT,
     user_auth TEXT,
     user_pass TEXT,
+    user_salt TEXT,
     cookie TEXT
 );
 
