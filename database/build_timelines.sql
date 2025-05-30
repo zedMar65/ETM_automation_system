@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS users(
     user_name TEXT,
     user_mail TEXT,
     user_auth TEXT,
-    user_pass TEXT,
+    user_pass_hash TEXT,
     user_salt TEXT,
     cookie TEXT
 );

@@ -1,0 +1,2 @@
+LOG_FLAG = False
+DEBUG_FLAG = False
