@@ -264,6 +264,70 @@ class Guides(Group):
     @classmethod
     def get_table(self) -> str:
         return "guides"
+    
+    @classmethod
+    def occupie(self, guide_id, start_time, end_time, reason="Užimtas") -> int:
+        try:
+            id = MainDB.execute("INSERT INTO guide_occupation (guide_id, busy_from, busy_to, reason) VALUES(?, ?, ?, ?)", (guide_id, start_time, end_time, reason))
+            log(f"Added busy details for id [{id}]")
+            return id 
+        except Exception as e:
+            log(f"Error while trying to occupie guide [{guide_id}]: {e}")
+            return -1
+
+    @classmethod
+    def change_occ_time(id, new_start_time = None, new_end_time = None) -> int:
+        try:
+            data = MainDB.query("SELECT * FROM guide_occupation WHERE id = ?", (id,))
+            if len(data) < 1:
+                log(f"No guide occupation with id [{id}] found")
+                return -2
+            if new_start_time == None:
+                new_start_time = data[0][2]
+            if new_end_time == None:
+                new_start_time = data[0][3]
+            MainDB.execute("UPDATE guide_occupation SET busy_from = ?, busy_to = ? WHERE id = ?", (new_start_time, new_end_time, id))
+            return 1
+        except Exception as e:
+            log(f"Error while changing time for guide occ [{id}]: {e}")
+            return -1
+    
+    @classmethod 
+    def get_occupation_by_id(id) -> [()]:
+        try:
+            data = MainDB.query("SELECT * FROM guide_occupation WHERE id = ?", (id,))
+            if len(data) < 1:
+                log(f"No guide occupation with id [{id}] found")
+                return [()]
+            return data
+        except Exception as e:
+            log(f"Error while getting occupation guide [{id}]: {e}")
+            return [()]
+
+    @classmethod
+    def get_occupation_by_guide(guide_id) -> [()]:
+        try:
+            data = MainDB.query("SELECT * FROM guide_occupation WHERE guide_id = ?", (guide_id,))
+            if len(data) < 1:
+                log(f"No guide occupation with for [{guide_id}] found")
+                return [()]
+            return data
+        except Exception as e:
+            log(f"Error while getting occupation for guide [{guide_id}]: {e}")
+            return [()]
+    
+    @classmethod
+    def free(self, id) -> int:
+        try:
+            data = MainDB.query("SELECT * FROM guide_occupation WHERE id = ?", (id,))
+            if len(data) < 1:
+                log(f"No guide occupation with id [{id}] found")
+                return -2
+            MainDB.execute("DELETE FROM guide_occupation WHERE id = ?", (id,))
+            return 1
+        except Exception as e:
+            log(f"Error while freeing guide [{id}]: {e}")
+            return -1
 
 class Events:
     @classmethod
@@ -434,6 +498,70 @@ class Rooms:
             return data[0][2]
         except Exception as e:
             log(f"Error while finding capacity of room [{room_id}]")
+            return -1
+
+    @classmethod
+    def occupie(self, room_id, start_time, end_time, reason="Užimtas") -> int:
+        try:
+            id = MainDB.execute("INSERT INTO room_occupation (room_id, busy_from, busy_to, reason) VALUES(?, ?, ?, ?)", (room_id, start_time, end_time, reason))
+            log(f"Added busy details for id [{id}]")
+            return id 
+        except Exception as e:
+            log(f"Error while trying to occupie room [{room_id}]: {e}")
+            return -1
+
+    @classmethod
+    def change_occ_time(id, new_start_time = None, new_end_time = None) -> int:
+        try:
+            data = MainDB.query("SELECT * FROM room_occupation WHERE id = ?", (id,))
+            if len(data) < 1:
+                log(f"No room occupation with id [{id}] found")
+                return -2
+            if new_start_time == None:
+                new_start_time = data[0][2]
+            if new_end_time == None:
+                new_start_time = data[0][3]
+            MainDB.execute("UPDATE room_occupation SET busy_from = ?, busy_to = ? WHERE id = ?", (new_start_time, new_end_time, id))
+            return 1
+        except Exception as e:
+            log(f"Error while changing time for room occ [{id}]: {e}")
+            return -1
+    
+    @classmethod 
+    def get_occupation_by_id(id) -> [()]:
+        try:
+            data = MainDB.query("SELECT * FROM room_occupation WHERE id = ?", (id,))
+            if len(data) < 1:
+                log(f"No room occupation with id [{id}] found")
+                return [()]
+            return data
+        except Exception as e:
+            log(f"Error while getting occupation room [{id}]: {e}")
+            return [()]
+
+    @classmethod
+    def get_occupation_by_room(room_id) -> [()]:
+        try:
+            data = MainDB.query("SELECT * FROM room_occupation WHERE room_id = ?", (room_id,))
+            if len(data) < 1:
+                log(f"No room occupation with for [{room_id}] found")
+                return [()]
+            return data
+        except Exception as e:
+            log(f"Error while getting occupation for room [{room_id}]: {e}")
+            return [()]
+    
+    @classmethod
+    def free(self, id) -> int:
+        try:
+            data = MainDB.query("SELECT * FROM room_occupation WHERE id = ?", (id,))
+            if len(data) < 1:
+                log(f"No room occupation with id [{id}] found")
+                return -2
+            MainDB.execute("DELETE FROM room_occupation WHERE id = ?", (id,))
+            return 1
+        except Exception as e:
+            log(f"Error while freeing room [{id}]: {e}")
             return -1
 
 class Event_Guide_Relation:
@@ -616,6 +744,50 @@ class Available_Events:
         except Exception as e:
             log(f"Error while removing available event {id}: {e}")
             return -1
+
+class Occupied_Events:
+    @classmethod
+    def find(self, id = None, guide_oc_id = None, room_oc_id = None) -> [()]:
+        try:
+            placeholder = ""
+            values = ()
+            if id != None:
+                placeholder += "available_event_id = ?"
+                values = values + (id,)
+            if event_id != None:
+                if placeholder != "":
+                    placeholder += ", "
+                placeholder += "event_id = ?"
+                values = values + (event_id)
+            if room_id != None:
+                if placeholder != "":
+                    placeholder += ", "
+                placeholder += "room_id = ?"
+                values = values + (room_id)
+            if guide_id != None:
+                if placeholder != "":
+                    placeholder += ", "
+                placeholder += "guide_id = ?"
+                values = values + (guide_id)
+            data = MainDB.query(f"SELECT * FROM available_events WHERE {placeholder}", values)
+            log(f"Found {len(data)} available events")
+            return data
+        except Exception as e:
+            log(f"Error while finding available event: {e}")
+            return [()]
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
