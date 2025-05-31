@@ -168,14 +168,21 @@ class Users:
 class Group(ABC):
     @classmethod
     def assign(self, user_id) -> int:
-        # try:
-        Users.update_user(user_id, new_auth = self.get_auth())
-        guide_id = MainDB.execute(f"INSERT INTO {self.get_table()} (user_id) VALUES(?)", (user_id,))
-        log(f"Assigned user {user_id}, to {self.get_auth()}")
-        return guide_id
-        # except Exception as e:
-        #     log(f"Error while creating guide[{user_id}]: {e}")
-        #     return -1
+        try:
+            user_auth = Users.get_auth(user_id)
+            if user_auth == "admin":
+                Admins.remove(Admins.get_group_id(user_id))
+            elif user_auth == "mod":
+                Mods.remove(Mods.get_group_id(user_id))
+            elif user_auth == "guide":
+                Guides.remove(Guides.get_group_id(user_id))
+            Users.update_user(user_id, new_auth = self.get_auth())
+            guide_id = MainDB.execute(f"INSERT INTO {self.get_table()} (user_id) VALUES(?)", (user_id,))
+            log(f"Assigned user {user_id}, to {self.get_auth()}")
+            return guide_id
+        except Exception as e:
+            log(f"Error while creating guide[{user_id}]: {e}")
+            return -1
     
     @classmethod
     def update(self, group_id, new_user_id=None) -> int:
@@ -257,3 +264,359 @@ class Guides(Group):
     @classmethod
     def get_table(self) -> str:
         return "guides"
+
+class Events:
+    @classmethod
+    def get_id(self, event_name) -> int:
+        try:
+            data = MainDB.query("SELECT event_id FROM events WHERE event_name = ?", (event_name))
+            if len(data) > 1:
+                log(f"Too many events associated with name [{event_name}]")
+                return -2
+            if len(data) < 1:
+                log(f"No events found for event [{event_name}]")
+                return 0
+            log(f"Event id [{data[0][0]}] found for [{event_name}]")
+            return data[0][0]
+        except Exception as e:
+            log(f"Error while finding id of event [{event_name}]")
+            return -1
+    
+    @classmethod
+    def new_event(self, event_name) -> int:
+        try:
+            if self.get_id(event_name) < 1:
+                log(f"Event with name [{event_name}] already exists")
+                return 0
+            event_id = MainDB.execute("INSERT INTO events (event_name) VALUES(?)", (event_name,))
+            log(f"Created event [{event_id}]")
+            return event_id
+        except Exception as e:
+            log(f"Error while creating new event [{event_name}]: {e}")
+    
+    @classmethod
+    def get_name(self, event_id) -> str:
+        try:
+            data = MainDB.query("SELECT event_name FROM events WHERE event_id = ?", (event_id))
+            if len(data) > 1:
+                log(f"Too many events associated with id [{event_id}]")
+                return ""
+            if len(data) < 1:
+                log(f"No events found for event [{event_id}]")
+                return ""
+            log(f"Event name [{data[0][1]}] found for [{event_id}]")
+            return data[0][1]
+        except Exception as e:
+            log(f"Error while finding name of event [{event_id}]")
+            return ""
+    
+    @classmethod
+    def delete_event(self, event_id) -> int:
+        try:
+            if self.get_name(event_id) == "":
+                log(f"No event with id [{event_id}] found to delete")
+                return 0
+            MainDB.execute("DELETE FROM events WHERE event_id = ?", (event_id,))
+            log(f"Removed event [{event_id}]")
+            return 1
+        except Exception as e:
+            log(f"Error while deleting event [{event_id}]: {e}")
+            return -1
+
+    @classmethod
+    def rename(self, event_id, new_name) -> int:
+        try:
+            if self.get_name(event_id) == "":
+                log(f"No event with id [{event_id}] found to rename")
+                return 0
+            MainDB.execute("UPDATE events SET event_name = ? WHERE event_id = ?", (new_name, event_id))
+            log(f"Renamed event [{event_id}]")
+            return 1
+        except Exception as e:
+            log(f"Error while renaming event [{event_id}]: {e}")
+            return -1
+
+class Rooms:
+    @classmethod
+    def get_id(self, room_name) -> int:
+        try:
+            data = MainDB.query("SELECT room_id FROM rooms WHERE room_name = ?", (room_name))
+            if len(data) > 1:
+                log(f"Too many rooms associated with name [{room_name}]")
+                return -2
+            if len(data) < 1:
+                log(f"No rooms found for room [{room_name}]")
+                return 0
+            log(f"Room id [{data[0][0]}] found for [{room_name}]")
+            return data[0][0]
+        except Exception as e:
+            log(f"Error while finding id of room [{room_name}]")
+            return -1
+    
+    @classmethod
+    def new_room(self, room_name, capacity) -> int:
+        try:
+            if self.get_id(room_name) < 1:
+                log(f"room with name [{room_name}] already exists")
+                return 0
+            room_id = MainDB.execute("INSERT INTO rooms (room_name, capacity) VALUES(?, ?)", (room_name, capacity))
+            log(f"Created room [{room_id}]")
+            return room_id
+        except Exception as e:
+            log(f"Error while creating new room [{room_name}]: {e}")
+    
+    @classmethod
+    def get_name(self, room_id) -> str:
+        try:
+            data = MainDB.query("SELECT room_name FROM rooms WHERE room_id = ?", (room_id))
+            if len(data) > 1:
+                log(f"Too many rooms associated with id [{room_id}]")
+                return ""
+            if len(data) < 1:
+                log(f"No rooms found for room [{room_id}]")
+                return ""
+            log(f"room name [{data[0][1]}] found for [{room_id}]")
+            return data[0][1]
+        except Exception as e:
+            log(f"Error while finding name of room [{room_id}]")
+            return ""
+    
+    @classmethod
+    def delete_room(self, room_id) -> int:
+        try:
+            if self.get_name(room_id) == "":
+                log(f"No room with id [{room_id}] found to delete")
+                return 0
+            MainDB.execute("DELETE FROM rooms WHERE room_id = ?", (room_id,))
+            log(f"Removed room [{room_id}]")
+            return 1
+        except Exception as e:
+            log(f"Error while deleting room [{room_id}]: {e}")
+            return -1
+
+    @classmethod
+    def rename(self, room_id, new_name) -> int:
+        try:
+            if self.get_name(room_id) == "":
+                log(f"No room with id [{room_id}] found to rename")
+                return 0
+            MainDB.execute("UPDATE rooms SET room_name = ? WHERE room_id = ?", (new_name, room_id))
+            log(f"Renamed room [{room_id}]")
+            return 1
+        except Exception as e:
+            log(f"Error while renaming room [{room_id}]: {e}")
+            return -1
+    
+    @classmethod
+    def change_capacity(self, room_id, new_capacity) -> int:
+        try:
+            if self.get_name(room_id) == "":
+                log(f"No room with id [{room_id}] found to change capacity")
+                return 0
+            MainDB.execute("UPDATE rooms SET capacity = ? WHERE room_id = ?", (new_capacity, room_id))
+            log(f"Changed capacity of room [{room_id}]")
+            return 1
+        except Exception as e:
+            log(f"Error while changing capacity of room [{room_id}]: {e}")
+            return -1
+    
+    @classmethod
+    def get_capacity(self, room_id) -> int:
+        try:
+            data = MainDB.query("SELECT capacity FROM rooms WHERE room_id = ?", (room_id))
+            if len(data) > 1:
+                log(f"Too many rooms associated with id [{room_id}]")
+                return -2
+            if len(data) < 1:
+                log(f"No rooms found for room [{room_id}]")
+                return 0
+            log(f"Room capacity [{data[0][2]}] found for [{room_id}]")
+            return data[0][2]
+        except Exception as e:
+            log(f"Error while finding capacity of room [{room_id}]")
+            return -1
+
+class Event_Guide_Relation:
+    @classmethod
+    def check_relation(self, event_id, guide_id) -> int:
+        try:
+            data = MainDB.query("SELECT * FROM event_guide_relation WHERE event_id = ?, guide_id = ?", (event_id, guide_id))
+            if len(data) < 1:
+                log(f"Relation {event_id}-{guide_id} not found")
+                return 0
+            return 1
+        except Exception as e:
+            log(f"Error while checking relation of {event_id}-{guide_id}")
+            return -1
+
+    @classmethod
+    def get_guides(self, event_id) -> [()]:
+        try:
+            data = MainDB.query("SELECT guide_id FROM event_guide_relation WHERE event_id = ?", (event_id,))
+            if len(data) < 1:
+                log(f"No guides for event [{event_id}] found")
+                return [()]
+            return data
+        except Exception as e:
+            log(f"Error while getting guides for event [{event_id}]")
+            return [()]
+
+    @classmethod
+    def get_events(self, guide_id) -> [()]:
+        try:
+            data = MainDB.query("SELECT event_id FROM event_guide_relation WHERE guide_id = ?", (guide_id,))
+            if len(data) < 1:
+                log(f"No events for guide [{guide_id}] found")
+                return [()]
+            return data
+        except Exception as e:
+            log(f"Error while getting events for guide [{guide_id}]")
+            return [()]
+
+    @classmethod
+    def add_relation(self, event_id, guide_id) -> 1:
+        try:
+            if self.check_relation(event_id, guide_id) > 0:
+                log(f"Relation between [{event_id}]-[{guide_id}] already exists")
+                return 0
+            MainDB.execute("INSERT INTO event_guide_relation (event_id, guide_id) VALUES()")
+            return 1
+        except Exception as e:
+            log(f"Error while adding guide relation between [{event_id}]-[{guide_id}]")
+            return -1
+    
+    @classmethod
+    def remove_relation(self, event_id, guide_id):
+        try:
+            if self.check_relation(event_id, guide_id) < 1:
+                log(f"No relation found to remove")
+                return 0
+            MainDB.execute("DELETE FROM event_guide_relation WHERE event_id = ?, guide_id = ?", (event_id, guide_id))
+            log(f"Removed relation between guide [{guide_id}] and event [{event_id}]")
+            return 1
+        except Exception as e:
+            log(f"Error while removing relation: {e}")
+            return -1
+
+class Event_Room_Relation:
+    @classmethod
+    def check_relation(self, event_id, room_id) -> int:
+        try:
+            data = MainDB.query("SELECT * FROM room_event_relation WHERE event_id = ?, room_id = ?", (event_id, room_id))
+            if len(data) < 1:
+                log(f"Relation {event_id}-{room_id} not found")
+                return 0
+            return 1
+        except Exception as e:
+            log(f"Error while checking relation of {event_id}-{room_id}")
+            return -1
+
+    @classmethod
+    def get_rooms(self, event_id) -> [()]:
+        try:
+            data = MainDB.query("SELECT room_id FROM room_event_relation WHERE event_id = ?", (event_id,))
+            if len(data) < 1:
+                log(f"No rooms for event [{event_id}] found")
+                return [()]
+            return data
+        except Exception as e:
+            log(f"Error while getting rooms for event [{event_id}]")
+            return [()]
+
+    @classmethod
+    def get_events(self, room_id) -> [()]:
+        try:
+            data = MainDB.query("SELECT event_id FROM room_event_relation WHERE room_id = ?", (room_id,))
+            if len(data) < 1:
+                log(f"No events for room [{room_id}] found")
+                return [()]
+            return data
+        except Exception as e:
+            log(f"Error while getting events for room [{room_id}]")
+            return [()]
+
+    @classmethod
+    def add_relation(self, event_id, room_id) -> 1:
+        try:
+            if self.check_relation(event_id, room_id) > 0:
+                log(f"Relation between [{event_id}]-[{room_id}] already exists")
+                return 0
+            MainDB.execute("INSERT INTO room_event_relation (event_id, room_id) VALUES()")
+            return 1
+        except Exception as e:
+            log(f"Error while adding room relation between [{event_id}]-[{room_id}]")
+            return -1
+    
+    @classmethod
+    def remove_relation(self, event_id, room_id):
+        try:
+            if self.check_relation(event_id, room_id) < 1:
+                log(f"No relation found to remove")
+                return 0
+            MainDB.execute("DELETE FROM room_event_relation WHERE event_id = ?, room_id = ?", (event_id, room_id))
+            log(f"Removed relation between room [{room_id}] and event [{event_id}]")
+            return 1
+        except Exception as e:
+            log(f"Error while removing relation: {e}")
+            return -1
+
+class Available_Events:
+    @classmethod
+    def find(self, id = None, event_id = None, room_id = None, guide_id = None) -> [()]:
+        try:
+            placeholder = ""
+            values = ()
+            if id != None:
+                placeholder += "available_event_id = ?"
+                values = values + (id,)
+            if event_id != None:
+                if placeholder != "":
+                    placeholder += ", "
+                placeholder += "event_id = ?"
+                values = values + (event_id)
+            if room_id != None:
+                if placeholder != "":
+                    placeholder += ", "
+                placeholder += "room_id = ?"
+                values = values + (room_id)
+            if guide_id != None:
+                if placeholder != "":
+                    placeholder += ", "
+                placeholder += "guide_id = ?"
+                values = values + (guide_id)
+            data = MainDB.query(f"SELECT * FROM available_events WHERE {placeholder}", values)
+            log(f"Found {len(data)} available events")
+            return data
+        except Exception as e:
+            log(f"Error while finding available event: {e}")
+            return [()]
+
+    @classmethod
+    def new(self, event_id, room_id, guide_id) -> int:
+        try:
+            if len(self.find(event_id=event_id, room_id=room_id, guide_id=guide_id)) > 0:
+                log(f"Duplicate available event found while adding new")
+                return 0
+            event_id = MainDB.execute("INSERT INTO available_events (even_id, room_id, guide_id) VALUES(?, ?, ?)", (event_id, room_id, guide_id))
+            log(f"Made new available event [{event_id}]")
+            return event_id
+        except Exception as e:
+            log(f"Error while adding new available event: {e}")
+            return -1
+
+    @classmethod
+    def remove(self, id) -> int:
+        try:
+            if len(self.find(id=id)) < 1:
+                log(f"No available event found to remove for [{id}]")
+                return 0
+            MainDB.execute("DELETE FROM available_events WHERE available_event_id = ?", (id,))
+            log(f"Removed available_event: {id}")
+            return 1
+        except Exception as e:
+            log(f"Error while removing available event {id}: {e}")
+            return -1
+
+
+
+

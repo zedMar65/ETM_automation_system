@@ -26,6 +26,9 @@ def main():
     log(f"id: {id}")
     log(f"id by guide_id: {Guides.get_user_id(guide_id)}")
     log(f"{guide_id} - {Guides.get_group_id(id)}")
+    mod_id = Mods.assign(id)
+    admin_id = Admins.assign(id)
+    print(admin_id)
 
     pass
 

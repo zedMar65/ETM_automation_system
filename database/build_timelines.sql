@@ -50,8 +50,8 @@ CREATE TABLE IF NOT EXISTS occupied_events (
     busy_from DATETIME,
     busy_to DATETIME,
     FOREIGN KEY (available_event_id) REFERENCES available_events(available_event_id),
-    FOREIGN KEY (busy_from) REFERENCES guide_occupation(busy_from),
-    FOREIGN KEY (busy_to) REFERENCES guide_occupation(busy_to),
+    FOREIGN KEY (busy_from) REFERENCES room_occupation(busy_from),
+    FOREIGN KEY (busy_to) REFERENCES room_occupation(busy_to),
     FOREIGN KEY (guide_oc_id) REFERENCES guide_occupation(id),
     FOREIGN KEY (room_oc_id) REFERENCES room_occupation(id)
 );
