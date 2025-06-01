@@ -44,14 +44,14 @@ CREATE TABLE IF NOT EXISTS available_events (
 
 
 CREATE TABLE IF NOT EXISTS occupied_events (
+    id INT PRIMARY KEY AUTOINCREMENT NOT NULL,
     available_event_id INT,
     guide_oc_id INT,
     room_oc_id INT,
     busy_from DATETIME,
     busy_to DATETIME,
+    comment TEXT,
     FOREIGN KEY (available_event_id) REFERENCES available_events(available_event_id),
-    FOREIGN KEY (busy_from) REFERENCES room_occupation(busy_from),
-    FOREIGN KEY (busy_to) REFERENCES room_occupation(busy_to),
     FOREIGN KEY (guide_oc_id) REFERENCES guide_occupation(id),
     FOREIGN KEY (room_oc_id) REFERENCES room_occupation(id)
 );
