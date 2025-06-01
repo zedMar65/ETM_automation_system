@@ -1,6 +1,6 @@
 from database import LoggingDB
 import os
-import config
+from config import Flags
 
 def init_log() -> bool:
     try:
@@ -14,9 +14,9 @@ def init_log() -> bool:
 
 def log(msg, user=-1, ip="internal"):
     try:
-        if config.LOG_FLAG:
+        if Flags.LOG_FLAG:
             LoggingDB.execute("INSERT INTO logs (user_id, user_ip, message) VALUES(?, ?, ?)", (user, ip, msg))
-        if config.DEBUG_FLAG:
+        if Flags.DEBUG_FLAG:
             print(f"[{user}], [{ip}], [{msg}]")
     except Exception as e:
         print(f"Error while Logging: {e}, last_msg: [{msg}]")

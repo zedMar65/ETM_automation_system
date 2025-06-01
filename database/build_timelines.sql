@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS event_guide_relation (
 );
 
 CREATE TABLE IF NOT EXISTS available_events (
-    availabe_event_id INTEGER PRIMARY KEY AUTOINCREMENT NOT null,
+    available_event_id INTEGER PRIMARY KEY AUTOINCREMENT NOT null,
     event_id INT,
     room_id INT,
     guide_id INT,
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS available_events (
 
 
 CREATE TABLE IF NOT EXISTS occupied_events (
-    id INT PRIMARY KEY AUTOINCREMENT NOT NULL,
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     available_event_id INT,
     guide_oc_id INT,
     room_oc_id INT,
