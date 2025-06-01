@@ -99,7 +99,15 @@ class Users:
                 log(f"No user {user_id} found, while querrying for auth")
                 return ""
             return data[0][3]
-        except Exception as e:Value)
+        except Exception as e:
+            log(f"Error while authing user: {e}")
+            return -1
+
+    @classmethod
+    def update(self, user_id, new_auth):
+        try:
+            if user_id < 1:
+                raise ValueError(Errors.id_below_one)
             if new_auth != None:
                 MainDB.execute("UPDATE users SET user_auth = ? WHERE user_id = ?", (new_auth, user_id))
             log(f"Updated user: {user_id}")
@@ -340,7 +348,10 @@ class Events:
     @classmethod
     def get_id(self, event_name) -> int:
         try:
-            data = MainDB.query("SELECT evenIndentationError: expected an indented block after class definition on line 5 (config.py, line 7) INTO events (event_name) VALUES(?)", (event_name,))
+            data = MainDB.query("SELECT) INTO events (event_name) VALUES(?)", (event_name,))
+            
+            # FIX THIS BULSHIT
+            
             log(f"Created event [{event_id}]")
             return event_id
         except Exception as e:
@@ -366,7 +377,8 @@ class Events:
     @classmethod
     def delete_event(self, event_id) -> int:
         try:
-            if event_id < 1:IndentationError: expected an indented block after class definition on line 5 (config.py, line 7)ed_find)
+            if event_id < 1:
+                raise ValueError(Errors.id_below_one)
             MainDB.execute("DELETE FROM events WHERE event_id = ?", (event_id,))
             log(f"Removed event [{event_id}]")
             return 1
@@ -515,7 +527,7 @@ class Rooms:
             log(f"Error while changing time for room occ [{id}]: {e}")
             return -1
     
-    @classmethod IndentationError: expected an indented block after class definition on line 5 (config.py, line 7)
+    @classmethod
     def get_occupation_by_id(id) -> [()]:
         try:
             if id < 1:
