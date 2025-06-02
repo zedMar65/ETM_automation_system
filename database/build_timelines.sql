@@ -1,7 +1,8 @@
 -- Build system tables only if they don't already exist
 CREATE TABLE IF NOT EXISTS events(
     event_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    event_name TEXT
+    event_name TEXT,
+    duration INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS rooms(
@@ -48,8 +49,8 @@ CREATE TABLE IF NOT EXISTS occupied_events (
     available_event_id INT,
     guide_oc_id INT,
     room_oc_id INT,
-    busy_from DATETIME,
-    busy_to DATETIME,
+    busy_from INTEGER,
+    busy_to INTEGER,
     comment TEXT,
     FOREIGN KEY (available_event_id) REFERENCES available_events(available_event_id),
     FOREIGN KEY (guide_oc_id) REFERENCES guide_occupation(id),
@@ -59,8 +60,8 @@ CREATE TABLE IF NOT EXISTS occupied_events (
 CREATE TABLE IF NOT EXISTS guide_occupation(
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     guide_id INT,
-    busy_from DATETIME,
-    busy_to DATETIME,
+    busy_from INTEGER,
+    busy_to INTEGER,
     reason TEXT,
     FOREIGN KEY (guide_id) REFERENCES guides(guide_id)
 );
@@ -68,8 +69,8 @@ CREATE TABLE IF NOT EXISTS guide_occupation(
 CREATE TABLE IF NOT EXISTS room_occupation(
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     room_id INT,
-    busy_from DATETIME,
-    busy_to DATETIME,
+    busy_from INTEGER,
+    busy_to INTEGER,
     reason TEXT,
     FOREIGN KEY (room_id) REFERENCES rooms(room_id)
 );

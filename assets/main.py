@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 import os
 from config import Flags, Errors
+from users import Users, Guides
 from utils import *
 from interface import *
 import time
@@ -17,27 +18,22 @@ def init():
 
 def main():
     log("starting main script")
-    id = Rooms.new_room("some_room",5)
-    id_event = Events.new_event("some_event")
-    id_guide = Guides.assign(Users.new_user("some_iser", "some_mail", "some_pass"))
-    Event_Guide_Relation.add_relation(id_event, id_guide)
-    Event_Room_Relation.add_relation(id_event, id)
-    EV_id = Available_Events.new(id_event, id, id_guide)
-    Occupied_Events.new()
+    user_id = Users.new_user("bronius", "bronius@gmail.com", "password")
+    guide_id = Guides.assign(user_id)
+    event_id = Events.new_event("some event", 90)
+    room_id = Rooms.new_room("some room", 4)
+    Event_Guide_Relation.add_relation(event_id, guide_id)
+    Event_Room_Relation.add_relation(event_id, room_id)
+    available_event_id = Available_Events.find(event_id=event_id, room_id=room_id)[0][0]
+    Occupied_Events.new(
+        time_to_int({"year": "2024", "month": "05", "day": "15", "hour": "09", "minute": "45"}), 
+        time_to_int({"year": "2024", "month": "05", "day": "15", "hour": "10", "minute": "45"}), 
+        available_event_id
+        )
 
-
-    Available_Events.remove(EV_id)
-    Event_Guide_Relation.remove_relation(id_event, id_guide)
-    Event_Room_Relation.remove_relation(id_event, id)
-    user_id = Guides.get_user_id(id_guide)
-    Guides.remove(id_guide)
+    Events.delete_event(event_id)
+    Rooms.delete_room(room_id)
     Users.delete_user(user_id)
-    Rooms.delete_room(id)
-    Events.delete_event(id_event)
-
-    
-    
-    
     pass
 
 if __name__ == "__main__":
