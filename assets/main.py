@@ -16,6 +16,39 @@ def init():
     init_log()
     init_MainDB()
 
+# wrapper, TODO: extrude later
+
+def fetch_by_event(event_id):
+    try:
+        free_events = []
+        from_time = time_to_int(from_time)
+        to_time = time_to_int(to_time)
+        if to_time < from_time:
+            raise ValueError(Errors.wrong_time)
+        events = Available_Events.find(event_id=event_id)
+        for event in events:
+            availability = Available_Events.get_availability(event[0], from_time, to_time)
+            free_events += availability
+        return free_events
+    except Exception as e:
+        log(f"Error while fetching spots by time: {e}")
+
+
+def fetch_by_time(from_time, to_time):
+    try:
+        free_events = []
+        from_time = time_to_int(from_time)
+        to_time = time_to_int(to_time)
+        if to_time < from_time:
+            raise ValueError(Errors.wrong_time)
+        events = Available_Events.find()
+        for event in events:
+            availability = Available_Events.get_availability(event[0], from_time, to_time)
+            free_events += availability
+        return free_events
+    except Exception as e:
+        log(f"Error while fetching spots by time: {e}")
+
 def main():
     log("starting main script")
     user_id = Users.new_user("bronius", "bronius@gmail.com", "password")
@@ -30,6 +63,8 @@ def main():
         time_to_int({"year": "2024", "month": "05", "day": "15", "hour": "10", "minute": "45"}), 
         available_event_id
         )
+
+    # print(Available_Events.find())
 
     Events.delete_event(event_id)
     Rooms.delete_room(room_id)

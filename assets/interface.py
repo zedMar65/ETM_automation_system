@@ -421,6 +421,8 @@ class Available_Events:
     @classmethod
     def find(self, id = None, event_id = None, room_id = None, guide_id = None) -> [()]:
         try:
+            if id == None and event_id == None and room_id == None and guide_id == None:
+                return MainDB.query(f"SELECT * FROM available_events")
             placeholder = ""
             values = ()
             if id != None:
