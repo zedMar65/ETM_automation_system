@@ -348,15 +348,27 @@ class Events:
     @classmethod
     def get_id(self, event_name) -> int:
         try:
-            data = MainDB.query("SELECT) INTO events (event_name) VALUES(?)", (event_name,))
-            
-            # FIX THIS BULSHIT
-            
+            data = MainDB.query("SELECT event_id FROM events WHERE event_name = ?", (event_name,))
+            if len(data) < 1:
+                raise FindError(Errors.failed_find)
+            if len(data) > 1:
+                raise FindError(Errors.duplicate_found)
+            return data[0][0]
+        except Exception as e:
+            log(f"Error while getting event id of [{event_name}]")
+            return -1
+    
+    def new_event(self, event_name) -> int:
+        try:
+            if self.get_id(event_name) > 0:
+                raise FindError(Errors.duplicate_found)
+            event_id = MainDB.query("INSERT INTO events (event_name) VALUES(?)", (event_name,))
             log(f"Created event [{event_id}]")
             return event_id
         except Exception as e:
             log(f"Error while creating new event [{event_name}]: {e}")
-    
+            return -1
+
     @classmethod
     def get_name(self, event_id) -> str:
         try:
