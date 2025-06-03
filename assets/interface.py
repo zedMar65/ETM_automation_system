@@ -1,4 +1,4 @@
-from utils import log
+from utils import log, min_times
 from database import MainDB
 from config import Errors, FindError, FailedMethodError
 from users import Guides
@@ -480,6 +480,45 @@ class Available_Events:
         except Exception as e:
             log(f"Error while removing available event {id}: {e}")
             return -1
+
+    @classmethod 
+    # Please do not judge this code, it's tryinh its best.
+    # May go help it
+    def get_availability(self, id, time_from, time_to) -> [()]:
+        # loop times in guide, get ones that are free,
+        # loop times in room, get ones that are free,
+        # return [(period_start_time, period_end_time, id)]
+        try:
+            if id < 1:
+                raise ValueError(Errors.id_below_one)
+            data = self.find(id=id)
+            event_duration = Events.get_duration(data[1])
+            if time_to-time_from < event_duration:
+                return [()]
+            room_oc = Rooms.get_occupation_by_room(data[2])
+            sorted_data = sorted(data, key=lambda x: x[1])
+            guide_oc = Guides.get_occupation_by_guide(data[3])
+            
+            availabilities = []
+            temp_time_from = time_from
+            if len(room_oc) > 0:
+                if len(room_oc[0]) > 0:
+                    room_oc = sorted(room_oc, key=lambda x: x[2])
+                    for room in room_oc:
+                        if room[2] < time_from:
+                            continue
+                        if room[2] > time_to:
+                            break
+                        if room[3] > time_to:
+                            continue
+                        available_time = min_times(room[2], temp_time_from)
+                        # nested loop to see where guide free time overlaps with time period (temp_time_from -> room[2])
+                        if available_time >= event_duration:
+
+                            # loop guide times and check for non area intersections in range...
+
+        except Exception as e:
+            log(f"Error while getting {id} availability: {e}")
 
 class Occupied_Events:
     @classmethod
