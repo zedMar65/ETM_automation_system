@@ -101,6 +101,12 @@ def time_now() -> int:
     return int(str(current_time).split("-")[0]+str(current_time).split("-")[1]+str(current_time).split("-")[2][:2]+str(current_time).split(" ")[1][:2]+str(current_time).split(":")[1][:2])
 
 def time_last() -> int:
-    date = int_to_time(current_time())
-    date["minute"] += Flags.TIME_LAST_SHOW
-    return time_to_int(date)
+    time = int_to_time(time)
+    time["hours"] = int(Flags.TIME_LAST_SHOW[:2])
+    time["minutes"] = int(Flags.TIME_LAST_SHOW[2:])
+    return time_to_int(time)
+def time_first(time) -> int:
+    time = int_to_time(time)
+    time["hours"] = int(Flags.TIME_FIRST_SHOW[:2])
+    time["minutes"] = int(Flags.TIME_FIRST_SHOW[2:])
+    return time_to_int(time)
