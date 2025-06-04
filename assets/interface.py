@@ -216,7 +216,7 @@ class Rooms:
             return -1
 
     @classmethod
-    def change_occ_time(id, new_start_time = None, new_end_time = None) -> int:
+    def change_occ_time(self, id, new_start_time = None, new_end_time = None) -> int:
         try:
             if id < 1:
                 raise ValueError(Errors.id_below_one)
@@ -234,7 +234,7 @@ class Rooms:
             return -1
     
     @classmethod
-    def get_occupation_by_id(id) -> [()]:
+    def get_occupation_by_id(self, id) -> [()]:
         try:
             if id < 1:
                 raise ValueError(Errors.id_below_one)
@@ -247,7 +247,7 @@ class Rooms:
             return [()]
 
     @classmethod
-    def get_occupation_by_room(room_id) -> [()]:
+    def get_occupation_by_room(self, room_id) -> [()]:
         try:
             if room_id < 1:
                 raise ValueError(Errors.id_below_one)
@@ -272,6 +272,46 @@ class Rooms:
         except Exception as e:
             log(f"Error while freeing room [{id}]: {e}")
             return -1
+    
+    # this method needs testing
+    @classmethod
+    def get_occupied_full(self, id) -> []:
+        intervals = self.get_occupation_by_room(id)
+        set_count = self.get_capacity(id)
+
+        if not intervals:
+            return []
+        if not intervals[0]:
+            return []
+        events = []
+        for data in intervals:
+            events.append((data[2], 1))   # start
+            events.append((data[3], -1))  # end
+        events.sort()
+
+        active = 0
+        last_time = None
+        raw_result = []
+
+        for time, delta in events:
+            if last_time is not None and active >= set_count and last_time < time:
+                raw_result.append((last_time, time))
+            active += delta
+            last_time = time
+
+        # Merge touching intervals
+        if not raw_result:
+            return []
+
+        merged = [raw_result[0]]
+        for start, end in raw_result[1:]:
+            last_start, last_end = merged[-1]
+            if last_end >= start:  # touching or overlapping
+                merged[-1] = (last_start, max(last_end, end))
+            else:
+                merged.append((start, end))
+
+        return merged
 
 class Event_Guide_Relation:
     @classmethod
@@ -483,42 +523,63 @@ class Available_Events:
 
     @classmethod 
     # Please do not judge this code, it's tryinh its best.
-    # May go help it
+    # May god help it
     def get_availability(self, id, time_from, time_to) -> [()]:
-        # loop times in guide, get ones that are free,
-        # loop times in room, get ones that are free,
-        # return [(period_start_time, period_end_time, id)]
         try:
             if id < 1:
                 raise ValueError(Errors.id_below_one)
-            data = self.find(id=id)
+            data = self.find(id=id)[0]
+            if len(data) < 1:
+                raise FindError(Errors.failed_find)
             event_duration = Events.get_duration(data[1])
-            if time_to-time_from < event_duration:
-                return [()]
-            room_oc = Rooms.get_occupation_by_room(data[2])
-            sorted_data = sorted(data, key=lambda x: x[1])
-            guide_oc = Guides.get_occupation_by_guide(data[3])
+            # print("-")
+            if min_times(time_to, time_from) < event_duration:
+                return []
+            # print("-")
+            guide_oc = []
+            guide_oc_temp = Guides.get_occupation_by_guide(data[3])
             
-            availabilities = []
-            temp_time_from = time_from
-            if len(room_oc) > 0:
-                if len(room_oc[0]) > 0:
-                    room_oc = sorted(room_oc, key=lambda x: x[2])
-                    for room in room_oc:
-                        if room[2] < time_from:
-                            continue
-                        if room[2] > time_to:
-                            break
-                        if room[3] > time_to:
-                            continue
-                        available_time = min_times(room[2], temp_time_from)
-                        # nested loop to see where guide free time overlaps with time period (temp_time_from -> room[2])
-                        if available_time >= event_duration:
-
-                            # loop guide times and check for non area intersections in range...
+            for guide in guide_oc_temp:
+                guide_oc += [(guide[2], guide[3])]
+            room_oc = Rooms.get_occupied_full(data[2])
+            
+            # Combine all unavailability
+            all_oc = []
+            for oc in guide_oc + room_oc:
+                start, end = oc[0], oc[1]
+                if start < end:
+                    all_oc.append((max(start, time_from), min(end, time_to)))  # Clip to search window
+    
+            all_oc = [oc for oc in all_oc if oc[0] < oc[1]]  # Remove invalids after clipping
+            all_oc.sort()
+    
+            # Merge overlapping/touching unavailabilities
+            merged = []
+            for start, end in all_oc:
+                if not merged:
+                    merged.append((start, end))
+                else:
+                    last_start, last_end = merged[-1]
+                    if last_end >= start:
+                        merged[-1] = (last_start, max(last_end, end))
+                    else:
+                        merged.append((start, end))
+    
+            # Invert merged intervals to find free time
+            free = []
+            current = time_from
+            for start, end in merged:
+                if current < start and min_times(start, current) >= event_duration:
+                    free.append((current, start))
+                current = max(current, end)
+            if current < time_to and min_times(time_to, current) >= event_duration:
+                free.append((current, time_to))
+    
+            return free
 
         except Exception as e:
-            log(f"Error while getting {id} availability: {e}")
+            log(f"Error in get_availability: {e}")
+            return []
 
 class Occupied_Events:
     @classmethod

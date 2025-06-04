@@ -9,7 +9,7 @@ def fetch_free_by_event(event_id) -> [()]:
             raise ValueError(Errors.wrong_time)
         events = Available_Events.find(event_id=event_id)
         for event in events:
-            availability = Available_Events.get_availability(event[0], from_time, to_time)
+            availability = Available_Events.get_availability(event[0], from_time, to_time).append(event[0])
             free_events += availability
         return free_events
     except Exception as e:
@@ -24,7 +24,7 @@ def fetch_free_by_time(from_time, to_time) -> [()]:
             raise ValueError(Errors.wrong_time)
         events = Available_Events.find()
         for event in events:
-            availability = Available_Events.get_availability(event[0], from_time, to_time)
+            availability = Available_Events.get_availability(event[0], from_time, to_time).append(event[0])
             free_events += availability
         return free_events
     except Exception as e:
@@ -39,7 +39,7 @@ def fetch_free_by_guide(guide_id) -> [()]:
             raise ValueError(Errors.wrong_time)
         events = Available_Events.find(guide_id=guide_id)
         for event in events:
-            availability = Available_Events.get_availability(event[0], from_time, to_time)
+            availability = Available_Events.get_availability(event[0], from_time, to_time).append(event[0])
             free_events += availability
         return free_events
     except Exception as e:
@@ -54,7 +54,7 @@ def fetch_free_by_room(room_id) -> [()]:
             raise ValueError(Errors.wrong_time)
         events = Available_Events.find(room_id=room_id)
         for event in events:
-            availability = Available_Events.get_availability(event[0], from_time, to_time)
+            availability = Available_Events.get_availability(event[0], from_time, to_time).append(event[0])
             free_events += availability
         return free_events
     except Exception as e:

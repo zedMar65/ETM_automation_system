@@ -273,7 +273,7 @@ class Guides(Group):
             return -1
 
     @classmethod
-    def change_occ_time(id, new_start_time = None, new_end_time = None) -> int:
+    def change_occ_time(self, id, new_start_time = None, new_end_time = None) -> int:
         try:
             if id < 1:
                 raise ValueError(Errors.id_below_one)
@@ -291,7 +291,7 @@ class Guides(Group):
             return -1
     
     @classmethod 
-    def get_occupation_by_id(id) -> [()]:
+    def get_occupation_by_id(self, id) -> [()]:
         try:
             if id < 1:
                 raise ValueError(Errors.id_below_one)
@@ -304,7 +304,7 @@ class Guides(Group):
             return [()]
 
     @classmethod
-    def get_occupation_by_guide(guide_id) -> [()]:
+    def get_occupation_by_guide(self, guide_id) -> [()]:
         try:
             if guide_id < 1:
                 raise ValueError(Errors.id_below_one)
