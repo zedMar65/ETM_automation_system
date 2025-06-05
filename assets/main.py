@@ -6,8 +6,10 @@ from utils import *
 from interface import *
 from api import *
 import time
+from server import start_server
 
 def init():
+    # load env vars
     load_dotenv()
     if os.getenv("LOG") != None:
         Flags.LOG_FLAG = True
@@ -15,17 +17,24 @@ def init():
         Flags.DEBUG_FLAG = True
     if os.getenv("TIME_LAST_SHOW") != None:
         Flags.TIME_LAST_SHOW = int(os.getenv("TIME_LAST_SHOW"))
+    if os.getenv("SERVE_PORT") != None:
+        Flags.SERVE_PORT = int(os.getenv("SERVE_PORT"))
+    if os.getenv("SERVE_IP") != None:
+        Flags.SERVE_IP = str(os.getenv("SERVE_IP"))
     init_log()
     init_MainDB()
 
+    # load superuser
+    admin_id = Users.new_user(os.getenv("ADMIN_NAME"), os.getenv("ADMIN_EMAIL"), os.getenv("ADMIN_PASSWORD"))
+    Admins.assign(admin_id)
+    log(f"Created superadmin")
+
 def main():
     log("starting main script")
-    
+    start_server()
     pass
 
 if __name__ == "__main__":
-    start_time = time.time()    
     init()
     log("main init complete")
     main()
-    print(f"Finished test in {round(time.time()-start_time, 2)}")

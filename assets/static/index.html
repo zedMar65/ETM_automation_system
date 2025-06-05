@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ETM-order-management</title>
+    <link rel="stylesheet" href="styles.css">
+    
+</head>
+<body>
+    <div class="table">
+            <div class="selected-times" id="selected-times">
+
+            </div>
+            <form id="selection-form">
+                <input type="datetime-local" name="start-time" id="time1" placeholder="">
+                <input type="datetime-local" name="end-time" id="time2" placeholder="">
+                <button type="button" id="saveDraft">Add Time</button>
+                <br>
+                <!-- optioons to choose guide event and room -->
+                <input type="submit" name="submit" id="filter" value="Filter">
+            </form>
+    </div>
+
+
+    <script src="scripts.js"></script> 
+</body>
+</html>

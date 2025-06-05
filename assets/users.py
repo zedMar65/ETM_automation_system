@@ -4,15 +4,17 @@ import os, uuid, secrets
 # from interface import Event_Guide_Relation
 from database import MainDB
 from utils import log
+import hashlib
 
 class Users:
     @classmethod
     def new_user(self, user_name, user_mail, user_pass) -> int:
         try:
-            if(len(self.find(user_name = user_name)) > 0 or len(self.find(user_mail = user_mail)) > 0):
+            if(len(self.find(user_mail = user_mail)) > 0):
                 raise FindError(Errors.failed_find)
+                return
             user_salt = str(uuid.UUID(bytes=secrets.token_bytes(16)))
-            pass_hash = hash(user_pass+user_salt)
+            pass_hash = hashlib.sha256((user_pass+user_salt).encode()).hexdigest()
             cookie = user_mail + str(uuid.UUID(bytes=secrets.token_bytes(16)))
             user_id = MainDB.execute("INSERT INTO users (user_name, user_mail, user_auth, user_pass_hash, user_salt, cookie) VALUES(?, ?, ?, ?, ?, ?)", (user_name, user_mail, "user", pass_hash, user_salt, cookie))
             log(f"Created user: {user_id}")
@@ -59,7 +61,7 @@ class Users:
             elif len(data) < 1:
                 raise FindError(Errors.failed_find)
             (user_id, user_hash, user_salt) = data[0]
-            if str(hash(user_pass+user_salt)) == user_hash:
+            if str(hashlib.sha256((str(user_pass)+str(user_salt)).encode()).hexdigest()) == user_hash:
                 log(f"Authentication of user {user_id} sucessfull")
                 return user_id
             log(f"Failed to authenticate user [{user_mail}]")
