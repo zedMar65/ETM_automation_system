@@ -1,3 +1,13 @@
 body{
     background-color: aqua;
 }
+
+.row{
+    background-color: azure;
+    border: 1px black solid;
+}
+
+.section{
+    border: 1px grey solid;
+    background-color: beige;
+}

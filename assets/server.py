@@ -132,7 +132,6 @@ class SecureServer(BaseHTTPRequestHandler):
             if self.path == "/login":
                 self.check_login()
                 return
-
             elif self.path == "/filter":
                 uuid, auth = self.auth()
                 if uuid == None:
@@ -151,6 +150,7 @@ class SecureServer(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(b'{"status": "received"}')
                 return
+            
             elif self.path == "/fetch-users":
                 uuid, auth = self.auth()
                 if uuid == None or auth != "admin":
@@ -168,7 +168,8 @@ class SecureServer(BaseHTTPRequestHandler):
                     raise ValueError(Errors.user_not_authorised)
                 content_length = int(self.headers.get("Content-Length", 0))
                 post_data = self.rfile.read(content_length)
-                post_data = post_data.decode("utf-8")
+                
+                post_data = json.loads(post_data.decode("utf-8"))["user_id"]
                 response = Commands.remove_user(int(post_data))
                 if response == None:
                     raise FailedMethodError(Errors.failed_method)
@@ -184,9 +185,22 @@ class SecureServer(BaseHTTPRequestHandler):
                 post_data = self.rfile.read(content_length)
                 
                 post_data = json.loads(post_data.decode("utf-8"))
-                print("55555555")
                 response = Commands.new_user(post_data)
-                print("ASDASD")
+                if response == None:
+                    raise FailedMethodError(Errors.failed_method)
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(str(response).encode())
+            elif self.path == "/mod-user":
+                uuid, auth = self.auth()
+                if uuid == None or auth != "admin":
+                    raise ValueError(Errors.user_not_authorised)
+                content_length = int(self.headers.get("Content-Length", 0))
+                post_data = self.rfile.read(content_length)
+                
+                post_data = json.loads(post_data.decode("utf-8"))
+                response = Commands.mod_user(post_data)
                 if response == None:
                     raise FailedMethodError(Errors.failed_method)
                 self.send_response(200)

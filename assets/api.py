@@ -92,3 +92,6 @@ class Commands:
         elif data["auth"] == "admin":
             Admins.assign(id)
         return 1
+    def mod_user(data) -> int:
+        Users.mod_user(int(data["user_id"]), data["user_name"], data["user_email"], data["user_auth"])
+        return 1

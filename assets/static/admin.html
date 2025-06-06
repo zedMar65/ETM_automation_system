@@ -8,9 +8,15 @@
 </head>
 <body>
     <h1>Admin Page</h1>
+    
+<div class="section">
+    <h4>Users</h4>
+    <p>ID, email, name, auth</p>
     <div class="list" id="user-list">
     </div>
     <h4>New user</h4>
+    <p>Email, name, password, auth</p>
+    <div class="row">
     <form class="form" id="new-user">
         <input type="email" name="user-email" id="user-email">
         <input type="text" name="user-name" id="user-name">
@@ -22,24 +28,9 @@
         </select>
         <input type="submit" name="submit" id="new-user" value="Create">
     </form>
+    </div>
+</div>
     
-    <div class="list" id="room-list">
-    </div>
-    <h4>New room</h4>
-    <form class="form" id="new-room">
-        <input type="text" name="room-name" id="room-name">
-        <input type="number" name="room-capacity" id="room-capacity">
-        <input type="submit" name="submit" id="new-user" value="Create">
-    </form>
-
-    <div class="list" id="event-list">
-    </div>
-    <h4>New event</h4>
-    <form class="form" id="new-event">
-        <input type="text" name="event-name" id="event-name">
-        <input type="submit" name="submit" id="new-user" value="Create">
-    </form>
-
     <script src="scripts.js"></script> 
 </body>
 </html>

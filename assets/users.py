@@ -22,6 +22,37 @@ class Users:
         except Exception as e:
             log(f"Error while creating user[{user_name}]: {e}")
             return -1
+
+    @classmethod
+    def change_pass(id, new_pass) -> int:
+        try:
+            if id < 1:
+                raise ValueError(Errors.id_below_one)
+            user_salt = MainDB.execute("SELECT user_salt FROM users WHERE user_id = ?", (id,))
+            pass_hash = hashlib.sha256((user_pass+user_salt).encode()).hexdigest()
+            cookie = user_mail + str(uuid.UUID(bytes=secrets.token_bytes(16)))
+            MainDB.execute("UPDATE users SET user_pass_hash = ? WHERE user_id = ?", (pass_hash, id))
+            return 1        
+        except Exception as e:
+            log(f"Error while changing password: {e}")
+            return -1
+
+    @classmethod
+    def mod_user(self, id, user_name, user_mail, user_auth) -> int:
+        try:
+            if id < 1:
+                raise ValueError(Errors.id_below_one)
+            MainDB.execute("UPDATE users SET user_mail = ?, user_name = ? WHERE user_id = ?", (user_mail, user_name, id))
+            if user_auth == "guide":
+                Guides.assign(id)
+            elif user_auth == "admin":
+                Admins.assign(id)
+            elif user_auth == "mod":
+                Mods.assign(id)
+            return 1
+        except Exception as e:
+            log(f"Error while modding user[{user_name}]: {e}")
+            return -1
     
     @classmethod
     def find(self, user_id = None, user_name = None, user_mail = None, user_cookie = None, user_auth = None) -> [()]:
