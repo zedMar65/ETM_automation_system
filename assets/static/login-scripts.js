@@ -21,5 +21,5 @@ form.addEventListener("submit", (e) => {
       return;
     }
       window.location.href = "/";
-  });
-});
+  })
+})

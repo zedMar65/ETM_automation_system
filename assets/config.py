@@ -22,9 +22,21 @@ class FailedMethodError(Exception):
 
 class PagesList:
     HOME_PAGE = {
-        "/": "static/index.html",
-        "/styles.css": "static/styles.css",
-        "/scripts.js": "static/scripts.js",
+        "admin": {
+            "/admin": "static/admin.html",
+            "/scripts.js": "static/admin-scripts.js",
+            "/styles.css": "static/styles.css"
+        },
+        "mod": {
+            "/mod": "static/mod.html",
+            "/scripts.js": "static/mod-scripts.js",
+            "/styles.css": "static/styles.css"
+        },
+        "guide": {
+            "/guide": "static/guide.html",
+            "/scripts.js": "static/guide-scripts.js",
+            "/styles.css": "static/styles.css"
+        }
     }
 
     LOGIN_PAGE = {

@@ -66,11 +66,11 @@ class SecureServer(BaseHTTPRequestHandler):
         if "cookie_auth" in cookies:
             uuid = Auth.auth_via_cookie(cookies["cookie_auth"])
             if uuid < 1:
-                self.serve_login()
+                self.logout()
                 return None, None
             auth = Auth.auth(uuid)
         else:
-            self.serve_login()
+            self.logout()
             return None, None
         if auth not in ["user", "mod", "admin", "guide"]:
             raise FindError(Errors.failed_find)
@@ -78,12 +78,12 @@ class SecureServer(BaseHTTPRequestHandler):
 
     def logout(self):
         self.send_response(302)
-        self.send_header("Location", "/")  # Target path
+        self.send_header("Location", "/login")  # Target path
         self.send_header("Set-Cookie", f"cookie_auth=; Path=/; HttpOnly")
         self.end_headers()
 
-    def serve_home(self):
-        filename = PagesList.HOME_PAGE[self.path]
+    def serve_home(self, auth):
+        filename = PagesList.HOME_PAGE[auth][self.path]
         if os.path.isfile(filename):
             self.send_response(200)
             if filename.endswith(".html"):
@@ -105,44 +105,98 @@ class SecureServer(BaseHTTPRequestHandler):
             # pages accessable without permisions
             if self.path in PagesList.LOGIN_PAGE:
                 self.serve_login()
+                return
 
             # check for user info
             uuid, auth = self.auth()
             if uuid == None:
                 raise ValueError(Errors.user_not_authorised)
+            if self.path == "/":
+                self.path = "/"+auth
 
             if self.path in PagesList.LOGOUT:
                 self.logout()
+                return
 
-            if self.path in PagesList.HOME_PAGE:
-                self.serve_home()
+            if self.path in PagesList.HOME_PAGE[auth]:
+                self.serve_home(auth)
+                return
 
         except Exception as e:
             log(f"Error while serving GET: {e}")
-            self.serve_login()
+            self.logout()
             return
 
     def do_POST(self):
-        if self.path == "/login":
-            self.check_login()
-            return
-        if self.path == "/filter":
-            content_length = int(self.headers.get("Content-Length", 0))
-            post_data = self.rfile.read(content_length)
-
-            data = json.loads(post_data.decode("utf-8"))
-            response = handle_inquiry(data)
-
-            if data == None:
-                self.send_error(404, "Opperation failed")
+        try:
+            if self.path == "/login":
+                self.check_login()
                 return
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json")
-            self.end_headers()
-            self.wfile.write(b'{"status": "received"}')
-        else:
-            self.send_error(404, "Opperation not found")
 
+            elif self.path == "/filter":
+                uuid, auth = self.auth()
+                if uuid == None:
+                    raise ValueError(Errors.user_not_authorised)
+
+                content_length = int(self.headers.get("Content-Length", 0))
+                post_data = self.rfile.read(content_length)
+
+                data = json.loads(post_data.decode("utf-8"))
+                response = Process.handle_inquiry(data)
+
+                if data == None:
+                    raise FailedMethodError(Errors.failed_method)
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(b'{"status": "received"}')
+                return
+            elif self.path == "/fetch-users":
+                uuid, auth = self.auth()
+                if uuid == None or auth != "admin":
+                    raise ValueError(Errors.user_not_authorised)
+                response = json.dumps(Fetch.fetch_users())
+                if response == None:
+                    raise FailedMethodError(Errors.failed_method)
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(str(response).encode())
+            elif self.path == "/remove-user":
+                uuid, auth = self.auth()
+                if uuid == None or auth != "admin":
+                    raise ValueError(Errors.user_not_authorised)
+                content_length = int(self.headers.get("Content-Length", 0))
+                post_data = self.rfile.read(content_length)
+                post_data = post_data.decode("utf-8")
+                response = Commands.remove_user(int(post_data))
+                if response == None:
+                    raise FailedMethodError(Errors.failed_method)
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(str(response).encode())
+            elif self.path == "/new-user":
+                uuid, auth = self.auth()
+                if uuid == None or auth != "admin":
+                    raise ValueError(Errors.user_not_authorised)
+                content_length = int(self.headers.get("Content-Length", 0))
+                post_data = self.rfile.read(content_length)
+                
+                post_data = json.loads(post_data.decode("utf-8"))
+                print("55555555")
+                response = Commands.new_user(post_data)
+                print("ASDASD")
+                if response == None:
+                    raise FailedMethodError(Errors.failed_method)
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(str(response).encode())
+        except Exception as e:
+            log(f"Error while serving post: {e}")
+            self.send_error(404, "Opperation not found")
+            return
 def start_server(server_class=HTTPServer, handler_class=SecureServer):
     server_address = (Flags.SERVE_IP, Flags.SERVE_PORT)
     httpd = server_class(server_address, handler_class)

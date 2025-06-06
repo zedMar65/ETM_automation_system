@@ -31,6 +31,7 @@ let time_frames = [];
 let selected_events = [];
 let selected_guides = [];
 let selected_rooms = [];
+let free_times = true
 const form = document.getElementById("selection-form");
 const saveDraftBtn = document.getElementById("saveDraft");
 const realSubmitBtn = document.getElementById("submit-filter");
@@ -41,6 +42,7 @@ var full_available_events = []
 function inquiry(option) {
   const jsonObject = {
     option: option,
+    free_time: free_times,
     time_frame: time_frames,
     guide: selected_guides,
     event: selected_events,

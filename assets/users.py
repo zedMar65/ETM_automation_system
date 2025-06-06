@@ -46,7 +46,8 @@ class Users:
                     placeholder += arg_names[num]
                     values = values + (arg,)
                 num += 1
-
+            if len(values) <= 0:
+                return MainDB.query(f"SELECT * FROM users")
             return MainDB.query(f"SELECT * FROM users WHERE {placeholder}", values)
         except Exception as e:
             log(f"Error while querrying for user {args_all}")
