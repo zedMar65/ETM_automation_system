@@ -22,6 +22,56 @@ class SecureServer(BaseHTTPRequestHandler):
             log(f"Error while parsing cookies: {e}")
             return {}
     
+    def auth(self):
+        cookies = self.parse_cookies()
+        if "cookie_auth" in cookies:
+            uuid = Auth.auth_via_cookie(cookies["cookie_auth"])
+            if uuid < 1:
+                self.logout()
+                return None, None
+            auth = Auth.auth(uuid)
+        else:
+            self.logout()
+            return None, None
+        if auth not in ["user", "mod", "admin", "guide"]:
+            raise FindError(Errors.failed_find)
+        return uuid, auth
+
+    def auth_admin(self):
+        uuid, auth = self.auth()
+        if uuid == None or auth != "admin":
+            raise ValueError(Errors.user_not_authorised)
+        else:
+            return True
+    
+    def auth_mod(self):
+        uuid, auth = self.auth()
+        if uuid == None or auth != "mod":
+            raise ValueError(Errors.user_not_authorised)
+        else:
+            return True
+
+    def auth_guide(self):
+        uuid, auth = self.auth()
+        if uuid == None or auth != "guide":
+            raise ValueError(Errors.user_not_authorised)
+        else:
+            return True
+
+    def get_content(self):
+        content_length = int(self.headers.get("Content-Length", 0))
+        post_data = self.rfile.read(content_length)
+        post_data = json.loads(post_data.decode("utf-8"))
+        return post_data
+
+    def send_json(self, response):
+        if response == None:
+            raise FailedMethodError(Errors.failed_method)
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.end_headers()
+        self.wfile.write(str(response).encode())
+
     def serve_login(self):
         try:
             if self.path not in PagesList.LOGIN_PAGE:
@@ -59,23 +109,8 @@ class SecureServer(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Location", "/")  # Target path
         self.send_header("Set-Cookie", f"cookie_auth={cookie}; Path=/; HttpOnly")
-        self.end_headers()
-
-    def auth(self):
-        cookies = self.parse_cookies()
-        if "cookie_auth" in cookies:
-            uuid = Auth.auth_via_cookie(cookies["cookie_auth"])
-            if uuid < 1:
-                self.logout()
-                return None, None
-            auth = Auth.auth(uuid)
-        else:
-            self.logout()
-            return None, None
-        if auth not in ["user", "mod", "admin", "guide"]:
-            raise FindError(Errors.failed_find)
-        return uuid, auth
-
+        self.end_headers()   
+    
     def logout(self):
         self.send_response(302)
         self.send_header("Location", "/login")  # Target path
@@ -151,62 +186,23 @@ class SecureServer(BaseHTTPRequestHandler):
                 self.wfile.write(b'{"status": "received"}')
                 return
             
-            elif self.path == "/fetch-users":
-                uuid, auth = self.auth()
-                if uuid == None or auth != "admin":
-                    raise ValueError(Errors.user_not_authorised)
-                response = json.dumps(Fetch.fetch_users())
-                if response == None:
-                    raise FailedMethodError(Errors.failed_method)
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json")
-                self.end_headers()
-                self.wfile.write(str(response).encode())
+            # Commands only for adimin:
+            if not self.auth_admin():
+                return
+            # User admin interface
+            if self.path == "/fetch-users":
+                send_json(json.dumps(Fetch.fetch_users()))
             elif self.path == "/remove-user":
-                uuid, auth = self.auth()
-                if uuid == None or auth != "admin":
-                    raise ValueError(Errors.user_not_authorised)
-                content_length = int(self.headers.get("Content-Length", 0))
-                post_data = self.rfile.read(content_length)
-                
-                post_data = json.loads(post_data.decode("utf-8"))["user_id"]
-                response = Commands.remove_user(int(post_data))
-                if response == None:
-                    raise FailedMethodError(Errors.failed_method)
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json")
-                self.end_headers()
-                self.wfile.write(str(response).encode())
+                post_data = json.loads(self.get_content().decode("utf-8"))["user_id"]
+                self.send_json(Commands.remove_user(int(post_data)))
             elif self.path == "/new-user":
-                uuid, auth = self.auth()
-                if uuid == None or auth != "admin":
-                    raise ValueError(Errors.user_not_authorised)
-                content_length = int(self.headers.get("Content-Length", 0))
-                post_data = self.rfile.read(content_length)
-                
-                post_data = json.loads(post_data.decode("utf-8"))
-                response = Commands.new_user(post_data)
-                if response == None:
-                    raise FailedMethodError(Errors.failed_method)
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json")
-                self.end_headers()
-                self.wfile.write(str(response).encode())
+                response = Commands.new_user(self.get_content())
+                self.send_json(response)
             elif self.path == "/mod-user":
-                uuid, auth = self.auth()
-                if uuid == None or auth != "admin":
-                    raise ValueError(Errors.user_not_authorised)
-                content_length = int(self.headers.get("Content-Length", 0))
-                post_data = self.rfile.read(content_length)
-                
-                post_data = json.loads(post_data.decode("utf-8"))
-                response = Commands.mod_user(post_data)
-                if response == None:
-                    raise FailedMethodError(Errors.failed_method)
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json")
-                self.end_headers()
-                self.wfile.write(str(response).encode())
+                response = Commands.mod_user(self.get_content())
+                self.send_json(response)
+            # Event admin interface
+
         except Exception as e:
             log(f"Error while serving post: {e}")
             self.send_error(404, "Opperation not found")

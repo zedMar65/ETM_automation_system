@@ -9,6 +9,8 @@
 <body>
     <h1>Admin Page</h1>
     
+<!-- guests section -->
+
 <div class="section">
     <h4>Users</h4>
     <p>ID, email, name, auth</p>
@@ -30,7 +32,41 @@
     </form>
     </div>
 </div>
-    
-    <script src="scripts.js"></script> 
+
+<!-- events section -->
+
+<div class="section">
+    <h4>Events</h4>
+    <p>ID, name</p>
+    <div class="list" id="event-list">
+    </div>
+    <h4>New event</h4>
+    <p>Name</p>
+    <div class="row">
+    <form class="form" id="new-event">
+        <input type="text" name="event-name" id="event-name">
+        <input type="submit" name="submit" id="new-event" value="Create">
+    </form>
+    </div>
+</div>
+
+<!-- rooms section -->
+
+<div class="section">
+    <h4>Rooms</h4>
+    <p>ID, name, capacity</p>
+    <div class="list" id="room-list">
+    </div>
+    <h4>New room</h4>
+    <p>Name, capacity</p>
+    <div class="row">
+    <form class="form" id="new-room">
+        <input type="text" name="room-name" id="room-name">
+        <input class="num" type="number" name="room-capacity" id="room-capacity">
+        <input type="submit" name="submit" id="new-room" value="Create">
+    </form>
+    </div>
+</div>
+<script src="scripts.js"></script> 
 </body>
 </html>
