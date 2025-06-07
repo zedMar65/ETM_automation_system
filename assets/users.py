@@ -5,6 +5,8 @@ from database import MainDB
 from utils import log
 import hashlib
 
+
+
 class Users:
     @classmethod
     def new_user(self, user_name, user_mail, user_pass) -> int:
@@ -395,3 +397,62 @@ class Guides(Group):
         except Exception as e:
             log(f"Error while freeing guide [{id}]: {e}")
             return -1
+
+class WorkHours:
+    @classmethod
+    def add(self, guide_id, day, start_time, end_time) -> int:
+        try:
+            if guide_id < 1:
+                raise ValueError(Errors.id_below_one)
+            MainDB.execute("INSERT INTO work_hours (guide_id, week_day, start_time, end_time) VALUES(?, ?, ?, ?)", (guide_id, day, start_time, end_time))
+            return 1
+        except Exception as e:
+            log(f"Error while adding work hours for {guide_id}: {e}")
+            return -1
+    
+    @classmethod
+    def remove(self, hour_id):
+        try:
+            if hour_id < 1:
+                raise ValueError(Errors.id_below_one)
+            MainDB.execute("DELETE FROM work_hours WHERE id = ?", (hour_id,))
+            return 1
+        except Exception as e:
+            log(f"Error while deleting work hours [{hour_id}]: {e}")
+            return -1
+
+    @classmethod
+    def update(self, id, start_time, end_time):
+        try:
+            if id < 1:
+                raise ValueError(Errors.id_below_one)
+            MainDB.execute("UPDATE work_hours SET start_time = ?, end_time = ? WHERE id = ?", (start_time, end_time, id))
+        except Exception as e:
+            log(f"Error while changing work hours [{id}]: {e}")
+    
+    @classmethod
+    def find(self, id = None, guide_id = None, week_day = None) -> [()]:
+        try:
+            if id == None and guide_id == None and week_day == None:
+                return MainDB.query(f"SELECT * FROM work_hours")
+            placeholder = ""
+            values = ()
+            if id != None:
+                placeholder += "id = ?"
+                values = values + (id,)
+            if guide_id != None:
+                if placeholder != "":
+                    placeholder += " AND "
+                placeholder += "guide_id = ?"
+                values = values + (guide_id,)
+            if week_day != None:
+                if placeholder != "":
+                    placeholder += " AND "
+                placeholder += "week_day = ?"
+                values = values + (week_day,)
+            data = MainDB.query(f"SELECT * FROM work_hours WHERE {placeholder}", values)
+            log(f"Found {len(data)} available work hours")
+            return data
+        except Exception as e:
+            log(f"Error while finding work hours: {e}")
+            return [()]

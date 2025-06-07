@@ -96,3 +96,11 @@ CREATE TABLE IF NOT EXISTS mods(
     user_id INT,
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
+
+CREATE TABLE IF NOT EXISTS work_hours(
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    guide_id INT,
+    week_day INT,
+    start_hour INT,
+    end_hour INT
+)

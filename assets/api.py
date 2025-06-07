@@ -3,6 +3,30 @@ import json
 from utils import *
 from users import *
 from interface import *
+import datetime
+
+class Utility:
+    def update(certain_date):
+        guides = Users.find(user_auth="guide")
+        for guide in guides:
+            guide_id = Guides.get_group_id(guide[0])
+            time_in_time = int_to_time(certain_date)
+            day_number = datetime.date(int_to_time(certain_date)["year"], int_to_time(certain_date)["month"], int_to_time(certain_date)["day"]).weekday()
+            guide_work_hours = WorkHours.find(guide_id=guide_id, week_day=day_number+1)
+            start_time = time_in_time
+            start_time["hour"] = guide_work_hours[3][:2]
+            start_time["minute"] = guide_work_hours[3][:2]
+            end_time = time_in_time
+            end_time["hour"] = guide_work_hours[4][:2]
+            end_time["minute"] = guide_work_hours[4][:2]
+            Guides.occupie(time_to_int(guide_id), time_to_int(start_time), end_time, "Off work")
+            return 1
+    def full_update(certain_future_date):
+        day = time_now()
+        while day < certain_future_date:
+            update(day)
+            day = add_times(day, 10000)
+        return 1
 
 class Fetch:
     def fetch_free_by_find(from_time, to_time, room_id=None, event_id=None, guide_id=None) -> [()]:

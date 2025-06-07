@@ -2,15 +2,20 @@ async function update_user_list() {
     const user_list = document.getElementById("user-list");
     const users = await query("user");  // Wait for fetch to complete
     user_list.innerHTML = "";
-
+    let list = document.getElementById("event-guide-guide-name")
+    list.innerHTML = "";
+        
     for (let key in users) {
-
+        
         const user = users[key];
         const selectedAuth = user["auth"];
+        if (user["auth"] == "guide"){
+          list.innerHTML += "<option value=\""+user["name"]+"\">"+user["name"]+"</option>"
+        }
 
         user_list.innerHTML +=  `
 <div class=\"row\">
-<input class="id" type=\"text\" value=\"${user["id"]}\" disabled id=\"user-id-${user["id"]}\">
+<input class="num" type=\"text\" value=\"${user["id"]}\" disabled id=\"user-id-${user["id"]}\">
 <input type=\"text\" value=\"${user["email"]}\" id=\"user-email-${user["id"]}\">
 <input type=\"text\" value=\"${user["name"]}\" id=\"user-name-${user["id"]}\">
 <select name="user-auth" id="user-auth-${user["id"]}">
@@ -20,7 +25,7 @@ async function update_user_list() {
 </select>
 <button onclick=\"mod('${user["id"]}', 'user')\">Set</button>
 <button onclick=\"remove('${user["id"]}', 'user')\">Delete</button>
-</div><br>`;
+</div>`;
     }
 }
 
@@ -28,18 +33,22 @@ async function update_room_list() {
     const room_list = document.getElementById("room-list");
     const rooms = await query("room");  // Wait for fetch to complete
     room_list.innerHTML = "";
-
+    let list = document.getElementById("event-room-room-name")
+    list.innerHTML = "";
+        
     for (let key in rooms) {
 
         const room = rooms[key];
+
+        list.innerHTML += "<option value=\""+room["name"]+"\">"+room["name"]+"</option>"
         room_list.innerHTML +=  `
 <div class=\"row\">
-<input class="id" type=\"text\" value=\"${room["id"]}\" disabled id=\"room-id-${room["id"]}\">
+<input class="num" type=\"text\" value=\"${room["id"]}\" disabled id=\"room-id-${room["id"]}\">
 <input type=\"text\" value=\"${room["name"]}\" id=\"room-name-${room["id"]}\">
 <input class="num" type="number" value="${room["capacity"]}" id="room-capacity-${room["id"]}">
 <button onclick=\"mod('${room["id"]}', 'room')\">Set</button>
 <button onclick=\"remove('${room["id"]}', 'room')\">Delete</button>
-</div><br>`;
+</div>`;
     }
 }  
 
@@ -47,19 +56,23 @@ async function update_event_list() {
     const event_list = document.getElementById("event-list");
     const events = await query("event");  // Wait for fetch to complete
     event_list.innerHTML = "";
-
+    let list1 = document.getElementById("event-room-event-name")
+    list1.innerHTML = "";
+    let list2 = document.getElementById("event-guide-event-name")
+    list2.innerHTML = "";
     for (let key in events) {
 
         const event = events[key];
-
+        list1.innerHTML += "<option value=\""+event["name"]+"\">"+event["name"]+"</option>"
+        list2.innerHTML += "<option value=\""+event["name"]+"\">"+event["name"]+"</option>"
         event_list.innerHTML +=  `
 <div class=\"row\">
-<input class="id" type=\"text\" value=\"${event["id"]}\" disabled id=\"event-id-${event["id"]}\">
+<input class="num" type=\"text\" value=\"${event["id"]}\" disabled id=\"event-id-${event["id"]}\">
 <input type=\"text\" value=\"${event["name"]}\" id=\"event-name-${event["id"]}\">
 <input class="num" type=\"number\" value=\"${event["duration"]}\" id=\"event-duration-${event["id"]}\">
 <button onclick=\"mod('${event["id"]}', 'event')\">Set</button>
 <button onclick=\"remove('${event["id"]}', 'event')\">Delete</button>
-</div><br>`;
+</div>`;
     }
 }
 
@@ -74,11 +87,11 @@ async function update_even_room_list() {
 
         event_list.innerHTML +=  `
 <div class=\"row\">
-<input class="id" type=\"text\" value=\"${event["id"]}\" disabled id=\"event-room-id-${event["id"]}\">
-<input type=\"text\" value=\"${event["event-name"]}\" id=\"event-room-event-name-${event["id"]}\">
-<input type=\"text\" value=\"${event["room-name"]}\" id=\"event-room-room-name-${event["id"]}\">
+<input class="num" type=\"text\" value=\"${event["id"]}\" disabled id=\"event-room-id-${event["id"]}\">
+<input disabled type=\"text\" value=\"${event["event-name"]}\" id=\"event-room-event-name-${event["id"]}\">
+<input disabled type=\"text\" value=\"${event["room-name"]}\" id=\"event-room-room-name-${event["id"]}\">
 <button onclick=\"remove('${[event["event-name"], event["room-name"]]}', 'event-room')\">Delete</button>
-</div><br>`;
+</div>`;
     }
 }
 
@@ -93,11 +106,11 @@ async function update_event_guide_list() {
 
         event_list.innerHTML +=  `
 <div class=\"row\">
-<input class="id" type=\"text\" value=\"${event["id"]}\" disabled id=\"event-guide-id-${event["id"]}\">
-<input type=\"text\" value=\"${event["event-name"]}\" id=\"event-guide-event-name-${event["id"]}\">
-<input type=\"text\" value=\"${event["guide-name"]}\" id=\"event-guide-guide-name-${event["id"]}\">
+<input class="num" type=\"text\" value=\"${event["id"]}\" disabled id=\"event-guide-id-${event["id"]}\">
+<input disabled type=\"text\" value=\"${event["event-name"]}\" id=\"event-guide-event-name-${event["id"]}\">
+<input disabled type=\"text\" value=\"${event["guide-name"]}\" id=\"event-guide-guide-name-${event["id"]}\">
 <button onclick=\"remove('${[event["event-name"], event["guide-name"]]}', 'event-guide')\">Delete</button>
-</div><br>`;
+</div>`;
     }
 }
 

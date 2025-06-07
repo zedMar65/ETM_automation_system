@@ -10,14 +10,12 @@
     <h1>Admin Page</h1>
     
 <!-- guests section -->
-
+<div class="column">
 <div class="section">
     <h4>Users</h4>
-    <p>ID, email, name, auth</p>
     <div class="list" id="user-list">
     </div>
     <h4>New user</h4>
-    <p>Email, name, password, auth</p>
     <div class="row">
         <input type="email" name="user-email" id="user-email">
         <input type="text" name="user-name" id="user-name">
@@ -30,32 +28,27 @@
         <button onclick="cnew('user')">Create</button>
     </div>
 </div>
-
 <!-- events section -->
 
 <div class="section">
     <h4>Events</h4>
-    <p>ID, name</p>
     <div class="list" id="event-list">
     </div>
     <h4>New event</h4>
-    <p>Name</p>
     <div class="row">
         <input type="text" name="event-name" id="event-name">
         <input class="num" type="number" name="event-duration" id="event-duration">
         <button onclick="cnew('event')">Create</button>
     </div>
 </div>
-
+</div>
 <!-- rooms section -->
-
+<div class="column">
 <div class="section">
     <h4>Rooms</h4>
-    <p>ID, name, capacity</p>
     <div class="list" id="room-list">
     </div>
     <h4>New room</h4>
-    <p>Name, capacity</p>
     <div class="row">
         <input type="text" name="room-name" id="room-name">
         <input class="num" type="number" name="room-capacity" id="room-capacity">
@@ -66,30 +59,38 @@
 <!-- Intersection section -->
 <div class="section">
     <h4>Room Event relation</h4>
-    <p>Event name, Room name</p>
     <div class="list" id="event-room-list">
     </div>
     <h4>New relation</h4>
-    <p>Event name, Room name</p>
     <div class="row">
-        <input type="text" name="event-room-event-name" id="event-room-event-name">
-        <input type="text" name="event-room-room-name" id="event-room-room-name">
+        <select name="event-room-event-name" id="event-room-event-name"></select>
+        <select name="event-room-room-name" id="event-room-room-name"></select>
         <button onclick="cnew('event-room')">Create</button>
     </div>
 </div>
+</div>
+<div class="column">
 <!-- Event+Guide -->
 <div class="section">
     <h4>Room Guide relation</h4>
-    <p>Event name, Guide name</p>
     <div class="list" id="event-guide-list">
     </div>
     <h4>New relation</h4>
-    <p>Event name, Guide name</p>
     <div class="row">
-        <input type="text" name="event-guide-event-name" id="event-guide-event-name">
-        <input type="text" name="event-guide-guide-name" id="event-guide-guide-name">
+        <select name="event-guide-event-name" id="event-guide-event-name">
+        </select>
+        <select name="event-guide-guide-name" id="event-guide-guide-name">
+        </select>
         <button onclick="cnew('event-guide')">Create</button>
     </div>
+</div>
+
+<!-- callender -->
+<div class="section">
+    <div class="callender">
+
+    </div>
+</div>
 </div>
 <script src="scripts.js"></script> 
 </body>

@@ -1,13 +1,69 @@
 body{
-    background-color: aqua;
+    padding: 0px;
+    margin: 0px;
+    align-content: center;
+    text-align: center;
+    /* background-color: aqua; */
 }
 
+
 .row{
-    background-color: azure;
-    border: 1px black solid;
+    /* background-color: azure; */
+    padding-bottom: 5px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5px;
+    width: 90%;
+    border-bottom: 2px solid black;
 }
 
 .section{
+    position: relative;
+    display: block;
+    
+    width: 46%;
+    padding: 1%;
+    margin-right:auto;
+    margin-left:auto;
+    margin-top: auto;
+    margin-bottom: 1%;
     border: 1px grey solid;
     background-color: beige;
+    height: 50vh;
+}
+
+input{
+    width: 9vw;
+}
+
+.column{
+    display: flex;
+    width: 100vw;
+    /* border: red solid 5px; */
+    /* height:auto; */
+}
+
+input, button, select{
+    border-radius: 1px;
+}
+
+
+.num{
+    width: 1vw;
+    text-align: center;
+}
+
+input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.list{
+    /* border:red solid 2px; */
+    overflow-y: scroll;
+    height: 60%;
 }
