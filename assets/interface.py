@@ -18,6 +18,15 @@ class Events:
             return -1
     
     @classmethod
+    def find(self) -> []:
+        try:
+            data = MainDB.query("SELECT * FROM events")
+            return data
+        except Exception as e:
+            log(f"Error while finding rooms: {e}")
+            return -1
+
+    @classmethod
     def new_event(self, event_name, duration) -> int:
         try:
             event_id = MainDB.execute("INSERT INTO events (event_name, duration) VALUES(?, ?)", (event_name, duration))
@@ -69,8 +78,7 @@ class Events:
         try:
             if event_id < 1:
                 raise ValueError(Errors.id_below_one)
-            if self.get_name(event_id) == "":
-                MainDB.execute("UPDATE events SET event_name = ? WHERE event_id = ?", (new_name, event_id))
+            MainDB.execute("UPDATE events SET event_name = ? WHERE event_id = ?", (new_name, event_id))
             log(f"Renamed event [{event_id}]")
             return 1
         except Exception as e:
@@ -118,6 +126,16 @@ class Rooms:
             log(f"Error while finding id of room [{room_name}]: {e}")
             return -1
     
+    @classmethod
+    def find(self) -> []:
+        try:
+            data = MainDB.query("SELECT * FROM rooms")
+            return data
+        except Exception as e:
+            log(f"Error while finding rooms: {e}")
+            return -1
+    
+
     @classmethod
     def new_room(self, room_name, capacity) -> int:
         try:
@@ -328,6 +346,15 @@ class Event_Guide_Relation:
             return -1
 
     @classmethod
+    def find(self) -> []:
+        try:
+            data = MainDB.query("SELECT * FROM event_guide_relation")
+            return data
+        except Exception as e:
+            log(f"Error while finding event_guide_relations: {e}")
+            return -1
+
+    @classmethod
     def get_guides(self, event_id) -> [()]:
         try:
             if event_id < 1:
@@ -397,6 +424,15 @@ class Event_Room_Relation:
             return 1
         except Exception as e:
             log(f"Error while checking relation of {event_id}-{room_id}: {e}")
+            return -1
+
+    @classmethod
+    def find(self) -> []:
+        try:
+            data = MainDB.query("SELECT * FROM room_event_relation")
+            return data
+        except Exception as e:
+            log(f"Error while finding event_room_relations: {e}")
             return -1
 
     @classmethod

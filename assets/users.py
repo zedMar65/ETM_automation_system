@@ -119,6 +119,35 @@ class Users:
             return -1
 
     @classmethod
+    def get_name(self, user_id) -> str:
+        try:
+            if user_id < 1:
+                raise ValueError(Errors.id_below_one)
+            data = self.find(user_id = user_id)
+            if len(data) > 1:
+                raise FindError(Errors.failed_find)
+            elif len(data) < 1:
+                raise FindError(Errors.failed_find)
+                return ""
+            return data[0][1]
+        except Exception as e:
+            log(f"Error while authing user: {e}")
+            return -1
+
+    def get_id(self, name) -> str:
+        try:
+            data = self.find(user_name = name)
+            if len(data) > 1:
+                raise FindError(Errors.failed_find)
+            elif len(data) < 1:
+                raise FindError(Errors.failed_find)
+                return ""
+            return data[0][0]
+        except Exception as e:
+            log(f"Error while authing user: {e}")
+            return -1
+
+    @classmethod
     def update(self, user_id, new_auth):
         try:
             if user_id < 1:

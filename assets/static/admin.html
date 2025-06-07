@@ -19,7 +19,6 @@
     <h4>New user</h4>
     <p>Email, name, password, auth</p>
     <div class="row">
-    <form class="form" id="new-user">
         <input type="email" name="user-email" id="user-email">
         <input type="text" name="user-name" id="user-name">
         <input type="password" name="user-password" id="user-password">
@@ -28,8 +27,7 @@
             <option value="mod">Mod</option>
             <option value="guide">Guide</option>
         </select>
-        <input type="submit" name="submit" id="new-user" value="Create">
-    </form>
+        <button onclick="cnew('user')">Create</button>
     </div>
 </div>
 
@@ -43,10 +41,9 @@
     <h4>New event</h4>
     <p>Name</p>
     <div class="row">
-    <form class="form" id="new-event">
         <input type="text" name="event-name" id="event-name">
-        <input type="submit" name="submit" id="new-event" value="Create">
-    </form>
+        <input class="num" type="number" name="event-duration" id="event-duration">
+        <button onclick="cnew('event')">Create</button>
     </div>
 </div>
 
@@ -60,11 +57,9 @@
     <h4>New room</h4>
     <p>Name, capacity</p>
     <div class="row">
-    <form class="form" id="new-room">
         <input type="text" name="room-name" id="room-name">
         <input class="num" type="number" name="room-capacity" id="room-capacity">
-        <input type="submit" name="submit" id="new-room" value="Create">
-    </form>
+        <button onclick="cnew('room')">Create</button>
     </div>
 </div>
 <script src="scripts.js"></script> 

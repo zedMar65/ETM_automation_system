@@ -190,19 +190,17 @@ class SecureServer(BaseHTTPRequestHandler):
             if not self.auth_admin():
                 return
             # User admin interface
-            if self.path == "/fetch-users":
-                send_json(json.dumps(Fetch.fetch_users()))
-            elif self.path == "/remove-user":
-                post_data = json.loads(self.get_content().decode("utf-8"))["user_id"]
-                self.send_json(Commands.remove_user(int(post_data)))
-            elif self.path == "/new-user":
-                response = Commands.new_user(self.get_content())
+            if self.path == "/fetch":
+                self.send_json(json.dumps(Fetch.fetch(self.get_content())))
+            elif self.path == "/remove":
+                post_data = self.get_content()
+                self.send_json(Commands.remove(post_data))
+            elif self.path == "/new":
+                response = Commands.new(self.get_content())
                 self.send_json(response)
-            elif self.path == "/mod-user":
-                response = Commands.mod_user(self.get_content())
+            elif self.path == "/mod":
+                response = Commands.mod(self.get_content())
                 self.send_json(response)
-            # Event admin interface
-
         except Exception as e:
             log(f"Error while serving post: {e}")
             self.send_error(404, "Opperation not found")

@@ -1,6 +1,6 @@
 async function update_user_list() {
     const user_list = document.getElementById("user-list");
-    const users = await query("users");  // Wait for fetch to complete
+    const users = await query("user");  // Wait for fetch to complete
     user_list.innerHTML = "";
 
     for (let key in users) {
@@ -18,187 +18,15 @@ async function update_user_list() {
 <option value="mod" ${selectedAuth === "mod" ? "selected" : ""}>Mod</option>
 <option value="guide" ${selectedAuth === "guide" ? "selected" : ""}>Guide</option>
 </select>
-<button onclick=\"mod_user('${user["id"]}')\">Set</button>
-<button onclick=\"remove_user('${user["id"]}')\">Delete</button>
+<button onclick=\"mod('${user["id"]}', 'user')\">Set</button>
+<button onclick=\"remove('${user["id"]}', 'user')\">Delete</button>
 </div><br>`;
     }
 }
-
-function query(type){
-    return fetch("fetch-"+type, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: ""
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`Server error: ${response.status}`);
-        }
-        response = response.json();
-        return response;
-    });
-}
-
-function remove_user(user_id){
-    fetch("/remove-user", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({ user_id })
-})
-.then(response => {
-    if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`);
-    }
-    update_user_list();
-})
-.catch(error => {
-    console.error("Failed to delete user:", error);
-});
-}   
-
-function mod_user(user_id){
-  let user_name = document.getElementById("user-name-"+user_id).value
-  let user_email = document.getElementById("user-email-"+user_id).value
-  let user_auth = document.getElementById("user-auth-"+user_id).value
-  
-fetch("/mod-user", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({ user_id, user_name, user_email, user_auth })
-})
-.then(response => {
-    if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`);
-    }
-    update_user_list();
-})
-.catch(error => {
-    console.error("Failed to delete user:", error);
-});
-}
-
-document.getElementById("new-user").addEventListener("submit", (e) => {
-    e.preventDefault();
-    namee = document.getElementById("user-name").value
-    mail = document.getElementById("user-email").value
-    pass = document.getElementById("user-password").value
-    auth = document.getElementById("user-auth").value
-    jsonOBJ = {
-        name: namee,
-        email: mail,
-        password: pass,
-        auth: auth
-    }
-    console.log(JSON.stringify(jsonOBJ))
-    sucess = fetch("new-user", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(jsonOBJ)
-  })
-  .then(response => {
-    if (!response.ok) {
-      return;
-    }
-      update_user_list()
-  })
-})
-
-// ----------------------------
-
-async function update_event_list() {
-    const event_list = document.getElementById("event-list");
-    const events = await query("events");  // Wait for fetch to complete
-    event_list.innerHTML = "";
-
-    for (let key in events) {
-
-        const event = events[key];
-
-        event_list.innerHTML +=  `
-<div class=\"row\">
-<input class="id" type=\"text\" value=\"${event["id"]}\" disabled id=\"event-id-${event["id"]}\">
-<input type=\"text\" value=\"${event["name"]}\" id=\"event-name-${event["id"]}\">
-<button onclick=\"mod_event('${event["id"]}')\">Set</button>
-<button onclick=\"remove_event('${event["id"]}')\">Delete</button>
-</div><br>`;
-    }
-}
-
-function remove_event(event_id){
-    fetch("/remove-event", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({ event_id })
-})
-.then(response => {
-    if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`);
-    }
-    update_event_list();
-})
-.catch(error => {
-    console.error("Failed to delete event:", error);
-});
-}   
-
-function mod_event(event_id){
-  let event_name = document.getElementById("event-name-"+event_id).value
-  
-fetch("/mod-event", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({ event_id, event_name })
-})
-.then(response => {
-    if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`);
-    }
-    update_event_list();
-})
-.catch(error => {
-    console.error("Failed to delete event:", error);
-});
-}
-
-document.getElementById("new-event").addEventListener("submit", (e) => {
-    e.preventDefault();
-    namee = document.getElementById("event-name").value
-    jsonOBJ = {
-        name: namee,
-    }
-    console.log(JSON.stringify(jsonOBJ))
-    sucess = fetch("new-event", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(jsonOBJ)
-  })
-  .then(response => {
-    if (!response.ok) {
-      return;
-    }
-      update_event_list()
-  })
-})
-
-// --------------
 
 async function update_room_list() {
     const room_list = document.getElementById("room-list");
-    const rooms = await query("rooms");  // Wait for fetch to complete
+    const rooms = await query("room");  // Wait for fetch to complete
     room_list.innerHTML = "";
 
     for (let key in rooms) {
@@ -209,60 +37,107 @@ async function update_room_list() {
 <input class="id" type=\"text\" value=\"${room["id"]}\" disabled id=\"room-id-${room["id"]}\">
 <input type=\"text\" value=\"${room["name"]}\" id=\"room-name-${room["id"]}\">
 <input class="num" type="number" value="${room["capacity"]}" id="room-capacity-${room["id"]}">
-<button onclick=\"mod_room('${room["id"]}')\">Set</button>
-<button onclick=\"remove_room('${room["id"]}')\">Delete</button>
+<button onclick=\"mod('${room["id"]}', 'room')\">Set</button>
+<button onclick=\"remove('${room["id"]}', 'room')\">Delete</button>
+</div><br>`;
+    }
+}  
+
+async function update_event_list() {
+    const event_list = document.getElementById("event-list");
+    const events = await query("event");  // Wait for fetch to complete
+    event_list.innerHTML = "";
+
+    for (let key in events) {
+
+        const event = events[key];
+
+        event_list.innerHTML +=  `
+<div class=\"row\">
+<input class="id" type=\"text\" value=\"${event["id"]}\" disabled id=\"event-id-${event["id"]}\">
+<input type=\"text\" value=\"${event["name"]}\" id=\"event-name-${event["id"]}\">
+<input class="num" type=\"number\" value=\"${event["duration"]}\" id=\"event-duration-${event["id"]}\">
+<button onclick=\"mod('${event["id"]}', 'event')\">Set</button>
+<button onclick=\"remove('${event["id"]}', 'event')\">Delete</button>
 </div><br>`;
     }
 }
 
-function remove_room(room_id){
-    fetch("/remove-room", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({ room_id })
-})
-.then(response => {
-    if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`);
-    }
-    update_room_list();
-})
-.catch(error => {
-    console.error("Failed to delete room:", error);
-});
-}   
-
-function mod_room(room_id){
-  let room_name = document.getElementById("room-name-"+room_id).value
-  
-fetch("/mod-room", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({ room_id, room_name })
-})
-.then(response => {
-    if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`);
-    }
-    update_room_list();
-})
-.catch(error => {
-    console.error("Failed to delete room:", error);
-});
+function update_all(){
+  update_event_list()
+  update_room_list()
+  update_user_list()
 }
 
-document.getElementById("new-room").addroomListener("submit", (e) => {
-    e.prroomDefault();
-    namee = document.getElementById("room-name").value
-    jsonOBJ = {
-        name: namee,
+function query(type){
+    return fetch("/fetch", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ option: type })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Server error: ${response.status}`);
+        }
+        response = response.json();
+        return response;
+    });
+}
+
+function remove(id, option){
+    fetch("/remove", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({ id, option })
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
     }
-    console.log(JSON.stringify(jsonOBJ))
-    sucess = fetch("new-room", {
+    update_all();
+})
+.catch(error => {
+    console.error("Failed to delete room:", error);
+});
+} 
+
+function cnew(option){
+  let jsonOBJ = {};
+  if (option == "user"){
+    let namee = document.getElementById("user-name").value
+    let mail = document.getElementById("user-email").value
+    let pass = document.getElementById("user-password").value
+    let auth = document.getElementById("user-auth").value
+    jsonOBJ = {
+        option: option,
+        name: namee,
+        email: mail,
+        password: pass,
+        auth: auth
+    };
+  } else if (option == "event"){
+    let namee = document.getElementById("event-name").value
+    let namee1 = document.getElementById("event-duration").value
+    jsonOBJ = {
+      option: option,
+      name: namee,
+      duration: namee1 
+    };
+  } else if (option == "room"){
+    let namee = document.getElementById("room-name").value
+    let namee1 = document.getElementById("room-capacity").value
+    jsonOBJ = {
+        option: option,
+        name: namee,
+        capacity: namee1
+      }
+  }
+
+    fetch("/new", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -273,10 +148,54 @@ document.getElementById("new-room").addroomListener("submit", (e) => {
     if (!response.ok) {
       return;
     }
-      update_room_list()
+    update_all()
   })
-})
 
-update_room_list()
-update_event_list()
-update_user_list()
+}
+
+function mod(id, option){
+  let jsonOBJ;
+  if (option == "user"){
+    jsonOBJ = {
+      option: option,
+      id: id,
+      name: document.getElementById("user-name-"+id).value,
+      email: document.getElementById("user-email-"+id).value,
+      auth: document.getElementById("user-auth-"+id).value
+    };
+  }
+  else if (option == "event"){
+    jsonOBJ = {
+      option: option,
+      id: id,
+      name: document.getElementById("event-name-"+id).value,
+      duration: document.getElementById("event-duration-"+id).value
+    };
+  }
+  else if (option == "room"){
+    jsonOBJ = {
+      option: option,
+      id: id,
+      name: document.getElementById("room-name-"+id).value,
+      capacity: document.getElementById("room-capacity-"+id).value,
+    };
+  }
+fetch("/mod", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(jsonOBJ)
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+    }
+    update_user_list();
+})
+.catch(error => {
+    console.error("Failed to Mod:", error);
+});
+}
+
+update_all()
