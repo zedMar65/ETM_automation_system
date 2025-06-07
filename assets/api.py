@@ -47,7 +47,7 @@ class Fetch:
             i = 0
             for da in dat:
                 if len(da) > 0:
-                    events[i] = {"id": i, "event": Events.get_name(int(da[0])), "room": Rooms.get_name(int(da[1]))}
+                    events[i] = {"id": i, "event-name": Events.get_name(int(da[0])), "room-name": Rooms.get_name(int(da[1]))}
                 i+=1
             return events
         elif option == "event-guide":
@@ -56,7 +56,7 @@ class Fetch:
             i = 0
             for da in dat:
                 if len(da) > 0:
-                    events[i] = {"id": i, "event": Events.get_name(int(da[0])), "guide": Users.get_name(Guides.get_user_id(int(da[2])))}
+                    events[i] = {"id": i, "event-name": Events.get_name(int(da[0])), "guide-name": Users.get_name(Guides.get_user_id(int(da[1])))}
                 i+=1
             return events
     
@@ -122,19 +122,26 @@ class Commands:
         elif data["option"] == "room":
             return Rooms.delete_room(int(data["id"]))
         elif data["option"] == "event-guide":
-            return Event_Guide_Relation.remove_relation(Events.get_id(data["event-name"]), Guides.get_group_id(Users.get_id(data["guide-name"])))
+            return Event_Guide_Relation.remove_relation(Events.get_id(data["id"].split(",")[0]), Guides.get_group_id(Users.get_id(data["id"].split(",")[1])))
         elif data["option"] == "event-room":
-            return Event_Room_Relation.remove_relation(Events.get_id(data["event-name"]), Rooms.get_id(data[["room-name"]]))
+            return Event_Room_Relation.remove_relation(Events.get_id(data["id"].split(",")[0]), Rooms.get_id(data["id"].split(",")[1]))
             
     def new(data) -> int:
         if data["option"] == "user":
-            return Users.new_user(data["name"], data["email"], data["password"])
+            id = Users.new_user(data["name"], data["email"], data["password"])
+            if data["auth"] == "guide":
+                Guides.assign(id)
+            elif data["auth"] == "admin":
+                Admins.assign(id)
+            elif data["auth"] == "mod":
+                Mods.assign(id)
+            return id
         elif data["option"] == "event":
             return Events.new_event(data["name"], data["duration"])
         elif data["option"] == "room":
             return Rooms.new_room(data["name"], data["capacity"])
         elif data["option"] == "event-guide":
-            return Event_Guide_Relation.add_relation(Events.get_id(data["event-name"]), Guides.get_user_id(Users.get_id(data["guide-name"])))
+            return Event_Guide_Relation.add_relation(Events.get_id(data["event-name"]), Guides.get_group_id(Users.get_id(data["guide-name"])))
         elif data["option"] == "event-room":
             return Event_Room_Relation.add_relation(Events.get_id(data["event-name"]), Rooms.get_id(data["room-name"]))
     

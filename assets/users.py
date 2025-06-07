@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from config import Errors, FindError, FailedMethodError
 import os, uuid, secrets
-# from interface import Event_Guide_Relation
 from database import MainDB
 from utils import log
 import hashlib
@@ -132,8 +131,9 @@ class Users:
             return data[0][1]
         except Exception as e:
             log(f"Error while authing user: {e}")
-            return -1
+            return ""
 
+    @classmethod
     def get_id(self, name) -> str:
         try:
             data = self.find(user_name = name)
@@ -249,12 +249,15 @@ class Group(ABC):
         try:
             if group_id < 1:
                 raise ValueError(Errors.id_below_one)
-            MainDB.execute(f"DELETE FROM {self.get_table()} WHERE {self.get_auth()}_id = ?", (group_id,))
-            if self.get_auth() == "guest":
+            if self.get_auth() == "guide":
+
+                from interface import Event_Guide_Relation
                 events = Event_Guide_Relation.get_events(group_id)
                 for event in events:
                     if len(event) > 0:
-                        Event_Guide_Relation.remove_relation(events[0], guide_id)
+                        Event_Guide_Relation.remove_relation(event[0], group_id)
+            
+            MainDB.execute(f"DELETE FROM {self.get_table()} WHERE {self.get_auth()}_id = ?", (group_id,))
             log(f"Deleted {self.get_auth}: {group_id}")
             return 1
         except Exception as e:

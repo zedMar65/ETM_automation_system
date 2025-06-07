@@ -62,6 +62,35 @@
         <button onclick="cnew('room')">Create</button>
     </div>
 </div>
+
+<!-- Intersection section -->
+<div class="section">
+    <h4>Room Event relation</h4>
+    <p>Event name, Room name</p>
+    <div class="list" id="event-room-list">
+    </div>
+    <h4>New relation</h4>
+    <p>Event name, Room name</p>
+    <div class="row">
+        <input type="text" name="event-room-event-name" id="event-room-event-name">
+        <input type="text" name="event-room-room-name" id="event-room-room-name">
+        <button onclick="cnew('event-room')">Create</button>
+    </div>
+</div>
+<!-- Event+Guide -->
+<div class="section">
+    <h4>Room Guide relation</h4>
+    <p>Event name, Guide name</p>
+    <div class="list" id="event-guide-list">
+    </div>
+    <h4>New relation</h4>
+    <p>Event name, Guide name</p>
+    <div class="row">
+        <input type="text" name="event-guide-event-name" id="event-guide-event-name">
+        <input type="text" name="event-guide-guide-name" id="event-guide-guide-name">
+        <button onclick="cnew('event-guide')">Create</button>
+    </div>
+</div>
 <script src="scripts.js"></script> 
 </body>
 </html>

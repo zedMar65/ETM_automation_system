@@ -1,7 +1,6 @@
 from utils import log, min_times
 from database import MainDB
 from config import Errors, FindError, FailedMethodError
-from users import Guides
 
 class Events:
     @classmethod
@@ -573,6 +572,8 @@ class Available_Events:
                 return []
             # print("-")
             guide_oc = []
+            from users import Guides
+
             guide_oc_temp = Guides.get_occupation_by_guide(data[3])
             
             for guide in guide_oc_temp:
@@ -665,6 +666,8 @@ class Occupied_Events:
             if available_event_id < 1:
                 raise ValueError(config.errors.id_below_one)
             event = Available_Events.find(id=available_event_id)
+            from users import Guides
+
             guide_oc_id = Guides.occupie(event[0][3] , busy_from, busy_to, f"Event {Events.get_name(event[0][1])} at {[Rooms.get_name(event[0][2])]}")
             if guide_oc_id < 1:
                 raise FailedMethodError(Errors.occupie_failed)
@@ -687,6 +690,8 @@ class Occupied_Events:
             if len(data) < 1:
                 raise FindError(Errors.failed_find)
             MainDB.execute("DELETE FROM occupied_events WHERE id = ?", (id,))
+            from users import Guides
+
             Guides.free(data[0][2])
             Rooms.free(data[0][3])
             log(f"Deleted occupied event {id}")

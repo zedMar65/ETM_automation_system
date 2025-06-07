@@ -63,10 +63,50 @@ async function update_event_list() {
     }
 }
 
-function update_all(){
-  update_event_list()
-  update_room_list()
-  update_user_list()
+async function update_even_room_list() {
+    const event_list = document.getElementById("event-room-list");
+    const events = await query("event-room");  // Wait for fetch to complete
+    event_list.innerHTML = "";
+
+    for (let key in events) {
+
+        const event = events[key];
+
+        event_list.innerHTML +=  `
+<div class=\"row\">
+<input class="id" type=\"text\" value=\"${event["id"]}\" disabled id=\"event-room-id-${event["id"]}\">
+<input type=\"text\" value=\"${event["event-name"]}\" id=\"event-room-event-name-${event["id"]}\">
+<input type=\"text\" value=\"${event["room-name"]}\" id=\"event-room-room-name-${event["id"]}\">
+<button onclick=\"remove('${[event["event-name"], event["room-name"]]}', 'event-room')\">Delete</button>
+</div><br>`;
+    }
+}
+
+async function update_event_guide_list() {
+    const event_list = document.getElementById("event-guide-list");
+    const events = await query("event-guide");  // Wait for fetch to complete
+    event_list.innerHTML = "";
+
+    for (let key in events) {
+
+        const event = events[key];
+
+        event_list.innerHTML +=  `
+<div class=\"row\">
+<input class="id" type=\"text\" value=\"${event["id"]}\" disabled id=\"event-guide-id-${event["id"]}\">
+<input type=\"text\" value=\"${event["event-name"]}\" id=\"event-guide-event-name-${event["id"]}\">
+<input type=\"text\" value=\"${event["guide-name"]}\" id=\"event-guide-guide-name-${event["id"]}\">
+<button onclick=\"remove('${[event["event-name"], event["guide-name"]]}', 'event-guide')\">Delete</button>
+</div><br>`;
+    }
+}
+
+async function update_all(){
+  await update_event_list()
+  await update_room_list()
+  await update_user_list()
+  await update_even_room_list()
+  await update_event_guide_list()
 }
 
 function query(type){
@@ -134,7 +174,23 @@ function cnew(option){
         option: option,
         name: namee,
         capacity: namee1
-      }
+      };
+  }else if (option == "event-room"){
+    let namee = document.getElementById("event-room-event-name").value
+    let namee1 = document.getElementById("event-room-room-name").value
+    jsonOBJ = {
+        option: option,
+        "event-name": namee,
+        "room-name": namee1
+      };
+  }else if (option == "event-guide"){
+    let namee = document.getElementById("event-guide-event-name").value
+    let namee1 = document.getElementById("event-guide-guide-name").value
+    jsonOBJ = {
+        option: option,
+        "event-name": namee,
+        "guide-name": namee1
+      };
   }
 
     fetch("/new", {
