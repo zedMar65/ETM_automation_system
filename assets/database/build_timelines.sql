@@ -101,6 +101,6 @@ CREATE TABLE IF NOT EXISTS work_hours(
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     guide_id INT,
     week_day INT,
-    start_hour INT,
-    end_hour INT
+    start_hour TEXT,
+    end_hour TEXT
 )

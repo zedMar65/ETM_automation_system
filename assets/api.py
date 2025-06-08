@@ -13,27 +13,30 @@ class Utility:
             for guide in guides:
                 guide_id = Guides.get_group_id(guide[0])
                 time_in_time = int_to_time(certain_date)
-                print(int_to_time(certain_date))
                 day_number = date(int_to_time(certain_date)["year"], int_to_time(certain_date)["month"], int_to_time(certain_date)["day"]).weekday()
                 guide_work_hours = WorkHours.find(guide_id=guide_id, week_day=day_number+1)
                 if len(guide_work_hours) > 0:
                     if len(guide_work_hours[0]) > 0:
-                        start_time = time_in_time
-                        end_time = time_in_time
-                        if guide_work_hours[0][3] > Flags.TIME_FIRST_SHOW:
+                        start_time = time_in_time.copy()
+                        end_time = time_in_time.copy()
+
+                        if int(guide_work_hours[0][3]) > int(Flags.TIME_FIRST_SHOW):
                             start_time["hour"] = int(str(Flags.TIME_FIRST_SHOW)[:2])
                             start_time["minute"] = int(str(Flags.TIME_FIRST_SHOW)[2:])
                             end_time["hour"] = int(str(guide_work_hours[0][3])[:2])
-                            end_time["minute"] = int(str(guide_work_hours[0][3])[:2])
-                        elif guide_work_hours[0][4] < Flags.TIME_LAST_SHOW:
+                            end_time["minute"] = int(str(guide_work_hours[0][3])[2:])
+                        elif int(guide_work_hours[0][4]) < int(Flags.TIME_LAST_SHOW):
                             start_time["hour"] = int(str(guide_work_hours[0][4])[:2])
-                            start_time["minute"] = int(str(guide_work_hours[0][4])[:2])
+                            
+                            start_time["minute"] = int(str(guide_work_hours[0][4])[2:])
+                            
                             end_time["hour"] = int(str(Flags.TIME_LAST_SHOW)[:2])
                             end_time["minute"] = int(str(Flags.TIME_LAST_SHOW)[2:])
+                            
                         elif guide_work_hours[0][4] == Flags.TIME_LAST_SHOW and guide_work_hours[0][3] == Flags.TIME_FIRST_SHOW:
                             pass
                         else:
-                            raise ValueError("Wrong tiime frames used")
+                            raise ValueError(Errors.wrong_time)
                         Guides.occupie(guide_id, time_to_int(start_time), time_to_int(end_time), "Off work")
                         return 1
                     
@@ -122,7 +125,7 @@ class Fetch:
             rooms = {}
             for da in dat:
                 if len(da) > 0:
-                    rooms[str(da[0])] = {"id": da[0], "name": Users.get_name(Guides.get_user_id(int(da[1]))), "day": da[2], "start-hour": da[3], "end-hour": da[4]}
+                    rooms[str(da[0])] = {"id": da[0], "name": Users.get_name(Guides.get_user_id(int(da[1]))), "day": da[2], "start-hour": str(da[3])[:2]+":"+str(da[3])[2:], "end-hour": str(da[4])[:2]+":"+str(da[4])[2:]}
             return rooms
 
 class Process:
@@ -211,7 +214,9 @@ class Commands:
         elif data["option"] == "event-room":
             return Event_Room_Relation.add_relation(Events.get_id(data["event-name"]), Rooms.get_id(data["room-name"]))
         elif data["option"] == "guide-hour":
-            return WorkHours.add(Guides.get_group_id(Users.get_id(data["name"])), int(data["day"]), int(data["start-time"]), int(data["end-time"]))
+            print(data)
+            
+            return WorkHours.add(Guides.get_group_id(Users.get_id(data["name"])), int(data["day"]), data["start-time"][:2].zfill(2)+data["start-time"][3:].zfill(2), data["end-time"][:2].zfill(2)+data["end-time"][3:].zfill(2))
         return 0
     def mod(data) -> int:
         if data["option"] == "user":
@@ -225,7 +230,7 @@ class Commands:
             Rooms.rename(int(data["id"]), data["name"])
             return 1
         elif data["option"] == "guide-hour":
-            WorkHours.update(int(data["id"]), int(data["day"]), int(data["start-hour"]), int(data["end-hour"]))
+            WorkHours.update(int(data["id"]), int(data["day"]), data["start-hour"][:2].zfill(2)+data["start-hour"][3:].zfill(2), data["end-hour"][:2].zfill(2)+data["end-hour"][3:].zfill(2))
         return 0
 
     def mod_user(data) -> int:

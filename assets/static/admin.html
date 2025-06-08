@@ -103,14 +103,31 @@
             <option value="6">Saturnday</option>
             <option value="7">Sunday</option>
         </select>
-        <input class="num" type="number" name="guide-hour-start" id="guide-hour-start">
-        <input class="num" type="number" name="guide-hour-end" id="guide-hour-end">
+        <input class="time" type="time" name="guide-hour-start" id="guide-hour-start">
+        <input class="time" type="time" name="guide-hour-end" id="guide-hour-end">
 
         <button onclick="cnew('guide-hour')">Create</button>
         <button onclick="full_update()">Commit off hours</button>
     </div>
 </div>
 </div>
+
+<div class="column">
+    <div class="section" style="width:96vw;">
+        <h4>Callender</h4>
+        <div class="row">
+            <input class="datetime" type="datetime-local" name="callender-time-start" id="callender-time-start">
+            <input class="datetime" type="datetime-local" name="callender-time-end" id="callender-time-end">
+            <select value="" name="callender-guide-name" id="callender-guide-name">
+            </select>
+            <select value="" name="callender-event" id="callender-room">
+            </select>
+            <select value="" name="callender-room" id="callender-room">
+            </select>
+        </div>
+    </div>
+</div>
+
 <script src="scripts.js"></script> 
 </body>
 </html>

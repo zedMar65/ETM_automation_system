@@ -6,6 +6,8 @@ async function update_user_list() {
     list.innerHTML = "";
     let list2 = document.getElementById("guide-hour-name")
     list2.innerHTML = "";
+    let list3 = document.getElementById("callender-guide-name")
+    list3.innerHTML = "<option value=\"-\">-</option>";
     for (let key in users) {
         
         const user = users[key];
@@ -13,6 +15,7 @@ async function update_user_list() {
         if (user["auth"] == "guide"){
           list.innerHTML += "<option value=\""+user["name"]+"\">"+user["name"]+"</option>"
           list2.innerHTML += "<option value=\""+user["name"]+"\">"+user["name"]+"</option>"
+          list3.innerHTML += "<option value=\""+user["name"]+"\">"+user["name"]+"</option>"
         }
 
         user_list.innerHTML +=  `
@@ -98,8 +101,8 @@ async function update_guide_hour_list() {
             <option ${guide_hour["day"] === 6 ? "selected" : ""} value="6">Saturnday</option>
             <option ${guide_hour["day"] === 7 ? "selected" : ""} value="7">Sunday</option>
         </select>
-<input class="num" type="number" value="${guide_hour["start-hour"]}" id="guide-hour-start-${guide_hour["id"]}">
-<input class="num" type="number" value="${guide_hour["end-hour"]}" id="guide-hour-end-${guide_hour["id"]}">
+<input type="time" class="time" value="${guide_hour["start-hour"]}" id="guide-hour-start-${guide_hour["id"]}">
+<input type="time" class="time" value="${guide_hour["end-hour"]}" id="guide-hour-end-${guide_hour["id"]}">
 <button onclick=\"mod('${guide_hour["id"]}', 'guide-hour')\">Set</button>
 <button onclick=\"remove('${guide_hour["id"]}', 'guide-hour')\">Delete</button>
 </div>`;

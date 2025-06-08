@@ -49,7 +49,7 @@ class SecureServer(BaseHTTPRequestHandler):
     
     def auth_mod(self):
         uuid, auth = self.auth()
-        if uuid == None or auth != "mod":
+        if uuid == None or (auth != "mod" or auth != "admin"):
             raise ValueError(Errors.user_not_authorised)
         else:
             return True
@@ -173,23 +173,13 @@ class SecureServer(BaseHTTPRequestHandler):
             if self.path == "/login":
                 self.check_login()
                 return
+
             elif self.path == "/filter":
-                uuid, auth = self.auth()
-                if uuid == None:
-                    raise ValueError(Errors.user_not_authorised)
-
-                content_length = int(self.headers.get("Content-Length", 0))
-                post_data = self.rfile.read(content_length)
-
-                data = json.loads(post_data.decode("utf-8"))
-                response = Process.handle_inquiry(data)
-
-                if data == None:
-                    raise FailedMethodError(Errors.failed_method)
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json")
-                self.end_headers()
-                self.wfile.write(b'{"status": "received"}')
+                if not self.auth_mod():
+                    return
+                
+                response = Process.handle_inquiry(self.get_content())
+                self.send_json(response)
                 return
             
             # Commands only for adimin:
