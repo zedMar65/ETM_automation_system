@@ -207,10 +207,15 @@ class SecureServer(BaseHTTPRequestHandler):
             elif self.path == "/mod":
                 response = Commands.mod(self.get_content())
                 self.send_json(response)
+            elif self.path == "/full_update":
+                Utility.full_update(0)
+                response = Utility.full_update(1)
+                self.send_json(response)
         except Exception as e:
             log(f"Error while serving post: {e}")
             self.send_error(404, "Opperation not found")
             return
+
 def start_server(server_class=HTTPServer, handler_class=SecureServer):
     server_address = (Flags.SERVE_IP, Flags.SERVE_PORT)
     httpd = server_class(server_address, handler_class)

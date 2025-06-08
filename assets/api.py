@@ -3,7 +3,8 @@ import json
 from utils import *
 from users import *
 from interface import *
-import datetime
+import time
+from datetime import datetime, date
 
 class Utility:
     def update(certain_date):
@@ -12,26 +13,52 @@ class Utility:
             for guide in guides:
                 guide_id = Guides.get_group_id(guide[0])
                 time_in_time = int_to_time(certain_date)
-                day_number = datetime.date(int_to_time(certain_date)["year"], int_to_time(certain_date)["month"], int_to_time(certain_date)["day"]).weekday()
+                print(int_to_time(certain_date))
+                day_number = date(int_to_time(certain_date)["year"], int_to_time(certain_date)["month"], int_to_time(certain_date)["day"]).weekday()
                 guide_work_hours = WorkHours.find(guide_id=guide_id, week_day=day_number+1)
                 if len(guide_work_hours) > 0:
-                    if len(guide_work_hours)[0] > 0:
+                    if len(guide_work_hours[0]) > 0:
                         start_time = time_in_time
-                        start_time["hour"] = guide_work_hours[3][:2]
-                        start_time["minute"] = guide_work_hours[3][:2]
                         end_time = time_in_time
-                        end_time["hour"] = guide_work_hours[4][:2]
-                        end_time["minute"] = guide_work_hours[4][:2]
-                        Guides.occupie(time_to_int(guide_id), time_to_int(start_time), end_time, "Off work")
+                        if guide_work_hours[0][3] > Flags.TIME_FIRST_SHOW:
+                            start_time["hour"] = int(str(Flags.TIME_FIRST_SHOW)[:2])
+                            start_time["minute"] = int(str(Flags.TIME_FIRST_SHOW)[2:])
+                            end_time["hour"] = int(str(guide_work_hours[0][3])[:2])
+                            end_time["minute"] = int(str(guide_work_hours[0][3])[:2])
+                        elif guide_work_hours[0][4] < Flags.TIME_LAST_SHOW:
+                            start_time["hour"] = int(str(guide_work_hours[0][4])[:2])
+                            start_time["minute"] = int(str(guide_work_hours[0][4])[:2])
+                            end_time["hour"] = int(str(Flags.TIME_LAST_SHOW)[:2])
+                            end_time["minute"] = int(str(Flags.TIME_LAST_SHOW)[2:])
+                        elif guide_work_hours[0][4] == Flags.TIME_LAST_SHOW and guide_work_hours[0][3] == Flags.TIME_FIRST_SHOW:
+                            pass
+                        else:
+                            raise ValueError("Wrong tiime frames used")
+                        Guides.occupie(guide_id, time_to_int(start_time), time_to_int(end_time), "Off work")
                         return 1
+                    
                 return 0
         except Exception as e:
             log(f"Error while doing Utility update: {e}")
             return 0
-    def full_update(certain_future_date):
-        day = time_now()
+    def full_update(month):
+        if month == 0:
+            day = int_to_time(time_now())
+        if month == 1:
+            day = time_now()
+            # next month
+            day = add_times(day, 1000000)
+            day = int_to_time(day)
+        day["day"] = 1
+        day["minute"] = 0
+        day["hour"] = 0
+        # next month
+        certain_future_date = (add_times(time_to_int(day), 1000000))
+        day = time_to_int(day)
+
         while day < certain_future_date:
-            update(day)
+            Utility.update(day)
+            # next day
             day = add_times(day, 10000)
         return 1
 
@@ -204,3 +231,24 @@ class Commands:
     def mod_user(data) -> int:
         Users.mod_user(int(data["user_id"]), data["user_name"], data["user_email"], data["user_auth"])
         return 1
+
+def check_and_run_monthly_task():
+    while True:
+        try:
+            current_month = datetime.now().strftime("%Y-%m")
+            last_run_month = None
+
+            if os.path.exists(Flags.MONTHLY_TASK_FILE):
+                with open(Flags.MONTHLY_TASK_FILE, "r") as f:
+                    last_run_month = f.read().strip()
+            if last_run_month == None:
+                full_update(0)
+                full_update(1)
+            elif last_run_month != current_month:
+                full_update(1)
+                with open(Flags.MONTHLY_TASK_FILE, "w") as f:
+                    f.write(current_month)
+        except Exception as e:
+            log(f"Error in monthly task checker: {e}")
+        
+        time.sleep(3600)  # check once every hour

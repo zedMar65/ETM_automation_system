@@ -7,6 +7,8 @@ from interface import *
 from api import *
 import time
 from server import start_server
+import threading
+from api import check_and_run_monthly_task
 
 def init():
     # load env vars
@@ -17,6 +19,8 @@ def init():
         Flags.DEBUG_FLAG = True
     if os.getenv("TIME_LAST_SHOW") != None:
         Flags.TIME_LAST_SHOW = int(os.getenv("TIME_LAST_SHOW"))
+    if os.getenv("TIME_FIRST_SHOW") != None:
+        Flags.TIME_FIRST_SHOW = int(os.getenv("TIME_FIRST_SHOW"))
     if os.getenv("SERVE_PORT") != None:
         Flags.SERVE_PORT = int(os.getenv("SERVE_PORT"))
     if os.getenv("SERVE_IP") != None:
@@ -31,6 +35,8 @@ def init():
 
 def main():
     log("starting main script")
+    monthly_thread = threading.Thread(target=check_and_run_monthly_task, daemon=True)
+    monthly_thread.start()
     start_server()
     pass
 

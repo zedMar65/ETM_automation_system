@@ -2,8 +2,10 @@ class Flags:
     LOG_FLAG = False
     DEBUG_FLAG = False
     TIME_LAST_SHOW = 0
+    TIME_FIRST_SHOW = 0
     SERVE_IP=""
     SERVE_PORT=8000
+    MONTHLY_TASK_FILE = "last_monthly_run.txt"
 
 class Errors:
     duplicate_found = "Duplicate data line found in database"

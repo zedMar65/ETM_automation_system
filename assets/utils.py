@@ -36,10 +36,11 @@ def init_MainDB() -> int:
         return -1
 
 def time_to_int(TIME) -> int:
+    # print(TIME["day"], "------------------------------------", calendar.monthrange(TIME["year"], TIME["month"])[1])
     while TIME["minute"] >= 60:
         while TIME["hour"] >= 24:
             while TIME["day"] > calendar.monthrange(TIME["year"], TIME["month"])[1]:
-                while TIME["moth"] > 12:
+                while TIME["month"] > 12:
                     TIME["month"] -= 12
                     TIME["year"] += 1
                 TIME["day"] -= calendar.monthrange(TIME["year"], TIME["month"])[1]
@@ -48,7 +49,24 @@ def time_to_int(TIME) -> int:
             TIME["day"] += 1
         TIME["minute"] -= 60
         TIME["hour"] += 1
-
+    while TIME["hour"] >= 24:
+        while TIME["day"] > calendar.monthrange(TIME["year"], TIME["month"])[1]:
+            while TIME["month"] > 12:
+                TIME["month"] -= 12
+                TIME["year"] += 1
+            TIME["day"] -= calendar.monthrange(TIME["year"], TIME["month"])[1]
+            TIME["month"] += 1
+        TIME["hour"] -= 24
+        TIME["day"] += 1
+    while TIME["day"] > calendar.monthrange(TIME["year"], TIME["month"])[1]:
+        while TIME["month"] > 12:
+            TIME["month"] -= 12
+            TIME["year"] += 1
+        TIME["day"] -= calendar.monthrange(TIME["year"], TIME["month"])[1]
+        TIME["month"] += 1
+    while TIME["month"] > 12:
+        TIME["month"] -= 12
+        TIME["year"] += 1
     
     return int(str(TIME["year"])+str(TIME["month"]).zfill(2)+str(TIME["day"]).zfill(2)+str(TIME["hour"]).zfill(2)+str(TIME["minute"]).zfill(2))
 
@@ -72,9 +90,24 @@ def min_times(time1, time2) -> int:
             time1["day"] -= 1
         time1["minute"] += 60
         time1["hour"] -= 1
-        
-            
-                
+    while time1["hour"] < 0:
+        while time1["day"] <= 0:
+            while time1["month"] <= 0:
+                time1["month"] += 12
+                time1["year"] -= 1
+            time1["day"] += calendar.monthrange(time1["year"], time1["month"])[1]
+            time1["month"] -= 1
+        time1["hour"] += 24
+        time1["day"] -= 1
+    while time1["day"] <= 0:
+        while time1["month"] <= 0:
+            time1["month"] += 12
+            time1["year"] -= 1
+        time1["day"] += calendar.monthrange(time1["year"], time1["month"])[1]
+        time1["month"] -= 1     
+    while time1["month"] <= 0:
+        time1["month"] += 12
+        time1["year"] -= 1
     return time_to_int(time1)
 
 def add_times(time1, time2) -> int:

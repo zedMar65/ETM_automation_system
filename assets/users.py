@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from config import Errors, FindError, FailedMethodError
+from config import Errors, FindError, FailedMethodError, Flags
 import os, uuid, secrets
 from database import MainDB
 from utils import log
@@ -252,7 +252,9 @@ class Group(ABC):
             if group_id < 1:
                 raise ValueError(Errors.id_below_one)
             if self.get_auth() == "guide":
-
+                work_hours = WorkHours.find(guide_id=group_id)
+                for hour in work_hours:
+                    WorkHours.remove(hour[0])
                 from interface import Event_Guide_Relation
                 events = Event_Guide_Relation.get_events(group_id)
                 for event in events:

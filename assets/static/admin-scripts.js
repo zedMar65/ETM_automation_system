@@ -189,6 +189,25 @@ function remove(id, option){
 });
 } 
 
+function full_update(){
+  fetch("/full_update", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({})
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+    }
+    update_all();
+})
+.catch(error => {
+    console.error("Failed to full_update:", error);
+});
+}
+
 function cnew(option){
   let jsonOBJ = {};
   if (option == "user"){
