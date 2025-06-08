@@ -141,7 +141,7 @@ class SecureServer(BaseHTTPRequestHandler):
     def do_GET(self):
         try:
             # call the server update (I know this is a really bad solution but at this point i dont really care)
-            Utility.update(self.time_of_last_update)
+            # Utility.update(self.time_of_last_update)
 
             # pages accessable without permisions
             if self.path in PagesList.LOGIN_PAGE:

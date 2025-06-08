@@ -404,7 +404,7 @@ class WorkHours:
         try:
             if guide_id < 1:
                 raise ValueError(Errors.id_below_one)
-            MainDB.execute("INSERT INTO work_hours (guide_id, week_day, start_time, end_time) VALUES(?, ?, ?, ?)", (guide_id, day, start_time, end_time))
+            MainDB.execute("INSERT INTO work_hours (guide_id, week_day, start_hour, end_hour) VALUES(?, ?, ?, ?)", (guide_id, day, start_time, end_time))
             return 1
         except Exception as e:
             log(f"Error while adding work hours for {guide_id}: {e}")
@@ -422,11 +422,11 @@ class WorkHours:
             return -1
 
     @classmethod
-    def update(self, id, start_time, end_time):
+    def update(self, id, day, start_time, end_time):
         try:
             if id < 1:
                 raise ValueError(Errors.id_below_one)
-            MainDB.execute("UPDATE work_hours SET start_time = ?, end_time = ? WHERE id = ?", (start_time, end_time, id))
+            MainDB.execute("UPDATE work_hours SET week_day = ?, start_hour = ?, end_hour = ? WHERE id = ?", (day, start_time, end_time, id))
         except Exception as e:
             log(f"Error while changing work hours [{id}]: {e}")
     

@@ -4,13 +4,15 @@ async function update_user_list() {
     user_list.innerHTML = "";
     let list = document.getElementById("event-guide-guide-name")
     list.innerHTML = "";
-        
+    let list2 = document.getElementById("guide-hour-name")
+    list2.innerHTML = "";
     for (let key in users) {
         
         const user = users[key];
         const selectedAuth = user["auth"];
         if (user["auth"] == "guide"){
           list.innerHTML += "<option value=\""+user["name"]+"\">"+user["name"]+"</option>"
+          list2.innerHTML += "<option value=\""+user["name"]+"\">"+user["name"]+"</option>"
         }
 
         user_list.innerHTML +=  `
@@ -76,6 +78,34 @@ async function update_event_list() {
     }
 }
 
+async function update_guide_hour_list() {
+    const guide_hour_list = document.getElementById("guide-hour-list");
+    const guide_hours = await query("guide-hour");  // Wait for fetch to complete
+    guide_hour_list.innerHTML = "";
+    for (let key in guide_hours) {
+
+        const guide_hour = guide_hours[key];
+        guide_hour_list.innerHTML +=  `
+<div class=\"row\">
+<input class="num" type=\"text\" value=\"${guide_hour["id"]}\" disabled id=\"guide-hour-id-${guide_hour["id"]}\">
+<input disabled locked type=\"text\" value=\"${guide_hour["name"]}\" id=\"guide-hour-name-${guide_hour["id"]}\">
+<select name="guide-hour-day" value="${guide_hour["day"]}" id="guide-hour-day-${guide_hour["id"]}">
+            <option ${guide_hour["day"] === 1 ? "selected" : ""} value="1">Monday</option>
+            <option ${guide_hour["day"] === 2 ? "selected" : ""} value="2">Tuesday</option>
+            <option ${guide_hour["day"] === 3 ? "selected" : ""} value="3">Wendsday</option>
+            <option ${guide_hour["day"] === 4 ? "selected" : ""} value="4">Thursday</option>
+            <option ${guide_hour["day"] === 5 ? "selected" : ""} value="5">Friday</option>
+            <option ${guide_hour["day"] === 6 ? "selected" : ""} value="6">Saturnday</option>
+            <option ${guide_hour["day"] === 7 ? "selected" : ""} value="7">Sunday</option>
+        </select>
+<input class="num" type="number" value="${guide_hour["start-hour"]}" id="guide-hour-start-${guide_hour["id"]}">
+<input class="num" type="number" value="${guide_hour["end-hour"]}" id="guide-hour-end-${guide_hour["id"]}">
+<button onclick=\"mod('${guide_hour["id"]}', 'guide-hour')\">Set</button>
+<button onclick=\"remove('${guide_hour["id"]}', 'guide-hour')\">Delete</button>
+</div>`;
+    }
+}
+
 async function update_even_room_list() {
     const event_list = document.getElementById("event-room-list");
     const events = await query("event-room");  // Wait for fetch to complete
@@ -120,6 +150,7 @@ async function update_all(){
   await update_user_list()
   await update_even_room_list()
   await update_event_guide_list()
+  await update_guide_hour_list()
 }
 
 function query(type){
@@ -204,6 +235,20 @@ function cnew(option){
         "event-name": namee,
         "guide-name": namee1
       };
+  }else if (option == "guide-hour"){
+    let namee = document.getElementById("guide-hour-name").value
+    let namee1 = document.getElementById("guide-hour-day").value
+    let namee2 = document.getElementById("guide-hour-start").value
+    let namee3 = document.getElementById("guide-hour-end").value
+    jsonOBJ = {
+        option: option,
+        "name": namee,
+        "day": namee1,
+        "start-time": namee2,
+        "end-time": namee3
+      };
+  }else{
+    return
   }
 
     fetch("/new", {
@@ -248,6 +293,16 @@ function mod(id, option){
       name: document.getElementById("room-name-"+id).value,
       capacity: document.getElementById("room-capacity-"+id).value,
     };
+  }else if (option == "guide-hour"){
+    jsonOBJ = {
+      option: option,
+      id: id,
+      day: document.getElementById("guide-hour-day-"+id).value,
+      "start-hour": document.getElementById("guide-hour-start-"+id).value,
+      "end-hour": document.getElementById("guide-hour-end-"+id).value
+    };
+  }else{
+    return
   }
 fetch("/mod", {
   method: "POST",

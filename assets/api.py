@@ -7,20 +7,27 @@ import datetime
 
 class Utility:
     def update(certain_date):
-        guides = Users.find(user_auth="guide")
-        for guide in guides:
-            guide_id = Guides.get_group_id(guide[0])
-            time_in_time = int_to_time(certain_date)
-            day_number = datetime.date(int_to_time(certain_date)["year"], int_to_time(certain_date)["month"], int_to_time(certain_date)["day"]).weekday()
-            guide_work_hours = WorkHours.find(guide_id=guide_id, week_day=day_number+1)
-            start_time = time_in_time
-            start_time["hour"] = guide_work_hours[3][:2]
-            start_time["minute"] = guide_work_hours[3][:2]
-            end_time = time_in_time
-            end_time["hour"] = guide_work_hours[4][:2]
-            end_time["minute"] = guide_work_hours[4][:2]
-            Guides.occupie(time_to_int(guide_id), time_to_int(start_time), end_time, "Off work")
-            return 1
+        try:
+            guides = Users.find(user_auth="guide")
+            for guide in guides:
+                guide_id = Guides.get_group_id(guide[0])
+                time_in_time = int_to_time(certain_date)
+                day_number = datetime.date(int_to_time(certain_date)["year"], int_to_time(certain_date)["month"], int_to_time(certain_date)["day"]).weekday()
+                guide_work_hours = WorkHours.find(guide_id=guide_id, week_day=day_number+1)
+                if len(guide_work_hours) > 0:
+                    if len(guide_work_hours)[0] > 0:
+                        start_time = time_in_time
+                        start_time["hour"] = guide_work_hours[3][:2]
+                        start_time["minute"] = guide_work_hours[3][:2]
+                        end_time = time_in_time
+                        end_time["hour"] = guide_work_hours[4][:2]
+                        end_time["minute"] = guide_work_hours[4][:2]
+                        Guides.occupie(time_to_int(guide_id), time_to_int(start_time), end_time, "Off work")
+                        return 1
+                return 0
+        except Exception as e:
+            log(f"Error while doing Utility update: {e}")
+            return 0
     def full_update(certain_future_date):
         day = time_now()
         while day < certain_future_date:
@@ -83,7 +90,13 @@ class Fetch:
                     events[i] = {"id": i, "event-name": Events.get_name(int(da[0])), "guide-name": Users.get_name(Guides.get_user_id(int(da[1])))}
                 i+=1
             return events
-    
+        elif option == "guide-hour":
+            dat = WorkHours.find()
+            rooms = {}
+            for da in dat:
+                if len(da) > 0:
+                    rooms[str(da[0])] = {"id": da[0], "name": Users.get_name(Guides.get_user_id(int(da[1]))), "day": da[2], "start-hour": da[3], "end-hour": da[4]}
+            return rooms
 
 class Process:
     def handle_inquiry(data) -> [()]:
@@ -149,7 +162,9 @@ class Commands:
             return Event_Guide_Relation.remove_relation(Events.get_id(data["id"].split(",")[0]), Guides.get_group_id(Users.get_id(data["id"].split(",")[1])))
         elif data["option"] == "event-room":
             return Event_Room_Relation.remove_relation(Events.get_id(data["id"].split(",")[0]), Rooms.get_id(data["id"].split(",")[1]))
-            
+        elif data["option"] == "guide-hour":
+            return WorkHours.remove(int(data["id"]))
+        return 0
     def new(data) -> int:
         if data["option"] == "user":
             id = Users.new_user(data["name"], data["email"], data["password"])
@@ -168,7 +183,9 @@ class Commands:
             return Event_Guide_Relation.add_relation(Events.get_id(data["event-name"]), Guides.get_group_id(Users.get_id(data["guide-name"])))
         elif data["option"] == "event-room":
             return Event_Room_Relation.add_relation(Events.get_id(data["event-name"]), Rooms.get_id(data["room-name"]))
-    
+        elif data["option"] == "guide-hour":
+            return WorkHours.add(Guides.get_group_id(Users.get_id(data["name"])), int(data["day"]), int(data["start-time"]), int(data["end-time"]))
+        return 0
     def mod(data) -> int:
         if data["option"] == "user":
             return Users.mod_user(int(data["id"]), data["name"], data["email"], data["auth"])
@@ -180,7 +197,9 @@ class Commands:
             Rooms.change_capacity(int(data["id"]), data["capacity"])
             Rooms.rename(int(data["id"]), data["name"])
             return 1
-        
+        elif data["option"] == "guide-hour":
+            WorkHours.update(int(data["id"]), int(data["day"]), int(data["start-hour"]), int(data["end-hour"]))
+        return 0
 
     def mod_user(data) -> int:
         Users.mod_user(int(data["user_id"]), data["user_name"], data["user_email"], data["user_auth"])
