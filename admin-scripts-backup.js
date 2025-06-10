@@ -65,15 +65,11 @@ async function update_event_list() {
     list1.innerHTML = "";
     let list2 = document.getElementById("event-guide-event-name")
     list2.innerHTML = "";
-    let list3 = document.getElementById("callendar-event-list")
-    list3.innerHTML = "";
-    list3.innerHTML = "";
     for (let key in events) {
 
         const event = events[key];
         list1.innerHTML += "<option value=\""+event["name"]+"\">"+event["name"]+"</option>"
         list2.innerHTML += "<option value=\""+event["name"]+"\">"+event["name"]+"</option>"
-        list3.innerHTML += "<div class=\"row_flex\"><input type=\"checkbox\" id=\""+event["id"]+"\"><div class=\"alligned_name\">"+event["name"]+"</div></div>"
         event_list.innerHTML +=  `
 <div class=\"row\">
 <input class="num" type=\"text\" value=\"${event["id"]}\" disabled id=\"event-id-${event["id"]}\">
@@ -348,37 +344,72 @@ fetch("/mod", {
 });
 }
 
-function calendar_filter(dateStr){
-    let selected_Events = [];
-    let timeStart = document.getElementById("calendar-start-time").value;
-    let timeEnd = document.getElementById("calendar-end-time").value;
-    let children = document.getElementById("callendar-event-list").children;
-    for (let i = 0; i < children.length; i++){
-      if (children[i].children[0].checked){
-        selected_Events.push(children[i].children[0].id) ;
-      }
-    }
-    jsonOBJ = {
-      date: dateStr,
-      time: [timeStart, timeEnd],
-      events: selected_Events
-        };
-        fetch("/filter", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(jsonOBJ)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`Server error: ${response.status}`);
-        }
-        update_callender(response.json);
-    })
-    .catch(error => {
-        console.error("Failed to Mod:", error);
-    });
-}
+// document.getElementById("calendar-search").addEventListener("click", async () => {
+//     const start = document.getElementById("callender-time-start").value;
+//     const end = document.getElementById("callender-time-end").value;
+//     const eventId = document.getElementById("callender-room").value;
+
+//     const payload = {
+//         option: null,
+//         free_time: true,
+//         time_frame: [{ startTime: start, endTime: end }],
+//         guides: [],
+//         event: [eventId],
+//         room: [],
+//     };
+
+//     const res = await fetch("/filter", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify(payload),
+//     });
+
+//     // const data = await res.json();
+//     // console.log(data)
+//     // renderCalendar(data); // function below
+// });
+
+// function renderCalendar(events) {
+//     const container = document.getElementById("calendar-results");
+//     container.innerHTML = ""; // clear old results
+
+//     if (events.length === 0) {
+//         container.innerHTML = "<p>No available slots found.</p>";
+//         return;
+//     }
+
+//     // Create table
+//     const table = document.createElement("table");
+//     table.innerHTML = `
+//         <tr>
+//             <th>Event ID</th>
+//             <th>Start</th>
+//             <th>End</th>
+//             <th>Room</th>
+//             <th>Guide</th>
+//         </tr>
+//     `;
+
+//     for (const ev of events) {
+//         const row = document.createElement("tr");
+//         row.innerHTML = `
+//             <td>${ev.event_id}</td>
+//             <td>${formatTime(ev.start_time)}</td>
+//             <td>${formatTime(ev.end_time)}</td>
+//             <td>${ev.room_id || "N/A"}</td>
+//             <td>${ev.guide_id || "N/A"}</td>
+//         `;
+//         table.appendChild(row);
+//     }
+
+//     container.appendChild(table);
+// }
+
+// function formatTime(t) {
+//     // If your backend gives you 202506081530 style int:
+//     const s = t.toString().padStart(12, "0");
+//     return `${s.slice(0, 4)}-${s.slice(4, 6)}-${s.slice(6, 8)} ${s.slice(8, 10)}:${s.slice(10, 12)}`;
+// }
+
 
 update_all()

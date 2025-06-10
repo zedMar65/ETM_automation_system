@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ETM-admin</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 <body>
     <h1>Admin Page</h1>
@@ -113,21 +114,46 @@
 </div>
 
 <div class="column">
-    <div class="section" style="width:96vw;">
-        <h4>Callender</h4>
+    <div class="section-full">
+        <h4>Calendar</h4>
         <div class="row">
-            <input class="datetime" type="datetime-local" name="callender-time-start" id="callender-time-start">
-            <input class="datetime" type="datetime-local" name="callender-time-end" id="callender-time-end">
-            <select value="" name="callender-guide-name" id="callender-guide-name">
-            </select>
-            <select value="" name="callender-event" id="callender-room">
-            </select>
-            <select value="" name="callender-room" id="callender-room">
-            </select>
+            <div class="dada_class">
+                <div class="calendar-cont" >
+                    <div class="row" style="margin-bottom:5px;">
+                        <h4>Choose time</h4>
+                    </div>
+                    <label class="small_label">
+                            Time Frame: 
+                            <input type="time" value="10:00" class="time" id="calendar-start-time">
+                            -
+                            <input type="time" value="18:00" class="time" id="calendar-end-time">
+                    </label>
+                    <div id="calendar-container"></div>
+                </div>
+                <div class="calendar-inputs">
+                        <h4>Choose events</h4>
+                    <br>                        
+                        <div class="list_small" id="callendar-event-list">
+                        </div>
+                </div>
+            </div>
+            <div id="calendar-results" class="calender_results"></div>
         </div>
     </div>
 </div>
 
-<script src="scripts.js"></script> 
+<!-- handle main script -->
+<script src="scripts.js"></script>
+
+<!-- handle date picker -->
+ <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script>
+    flatpickr("#calendar-container", {
+      inline: true,
+      onChange: function(selectedDates, dateStr, instance) {
+        calendar_filter(dateStr);
+      }
+    });
+  </script>
 </body>
 </html>

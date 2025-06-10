@@ -43,14 +43,14 @@ class SecureServer(BaseHTTPRequestHandler):
     def auth_admin(self):
         uuid, auth = self.auth()
         if uuid == None or auth != "admin":
-            raise ValueError(Errors.user_not_authorised)
+            return False
         else:
             return True
     
     def auth_mod(self):
         uuid, auth = self.auth()
-        if uuid == None or (auth != "mod" or auth != "admin"):
-            raise ValueError(Errors.user_not_authorised)
+        if uuid == None or auth != "mod":
+            return False
         else:
             return True
 
@@ -73,7 +73,7 @@ class SecureServer(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-Type", "application/json")
         self.end_headers()
-        self.wfile.write(str(response).encode())
+        self.wfile.write(json.dumps(response).encode())
 
     def serve_login(self):
         try:
@@ -175,7 +175,7 @@ class SecureServer(BaseHTTPRequestHandler):
                 return
 
             elif self.path == "/filter":
-                if not self.auth_mod():
+                if not self.auth_mod() and not self.auth_admin():
                     return
                 
                 response = Process.handle_inquiry(self.get_content())
@@ -187,7 +187,7 @@ class SecureServer(BaseHTTPRequestHandler):
                 return
             # User admin interface
             if self.path == "/fetch":
-                self.send_json(json.dumps(Fetch.fetch(self.get_content())))
+                self.send_json(Fetch.fetch(self.get_content()))
             elif self.path == "/remove":
                 post_data = self.get_content()
                 self.send_json(Commands.remove(post_data))

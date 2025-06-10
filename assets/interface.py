@@ -1,4 +1,4 @@
-from utils import log, min_times
+from utils import log, min_times, min_times2
 from database import MainDB
 from config import Errors, FindError, FailedMethodError
 
@@ -563,33 +563,37 @@ class Available_Events:
         try:
             if id < 1:
                 raise ValueError(Errors.id_below_one)
+
             data = self.find(id=id)[0]
             if len(data) < 1:
                 raise FindError(Errors.failed_find)
+
             event_duration = Events.get_duration(data[1])
-            # print("-")
-            if min_times(time_to, time_from) < event_duration:
-                return []
-            # print("-")
-            guide_oc = []
+
             from users import Guides
 
+            # Get guide occupation times
             guide_oc_temp = Guides.get_occupation_by_guide(data[3])
-            
-            for guide in guide_oc_temp:
-                guide_oc += [(guide[2], guide[3])]
+            guide_oc = [(g[2], g[3]) for g in guide_oc_temp if len(g) > 0]
+
+            # Get room occupation times
             room_oc = Rooms.get_occupied_full(data[2])
-            
+
             # Combine all unavailability
             all_oc = []
-            for oc in guide_oc + room_oc:
-                start, end = oc[0], oc[1]
+            for start, end in guide_oc + room_oc:
                 if start < end:
-                    all_oc.append((max(start, time_from), min(end, time_to)))  # Clip to search window
-    
-            all_oc = [oc for oc in all_oc if oc[0] < oc[1]]  # Remove invalids after clipping
+                    all_oc.append((max(start, time_from), min(end, time_to)))  # Clip to window
+            all_oc = [oc for oc in all_oc if oc[0] < oc[1]]
             all_oc.sort()
-    
+
+            # ✅ If there are no conflicts, return full window as free (if it’s long enough)
+            if not all_oc:
+                if min_times2(time_to, time_from) >= event_duration:
+                    return [[{"id": id, "start": time_from, "end": time_to}]]
+                else:
+                    return [{}]
+
             # Merge overlapping/touching unavailabilities
             merged = []
             for start, end in all_oc:
@@ -601,22 +605,24 @@ class Available_Events:
                         merged[-1] = (last_start, max(last_end, end))
                     else:
                         merged.append((start, end))
-    
+
             # Invert merged intervals to find free time
             free = []
             current = time_from
             for start, end in merged:
-                if current < start and min_times(start, current) >= event_duration:
+                if current < start and min_times2(start, current) >= event_duration:
                     free.append((current, start))
                 current = max(current, end)
-            if current < time_to and min_times(time_to, current) >= event_duration:
+
+            if current < time_to and min_times2(time_to, current) >= event_duration:
                 free.append((current, time_to))
-    
+            for i in range(len(free)):
+                free[i] = {"id": id,"start": free[i][0], "end": free[i][1]}
             return free
 
         except Exception as e:
             log(f"Error in get_availability: {e}")
-            return []
+            return [{}]
 
 class Occupied_Events:
     @classmethod

@@ -69,7 +69,25 @@ def time_to_int(TIME) -> int:
         TIME["year"] += 1
     
     return int(str(TIME["year"])+str(TIME["month"]).zfill(2)+str(TIME["day"]).zfill(2)+str(TIME["hour"]).zfill(2)+str(TIME["minute"]).zfill(2))
-
+def min_times2(time1, time2) -> int:
+    time1 = int_to_time(time1)
+    time2 = int_to_time(time2)
+    time1["year"] -= time2["year"]
+    time1["month"] -= time2["month"]
+    time1["day"] -= time2["day"]
+    time1["hour"] -= time2["hour"]
+    time1["minute"] -= time2["minute"]
+    
+    while time1["minute"] < 0:
+        while time1["hour"] < 0:
+            time1["hour"] += 24
+            time1["day"] -= 1
+        time1["minute"] += 60
+        time1["hour"] -= 1
+    while time1["hour"] < 0:
+        time1["hour"] += 24
+        time1["day"] -= 1
+    return int(str(time1["year"])+str(time1["month"]).zfill(2)+str(time1["day"]).zfill(2)+str(time1["hour"]).zfill(2)+str(time1["minute"]).zfill(2))
 def min_times(time1, time2) -> int:
     time1 = int_to_time(time1)
     time2 = int_to_time(time2)
@@ -78,6 +96,7 @@ def min_times(time1, time2) -> int:
     time1["day"] -= time2["day"]
     time1["hour"] -= time2["hour"]
     time1["minute"] -= time2["minute"]
+    
     while time1["minute"] < 0:
         while time1["hour"] < 0:
             while time1["day"] <= 0:

@@ -67,7 +67,7 @@ input[type=number] {
 .list{
     /* border:red solid 2px; */
     overflow-y: scroll;
-    height: 60%;
+    height: 80%;
 }
 
 .datetime{
@@ -76,4 +76,76 @@ input[type=number] {
 
 .time{
     width: 80px;
+}
+
+.dada_class{
+    /* border: blue solid 5px; */
+    width: 100%;
+    display: flex;
+    /* padding: 5px; */
+    margin: 10px;
+}
+
+.flatpickr-calendar.inline {
+    margin-top: 1.5%;
+    width: 310px !important;
+    font-size: 16px; /* Adjust font size */
+    box-sizing: border-box;
+}
+
+.section-full{
+    position: relative;
+    display: block;
+    
+    width: 98vw;
+    /* padding: 1%; */
+    /* margin-right:auto; */
+    margin-left: 1vw;
+    padding-top: 2%;
+    /* margin-top: auto; */
+    margin-bottom: 1%;
+    border: 1px grey solid;
+    background-color: beige;
+}
+
+.calendar-inputs{
+    width: calc(95% - 310px);
+    margin-left: 5%;
+    /* border:red solid 5px; */
+}
+
+h4{
+    margin: 0px;
+    padding: 0px;
+}
+
+.alligned_name{
+    /* margin-left: auto;
+    margin-right: auto; */
+    width: 100px;
+}
+
+.row_flex{
+    /* background-color: azure; */
+    display: flex;
+    padding-bottom: 5px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5px;
+    width: 90%;
+    border-bottom: 2px solid black;
+}
+
+.row_flex input{
+    margin-left: 30%;
+    /* margin-right: auto; */
+}
+
+.list_small{
+    overflow-y: scroll;
+    height: 320px;
+}
+
+.calender_results{
+    height: 500px;
 }

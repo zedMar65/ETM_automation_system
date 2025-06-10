@@ -4,7 +4,7 @@ from utils import *
 from users import *
 from interface import *
 import time
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 
 class Utility:
     def update(certain_date):
@@ -13,37 +13,61 @@ class Utility:
             for guide in guides:
                 guide_id = Guides.get_group_id(guide[0])
                 time_in_time = int_to_time(certain_date)
-                day_number = date(int_to_time(certain_date)["year"], int_to_time(certain_date)["month"], int_to_time(certain_date)["day"]).weekday()
-                guide_work_hours = WorkHours.find(guide_id=guide_id, week_day=day_number+1)
-                if len(guide_work_hours) > 0:
-                    if len(guide_work_hours[0]) > 0:
-                        start_time = time_in_time.copy()
-                        end_time = time_in_time.copy()
+                year = time_in_time["year"]
+                month = time_in_time["month"]
+                day = time_in_time["day"]
+                day_number = date(year, month, day).weekday()  # Monday = 0
 
-                        if int(guide_work_hours[0][3]) > int(Flags.TIME_FIRST_SHOW):
-                            start_time["hour"] = int(str(Flags.TIME_FIRST_SHOW)[:2])
-                            start_time["minute"] = int(str(Flags.TIME_FIRST_SHOW)[2:])
-                            end_time["hour"] = int(str(guide_work_hours[0][3])[:2])
-                            end_time["minute"] = int(str(guide_work_hours[0][3])[2:])
-                        elif int(guide_work_hours[0][4]) < int(Flags.TIME_LAST_SHOW):
-                            start_time["hour"] = int(str(guide_work_hours[0][4])[:2])
-                            
-                            start_time["minute"] = int(str(guide_work_hours[0][4])[2:])
-                            
-                            end_time["hour"] = int(str(Flags.TIME_LAST_SHOW)[:2])
-                            end_time["minute"] = int(str(Flags.TIME_LAST_SHOW)[2:])
-                            
-                        elif guide_work_hours[0][4] == Flags.TIME_LAST_SHOW and guide_work_hours[0][3] == Flags.TIME_FIRST_SHOW:
-                            pass
-                        else:
-                            raise ValueError(Errors.wrong_time)
-                        Guides.occupie(guide_id, time_to_int(start_time), time_to_int(end_time), "Off work")
-                        return 1
-                    
-                return 0
+                guide_work_hours = WorkHours.find(guide_id=guide_id, week_day=day_number + 1)
+                if len(guide_work_hours) > 0 and len(guide_work_hours[0]) > 0:
+                    start_time = time_in_time.copy()
+                    end_time = time_in_time.copy()
+
+                    # Occupy guide during normal working hours
+                    if int(guide_work_hours[0][3]) > int(Flags.TIME_FIRST_SHOW):
+                        start_time["hour"] = int(str(Flags.TIME_FIRST_SHOW)[:2])
+                        start_time["minute"] = int(str(Flags.TIME_FIRST_SHOW)[2:])
+                        end_time["hour"] = int(str(guide_work_hours[0][3])[:2])
+                        end_time["minute"] = int(str(guide_work_hours[0][3])[2:])
+                    elif int(guide_work_hours[0][4]) < int(Flags.TIME_LAST_SHOW):
+                        start_time["hour"] = int(str(guide_work_hours[0][4])[:2])
+                        start_time["minute"] = int(str(guide_work_hours[0][4])[2:])
+                        end_time["hour"] = int(str(Flags.TIME_LAST_SHOW)[:2])
+                        end_time["minute"] = int(str(Flags.TIME_LAST_SHOW)[2:])
+                    elif guide_work_hours[0][4] == Flags.TIME_LAST_SHOW and guide_work_hours[0][3] == Flags.TIME_FIRST_SHOW:
+                        pass
+                    else:
+                        raise ValueError(Errors.wrong_time)
+
+                    # Add work-hour occupation
+                    Guides.occupie(guide_id, time_to_int(start_time), time_to_int(end_time), "Off work")
+
+                    # --- ✅ Add night block: today TIME_LAST_SHOW -> next day TIME_FIRST_SHOW ---
+
+                # Block start: today at TIME_LAST_SHOW
+                night_start = time_in_time.copy()
+                night_start["hour"] = int(str(Flags.TIME_LAST_SHOW)[:2])
+                night_start["minute"] = int(str(Flags.TIME_LAST_SHOW)[2:])
+
+                # Block end: next day at TIME_FIRST_SHOW
+                next_day = datetime(year, month, day) + timedelta(days=1)
+                night_end = {
+                    "year": next_day.year,
+                    "month": next_day.month,
+                    "day": next_day.day,
+                    "hour": int(str(Flags.TIME_FIRST_SHOW)[:2]),
+                    "minute": int(str(Flags.TIME_FIRST_SHOW)[2:])
+                }
+
+                Guides.occupie(guide_id, time_to_int(night_start), time_to_int(night_end), "Closed hours")
+
+                return 1
+
+            return 0
         except Exception as e:
             log(f"Error while doing Utility update: {e}")
             return 0
+
     def full_update(month):
         if month == 0:
             day = int_to_time(time_now())
@@ -66,19 +90,23 @@ class Utility:
         return 1
 
 class Fetch:
-    def fetch_free_by_find(from_time, to_time, room_id=None, event_id=None, guide_id=None) -> [()]:
+    def fetch_free_by_find(from_time, to_time, event_id) -> []:
         try:
+            # print(room_id, guide_id, event_id)
             free_events = []
             if to_time < from_time:
                 raise ValueError(Errors.wrong_time)
-            events = Available_Events.find(room_id=room_id, event_id=event_id, guide_id=guide_id)
+            events = Available_Events.find(event_id=event_id)
             for event in events:
-                availability = Available_Events.get_availability(event[0], from_time, to_time).append(event[0])
-                free_events += availability
+                availability = Available_Events.get_availability(event[0], from_time, to_time)
+                if len(availability) > 0:
+                    for frame in availability:
+                        free_events.append(frame)
+
             return free_events
         except Exception as e:
             log(f"Error while fetching spots by find: {e}")
-            return [()]
+            return []
     def fetch(data) -> [{}]:
         option = data["option"]
         if option == "user":
@@ -131,42 +159,23 @@ class Fetch:
 class Process:
     def handle_inquiry(data) -> [()]:
         try:
-            option = data["option"]
-            free_time = data["free_time"]
-            time_frames = data["time_frame"]
-            guides = data["guides"]
-            events = data["event"]
-            rooms = data["room"]
-
-            # fix missing selection data
-            for i in range(len(time_frames)):
-                # convert time frames from js time to int time
-                time_frames[i]["startTime"] = int(str(time_frames[i]["startTime"][:4]+time_frames[i]["startTime"].split("-")[1][:2]+time_frames[i]["startTime"].split("T")[0][8:]+time_frames[i]["startTime"].split("T")[1].split(":")[0]+time_frames[i]["startTime"].split(":")[1]))
-                time_frames[i]["endTime"] = int(str(time_frames[i]["endTime"][:4]+time_frames[i]["endTime"].split("-")[1][:2]+time_frames[i]["endTime"].split("T")[0][8:]+time_frames[i]["endTime"].split("T")[1].split(":")[0]+time_frames[i]["endTime"].split(":")[1]))
-            if len(time_frames) < 1:
-                time_frames[0]["startTime"] = time_now()
-                time_frames[0]["endTime"] = time_last()
-                time_frames[0]["id"] = 0
-            if len(guides) < 1:
-                guides[0] = None
-            if len(rooms) < 1:
-                rooms[0] = None
+            time = data["time"]
+            date = data["date"]
+            events = data["events"]
             if len(events) < 1:
-                events[0] = None
+                events = [None]
+            # convert data from js format
+            time[0] = time[0][:2]+time[0][3:]
+            time[1] = time[1][:2]+time[1][3:]
+            date = date.split("-")[0]+date.split("-")[1].split("-")[0]+date.split("-")[1].split("-")[1]
+            from_time = date+time[0]
+            to_time = date+time[1]
             
-            possible_events = []
-            if free_time:
-                # dont ask, the 4 nested loops were neccesery:
-                for time_frame in time_frames:
-                    for guide in guides:
-                        for room in rooms:
-                            for event in events:
-                                evs = Fetch.fetch_free_by_find(from_time=time_frame["startTime"], to_time=time_frame["endTime"], room_id=room, event_id=event, guide_id=guide)
-                                if len(evs) > 0:
-                                    if len(evs[0]) > 0:
-                                        possible_events += evs
-                    
-            return possible_events
+            possible_spots = []
+            for event in events:
+
+            
+            return possible_spots
         except Exception as e:
             log(f"Error while handeling inquiry: {e}")
 
