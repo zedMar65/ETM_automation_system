@@ -149,3 +149,20 @@ h4{
 .calender_results{
     height: 500px;
 }
+
+.hours{
+    display: flex;
+    /* flex:auto; */
+    width: 100%;
+    height: 40px;
+    /* border: blue solid 2px; */
+}
+
+.hour{
+    flex:1;
+    /* border: red solid 2px; */
+}
+
+.cal_event{
+    border: red solid 2px;
+}

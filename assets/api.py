@@ -194,9 +194,11 @@ class Process:
             possible_spots = {}
             for event in events:
                 data = Fetch.fetch_free_by_find(from_time, to_time, event)
-                possible_spots[Events.get_name(int(Available_Events.find(int(data[0]["id"]))[0][1]))] = data;
+                if len(data) > 0:
+                    for da in data:
+                        possible_spots[Events.get_name(int(Available_Events.find(int(da["id"]))[0][1]))] = data;
             
-            # print(possible_spots)
+            print(possible_spots)
             return possible_spots
         except Exception as e:
             log(f"Error while handeling inquiry: {e}")

@@ -578,10 +578,13 @@ class Available_Events:
 
             # Get room occupation times
             room_oc = Rooms.get_occupied_full(data[2])
-
+            time_from = int(time_from)
+            time_to = int(time_to)
             # Combine all unavailability
             all_oc = []
             for start, end in guide_oc + room_oc:
+                start = int(start)
+                end = int(end)
                 if start < end:
                     all_oc.append((max(start, time_from), min(end, time_to)))  # Clip to window
             all_oc = [oc for oc in all_oc if oc[0] < oc[1]]
@@ -590,10 +593,9 @@ class Available_Events:
             # ✅ If there are no conflicts, return full window as free (if it’s long enough)
             if not all_oc:
                 if min_times2(time_to, time_from) >= event_duration:
-                    return [{"id": id, "start": time_from, "end": time_to}]
+                    return [{"id": id, "start": str(time_from), "end": str(time_to)}]
                 else:
                     return [{}]
-
             # Merge overlapping/touching unavailabilities
             merged = []
             for start, end in all_oc:
@@ -617,7 +619,7 @@ class Available_Events:
             if current < time_to and min_times2(time_to, current) >= event_duration:
                 free.append((current, time_to))
             for i in range(len(free)):
-                free[i] = {"id": id,"start": free[i][0], "end": free[i][1]}
+                free[i] = {"id": id,"start": str(free[i][0]), "end": str(free[i][1])}
             return free
 
         except Exception as e:

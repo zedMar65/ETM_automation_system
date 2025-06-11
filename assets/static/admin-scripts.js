@@ -66,14 +66,13 @@ async function update_event_list() {
     let list2 = document.getElementById("event-guide-event-name")
     list2.innerHTML = "";
     let list3 = document.getElementById("callendar-event-list")
-    list3.innerHTML = "";
-    list3.innerHTML = "";
+    list3.innerHTML = "<div class=\"row_flex\"><input type=\"checkbox\" checked=\"true\" id=\"check_all\" onclick=\"check_all()\"><div class=\"alligned_name\">Check all</div></div>";
     for (let key in events) {
 
         const event = events[key];
         list1.innerHTML += "<option value=\""+event["name"]+"\">"+event["name"]+"</option>"
         list2.innerHTML += "<option value=\""+event["name"]+"\">"+event["name"]+"</option>"
-        list3.innerHTML += "<div class=\"row_flex\"><input type=\"checkbox\" id=\""+event["id"]+"\"><div class=\"alligned_name\">"+event["name"]+"</div></div>"
+        list3.innerHTML += "<div class=\"row_flex\"><input type=\"checkbox\" checked=\"true\" id=\""+event["id"]+"\"><div class=\"alligned_name\">"+event["name"]+"</div></div>"
         event_list.innerHTML +=  `
 <div class=\"row\">
 <input class="num" type=\"text\" value=\"${event["id"]}\" disabled id=\"event-id-${event["id"]}\">
@@ -135,6 +134,7 @@ async function update_even_room_list() {
 async function update_event_guide_list() {
     const event_list = document.getElementById("event-guide-list");
     const events = await query("event-guide");  // Wait for fetch to complete
+    // console.log(events);
     event_list.innerHTML = "";
 
     for (let key in events) {
@@ -348,44 +348,97 @@ fetch("/mod", {
 });
 }
 
-function update_callender(data){
-  for (let key in data){
-    console.log(key, data[key]);
-    console.log("ASDASDASDASD")
+function check_all(){
+  let children = document.getElementById("callendar-event-list").children;
+  if (document.getElementById("check_all").checked){
+    for (let i = 0; i < children.length; i++) {
+      children[i].children[0].checked = true;
+    }
+  }else{
+    for (let i = 0; i < children.length; i++) {
+      children[i].children[0].checked = false;
+    }
   }
+  
 }
 
-function calendar_filter(dateStr){
-    let selected_Events = [];
-    let timeStart = document.getElementById("calendar-start-time").value;
-    let timeEnd = document.getElementById("calendar-end-time").value;
-    let children = document.getElementById("callendar-event-list").children;
-    for (let i = 0; i < children.length; i++){
-      if (children[i].children[0].checked){
-        selected_Events.push(children[i].children[0].id) ;
-      }
+async function calendar_filter(dateStr) {
+  let selected_Events = [];
+
+  let timeStart = document.getElementById("calendar-start-time").value;
+  let timeEnd = document.getElementById("calendar-end-time").value;
+
+  let children = document.getElementById("callendar-event-list").children;
+
+  for (let i = 0; i < children.length; i++) {
+    if (children[i].children[0].checked) {
+      selected_Events.push(children[i].children[0].id);
     }
-    jsonOBJ = {
-      date: dateStr,
-      time: [timeStart, timeEnd],
-      events: selected_Events
-        };
-        fetch("/filter", {
+  }
+
+  const jsonOBJ = {
+    date: dateStr,
+    time: [timeStart, timeEnd],
+    events: selected_Events
+  };
+
+  try {
+    const response = await fetch("/filter", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(jsonOBJ)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`Server error: ${response.status}`);
-        }
-        update_callender(response.json);
-    })
-    .catch(error => {
-        console.error("Failed to Mod:", error);
     });
+
+    if (!response.ok) {
+      throw new Error(`Server error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    await update_callender(data);
+
+  } catch (error) {
+    console.error("Failed to Mod:", error);
+  }
 }
+
+async function update_callender(data) {
+  let min=2400
+  let max= 0
+  for (let key in data) {
+    for (let key1 in data[key]){
+      if (parseInt(data[key][key1]["start"].slice(8)) < min){
+        min = parseInt(data[key][key1]["start"].slice(8));
+      }
+      if (parseInt(data[key][key1]["end"].slice(8)) > max){
+        max = parseInt(data[key][key1]["end"].slice(8));
+      }
+    }
+  }
+
+  min = parseInt(min.toString().slice(0, 2))-Math.ceil(parseInt(min.toString().slice(3))/60)
+  max = parseInt(max.toString().slice(0, 2))+Math.ceil(parseInt(max.toString().slice(3))/60)
+  let times = document.getElementById("hours");
+  times.innerHTML = "";
+  for(let i = min; i <= max; i++){
+    times.innerHTML+=`
+    <div class="hour" id="hour-${i}">${i}:00</div>
+    `
+  }
+  times = document.getElementById("times")
+  times.innerHTML = "";
+  for (let key in data) {
+    let event_div = "";
+    event_div += "<div class=\"cal_event\">"
+    for (let key1 in data[key]){
+      event_div += "<p>"+JSON.stringify(data[key][key1])+"</p>"
+    }
+    event_div += "</div>"
+    times.innerHTML += event_div
+  }
+   
+}
+
 
 update_all()
