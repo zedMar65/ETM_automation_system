@@ -1,11 +1,10 @@
-body{
+html, body{
     padding: 0px;
     margin: 0px;
     align-content: center;
     text-align: center;
-    /* background-color: aqua; */
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-
 
 .row{
     /* background-color: azure; */
@@ -17,9 +16,17 @@ body{
     border-bottom: 2px solid black;
 }
 
+.section, .section-full {
+    box-sizing: border-box;
+    border-radius: 10px;
+    background-color: hsl( 283, 39%, 83% );
+    box-shadow: 1px 2px 6px 1px rgba(0,0,0,0.3);
+}
+
 .section{
     position: relative;
-    display: block;
+    display: flex;
+    flex-direction: column;
     
     width: 46%;
     padding: 1%;
@@ -27,26 +34,60 @@ body{
     margin-left:auto;
     margin-top: auto;
     margin-bottom: 1%;
-    border: 1px grey solid;
-    background-color: beige;
     height: 50vh;
-}
-
-input{
-    width: 9vw;
 }
 
 .column{
     display: flex;
-    width: 100vw;
+    width: 99%;
     /* border: red solid 5px; */
     /* height:auto; */
 }
 
-input, button, select{
-    border-radius: 1px;
+/* Inputs */
+
+input:not(.numInput), button, select:not(.flatpickr-monthDropdown-months) {
+    padding: 5px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 2px solid hsl( 283, 39%, 63% );
+    margin: 3px;
+    transition: box-shadow ease 0.1s, background-color ease 0.1s, transform ease 0.1s;
 }
 
+input:not(.numInput):focus, button:focus, select:not(.flatpickr-monthDropdown-months):focus {
+    transform: scale(1.05);
+    outline: none;
+}
+
+input:not(.numInput) {
+    width: 9vw;
+    box-shadow: inset 1px 2px 4px 0 rgba(0,0,0,0.3);
+}
+
+button, select:not(.flatpickr-monthDropdown-months) {
+    background-color: hsl( 283, 39%, 53% );
+    color: white;
+    box-shadow: 1px 2px 4px 0 rgba(0,0,0,0.3);
+}
+
+button:hover, select:not(.flatpickr-monthDropdown-months):hover {
+    cursor: pointer;
+}
+
+button:hover, button:focus, select:not(.flatpickr-monthDropdown-months):focus, select:not(.flatpickr-monthDropdown-months):hover {
+    background-color: hsl( 283, 39%, 58% );
+    transform: scale(1.05);
+    box-shadow: 1.5px 3px 4px 0 rgba(0,0,0,0.3);
+}
+
+button:active, select:not(.flatpickr-monthDropdown-months):open {
+    background-color: hsl( 283, 39%, 63% );
+    transform: scale(0.95);
+    box-shadow: none;
+}
+
+/* Inputs end */
 
 .num{
     width: 1vw;
@@ -104,8 +145,6 @@ input[type=number] {
     padding-top: 2%;
     /* margin-top: auto; */
     margin-bottom: 1%;
-    border: 1px grey solid;
-    background-color: beige;
 }
 
 .calendar-inputs{
