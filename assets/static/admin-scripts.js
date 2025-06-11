@@ -348,6 +348,13 @@ fetch("/mod", {
 });
 }
 
+function update_callender(data){
+  for (let key in data){
+    console.log(key, data[key]);
+    console.log("ASDASDASDASD")
+  }
+}
+
 function calendar_filter(dateStr){
     let selected_Events = [];
     let timeStart = document.getElementById("calendar-start-time").value;

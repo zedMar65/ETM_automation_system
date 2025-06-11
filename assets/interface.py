@@ -590,7 +590,7 @@ class Available_Events:
             # ✅ If there are no conflicts, return full window as free (if it’s long enough)
             if not all_oc:
                 if min_times2(time_to, time_from) >= event_duration:
-                    return [[{"id": id, "start": time_from, "end": time_to}]]
+                    return [{"id": id, "start": time_from, "end": time_to}]
                 else:
                     return [{}]
 

@@ -102,8 +102,28 @@ class Fetch:
                 if len(availability) > 0:
                     for frame in availability:
                         free_events.append(frame)
+            free_events = sorted(free_events, key=lambda x: (to_dt(x["start"]), -to_dt(x["end"]).timestamp()))
 
-            return free_events
+            # Squash overlapping or duplicate time ranges
+            squashed = []
+            for event in free_events:
+                start = to_dt(event["start"])
+                end = to_dt(event["end"])
+            
+                if not squashed:
+                    squashed.append(event)
+                    continue
+                
+                last = squashed[-1]
+                last_start = to_dt(last["start"])
+                last_end = to_dt(last["end"])
+            
+                # Check if this event is fully within the last one
+                if start >= last_start and end <= last_end:
+                    continue  # Skip this one
+                
+                squashed.append(event)
+            return squashed
         except Exception as e:
             log(f"Error while fetching spots by find: {e}")
             return []
@@ -167,14 +187,16 @@ class Process:
             # convert data from js format
             time[0] = time[0][:2]+time[0][3:]
             time[1] = time[1][:2]+time[1][3:]
-            date = date.split("-")[0]+date.split("-")[1].split("-")[0]+date.split("-")[1].split("-")[1]
+            date = date.split("-")[0]+date.split("-")[1]+date.split("-")[2]
             from_time = date+time[0]
             to_time = date+time[1]
             
-            possible_spots = []
+            possible_spots = {}
             for event in events:
-
+                data = Fetch.fetch_free_by_find(from_time, to_time, event)
+                possible_spots[Events.get_name(int(Available_Events.find(int(data[0]["id"]))[0][1]))] = data;
             
+            # print(possible_spots)
             return possible_spots
         except Exception as e:
             log(f"Error while handeling inquiry: {e}")
@@ -223,7 +245,7 @@ class Commands:
         elif data["option"] == "event-room":
             return Event_Room_Relation.add_relation(Events.get_id(data["event-name"]), Rooms.get_id(data["room-name"]))
         elif data["option"] == "guide-hour":
-            print(data)
+            # print(data)
             
             return WorkHours.add(Guides.get_group_id(Users.get_id(data["name"])), int(data["day"]), data["start-time"][:2].zfill(2)+data["start-time"][3:].zfill(2), data["end-time"][:2].zfill(2)+data["end-time"][3:].zfill(2))
         return 0

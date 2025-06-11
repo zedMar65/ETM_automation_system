@@ -4,6 +4,11 @@ from config import Flags
 from datetime import datetime
 import calendar
 
+
+def to_dt(s):
+    return datetime.strptime(s, "%Y%m%d%H%M")
+
+
 def init_log() -> bool:
     try:
         LoggingDB.connect()
@@ -140,6 +145,7 @@ def add_times(time1, time2) -> int:
     return time_to_int(time1)
 
 def int_to_time(TIME) -> {}:
+    TIME = int(TIME)
     return {
         "year": int(TIME/100000000),
         "month": int((TIME/1000000)%100),
