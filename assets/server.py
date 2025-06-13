@@ -198,6 +198,7 @@ class SecureServer(BaseHTTPRequestHandler):
                 response = Commands.mod(self.get_content())
                 self.send_json(response)
             elif self.path == "/full_update":
+                Utility.del_guide_off_work()
                 Utility.full_update(0)
                 response = Utility.full_update(1)
                 self.send_json(response)

@@ -341,6 +341,17 @@ class Guides(Group):
         except Exception as e:
             log(f"Error while trying to occupie guide [{guide_id}]: {e}")
             return -1
+    
+    @classmethod
+    def remove_work_hours(self, guide_id, reason="Off work") -> int:
+        try:
+            if guide_id < 1:
+                raise ValueError(Errors.id_below_one)
+            MainDB.execute("DELETE FROM guide_occupation WHERE reason = ? AND guide_id = ?", (reason, guide_id))
+            return 1
+        except Exception as e:
+            log(f"Error while removing occupation hours guide [{guide_id}]: {e}")
+            return 0
 
     @classmethod
     def change_occ_time(self, id, new_start_time = None, new_end_time = None) -> int:

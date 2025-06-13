@@ -11,7 +11,7 @@ class Utility:
         try:
             guides = Users.find(user_auth="guide")
             for guide in guides:
-                guide_id = Guides.get_group_id(guide[0])
+                guide_id = int(Guides.get_group_id(guide[0]))
                 time_in_time = int_to_time(certain_date)
                 year = time_in_time["year"]
                 month = time_in_time["month"]
@@ -22,28 +22,37 @@ class Utility:
                 if len(guide_work_hours) > 0 and len(guide_work_hours[0]) > 0:
                     start_time = time_in_time.copy()
                     end_time = time_in_time.copy()
-
                     # Occupy guide during normal working hours
                     if int(guide_work_hours[0][3]) > int(Flags.TIME_FIRST_SHOW):
                         start_time["hour"] = int(str(Flags.TIME_FIRST_SHOW)[:2])
                         start_time["minute"] = int(str(Flags.TIME_FIRST_SHOW)[2:])
                         end_time["hour"] = int(str(guide_work_hours[0][3])[:2])
                         end_time["minute"] = int(str(guide_work_hours[0][3])[2:])
-                    elif int(guide_work_hours[0][4]) < int(Flags.TIME_LAST_SHOW):
+                        Guides.occupie(guide_id, time_to_int(start_time), time_to_int(end_time), "Off work")
+                    if int(guide_work_hours[0][4]) < int(Flags.TIME_LAST_SHOW):
                         start_time["hour"] = int(str(guide_work_hours[0][4])[:2])
                         start_time["minute"] = int(str(guide_work_hours[0][4])[2:])
                         end_time["hour"] = int(str(Flags.TIME_LAST_SHOW)[:2])
                         end_time["minute"] = int(str(Flags.TIME_LAST_SHOW)[2:])
+                        Guides.occupie(guide_id, time_to_int(start_time), time_to_int(end_time), "Off work")
                     elif guide_work_hours[0][4] == Flags.TIME_LAST_SHOW and guide_work_hours[0][3] == Flags.TIME_FIRST_SHOW:
                         pass
                     else:
                         raise ValueError(Errors.wrong_time)
 
                     # Add work-hour occupation
-                    Guides.occupie(guide_id, time_to_int(start_time), time_to_int(end_time), "Off work")
+                    
 
                     # --- ✅ Add night block: today TIME_LAST_SHOW -> next day TIME_FIRST_SHOW ---
-
+                else:
+                    start_time = time_in_time.copy()
+                    end_time = time_in_time.copy()
+                    start_time["hour"] = int(str(Flags.TIME_FIRST_SHOW)[:2])
+                    start_time["minute"] = int(str(Flags.TIME_FIRST_SHOW)[2:])
+                    end_time["hour"] = int(str(Flags.TIME_LAST_SHOW)[:2])
+                    end_time["minute"] = int(str(Flags.TIME_LAST_SHOW)[2:])
+                    
+                    Guides.occupie(guide_id, time_to_int(start_time), time_to_int(end_time), "Off work")
                 # Block start: today at TIME_LAST_SHOW
                 night_start = time_in_time.copy()
                 night_start["hour"] = int(str(Flags.TIME_LAST_SHOW)[:2])
@@ -61,12 +70,17 @@ class Utility:
 
                 Guides.occupie(guide_id, time_to_int(night_start), time_to_int(night_end), "Closed hours")
 
-                return 1
-
-            return 0
+            return 1
         except Exception as e:
             log(f"Error while doing Utility update: {e}")
             return 0
+
+    def del_guide_off_work():
+        guides = Users.find(user_auth="guide")
+        for guide in guides:
+            guide_id = int(Guides.get_group_id(guide[0]))
+            Guides.remove_work_hours(guide_id)
+            Guides.remove_work_hours(guide_id, "Closed hours")
 
     def full_update(month):
         if month == 0:
@@ -82,7 +96,7 @@ class Utility:
         # next month
         certain_future_date = (add_times(time_to_int(day), 1000000))
         day = time_to_int(day)
-
+        
         while day < certain_future_date:
             Utility.update(day)
             # next day
@@ -280,10 +294,15 @@ def check_and_run_monthly_task():
                 with open(Flags.MONTHLY_TASK_FILE, "r") as f:
                     last_run_month = f.read().strip()
             if last_run_month == None:
-                full_update(0)
-                full_update(1)
+                Utility.del_guide_off_work()
+                Utility.full_update(0)
+                Utility.full_update(1)
+                with open(Flags.MONTHLY_TASK_FILE, "w") as f:
+                    f.write(current_month)
             elif last_run_month != current_month:
-                full_update(1)
+                Utility.del_guide_off_work()
+                Utility.full_update(0)
+                Utility.full_update(1)
                 with open(Flags.MONTHLY_TASK_FILE, "w") as f:
                     f.write(current_month)
         except Exception as e:

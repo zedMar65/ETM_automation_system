@@ -431,9 +431,16 @@ async function update_callender(data) {
   for (let key in data) {
     let event_div = "";
     event_div += "<div class=\"cal_event\">"
-    for (let key1 in data[key]){
-      event_div += "<p>"+JSON.stringify(data[key][key1])+"</p>"
+    event_div += "<h4>"+key+"</h4>"
+    event_div += "<div class=\"small_event\">"
+    for (let i = 0; i < data[key].length; i++){
+      let start = data[key][i]["start"].slice(8);
+      let end = data[key][i]["end"].slice(8);
+      start = parseInt(start.slice(0, 2)*60)+parseInt(start.slice(3))
+      end = parseInt((parseInt(end.slice(0, 2))+1)*60)+parseInt(end.slice(3))
+      event_div += "<div class=\"hour_event\" style=\"width:"+100/(60*(max-min+1))*(end-start)+"%;left:" + 100/(60*(max-min+1))*(start-(60*min))  + "%;\">"+JSON.stringify(data[key][i])+"</div>"
     }
+    event_div += "</div>"
     event_div += "</div>"
     times.innerHTML += event_div
   }

@@ -186,6 +186,8 @@ h4{
 }
 
 .calender_results{
+    margin-left: 15%;
+
     height: 500px;
 }
 
@@ -199,9 +201,34 @@ h4{
 
 .hour{
     flex:1;
-    /* border: red solid 2px; */
+    border: 1px solid black;
+    border-radius: 5px;
 }
 
 .cal_event{
-    border: red solid 2px;
+    position: relative;
+    display: flex;
+    width: 123%;
+    left: -23%;
+    /* border: red solid 2px; */
+}
+
+.cal_event > h4{
+    position: relative;
+    width: 23%;
+    /* border: red solid 1px; */
+    margin: 0px;
+}
+
+.small_event{
+    width: 100%;
+    height: 20px;
+    position: relative;
+    /* left: -20%; */
+}
+.hour_event{
+    position: relative;
+    height: 100%;
+    border: blue solid 1px;
+
 }
