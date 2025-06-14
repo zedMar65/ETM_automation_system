@@ -99,6 +99,7 @@ class Events:
     @classmethod
     def get_duration(self, event_id) -> int:
         try:
+            event_id = int(event_id)
             if event_id < 1:
                 raise ValueError(Errors.id_below_one)
             data = MainDB.query("SELECT duration FROM events WHERE event_id = ?", (event_id,))

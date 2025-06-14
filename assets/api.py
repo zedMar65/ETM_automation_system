@@ -110,11 +110,22 @@ class Fetch:
             free_events = []
             if to_time < from_time:
                 raise ValueError(Errors.wrong_time)
+            event_duration = Events.get_duration(event_id)
+            if len(str(event_duration)) <= 2:
+                event_duration = str(event_duration).zfill(4)
+            elif len(str(event_duration)) == 3:
+                event_duration = str(event_duration)[0].zfill(2) + str(event_duration)[1:]
+            else:
+                event_duration = str(event_duration)
             events = Available_Events.find(event_id=event_id)
             for event in events:
                 availability = Available_Events.get_availability(event[0], from_time, to_time)
                 if len(availability) > 0:
                     for frame in availability:
+                        frame["length"] = event_duration
+                        frame["full_end"] = frame["end"]
+                        frame["end"] = str(min_times(frame["end"], event_duration))
+
                         free_events.append(frame)
             free_events = sorted(free_events, key=lambda x: (to_dt(x["start"]), -to_dt(x["end"]).timestamp()))
 
@@ -123,7 +134,7 @@ class Fetch:
             for event in free_events:
                 start = to_dt(event["start"])
                 end = to_dt(event["end"])
-            
+
                 if not squashed:
                     squashed.append(event)
                     continue
@@ -135,7 +146,9 @@ class Fetch:
                 # Check if this event is fully within the last one
                 if start >= last_start and end <= last_end:
                     continue  # Skip this one
-                
+                if start >= last_start and start <= last_end:
+                    squashed[-1]["end"] = event["end"]
+                    continue
                 squashed.append(event)
             return squashed
         except Exception as e:
@@ -196,8 +209,11 @@ class Process:
             time = data["time"]
             date = data["date"]
             events = data["events"]
+
             if len(events) < 1:
                 events = [None]
+            else:
+                events = events[1:]
             # convert data from js format
             time[0] = time[0][:2]+time[0][3:]
             time[1] = time[1][:2]+time[1][3:]
@@ -209,8 +225,7 @@ class Process:
             for event in events:
                 data = Fetch.fetch_free_by_find(from_time, to_time, event)
                 if len(data) > 0:
-                    for da in data:
-                        possible_spots[Events.get_name(int(Available_Events.find(int(da["id"]))[0][1]))] = data;
+                    possible_spots[Events.get_name(int(event))] = data
             
             print(possible_spots)
             return possible_spots

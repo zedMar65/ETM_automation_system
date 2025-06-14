@@ -411,14 +411,14 @@ async function update_callender(data) {
       if (parseInt(data[key][key1]["start"].slice(8)) < min){
         min = parseInt(data[key][key1]["start"].slice(8));
       }
-      if (parseInt(data[key][key1]["end"].slice(8)) > max){
-        max = parseInt(data[key][key1]["end"].slice(8));
+      if (parseInt(data[key][key1]["full_end"].slice(8)) > max){
+        max = parseInt(data[key][key1]["full_end"].slice(8));
       }
     }
   }
 
-  min = parseInt(min.toString().slice(0, 2))-Math.ceil(parseInt(min.toString().slice(3))/60)
-  max = parseInt(max.toString().slice(0, 2))+Math.ceil(parseInt(max.toString().slice(3))/60)
+  min = parseInt(min.toString().slice(0, 2))-Math.ceil(parseInt(min.toString().slice(2))/60)
+  max = parseInt(max.toString().slice(0, 2))+Math.ceil(parseInt(max.toString().slice(2))/60)
   let times = document.getElementById("hours");
   times.innerHTML = "";
   for(let i = min; i <= max; i++){
@@ -434,11 +434,15 @@ async function update_callender(data) {
     event_div += "<h4>"+key+"</h4>"
     event_div += "<div class=\"small_event\">"
     for (let i = 0; i < data[key].length; i++){
+      let event_duration = data[key][i]["length"];
       let start = data[key][i]["start"].slice(8);
       let end = data[key][i]["end"].slice(8);
-      start = parseInt(start.slice(0, 2)*60)+parseInt(start.slice(3))
-      end = parseInt((parseInt(end.slice(0, 2))+1)*60)+parseInt(end.slice(3))
-      event_div += "<div class=\"hour_event\" style=\"width:"+100/(60*(max-min+1))*(end-start)+"%;left:" + 100/(60*(max-min+1))*(start-(60*min))  + "%;\">"+JSON.stringify(data[key][i])+"</div>"
+      start = parseInt(start.slice(0, 2)*60)+parseInt(start.slice(2))
+      // console.log(parseInt(end.slice(2)))
+      event_duration = parseInt(event_duration.slice(0, 2)*60)+parseInt(event_duration.slice(2))
+      end = parseInt((parseInt(end.slice(0, 2))+1)*60)+parseInt(end.slice(2))
+      // console.log(end)
+      event_div += "<div class=\"hour_event\" style=\"width:"+100/(60*(max-min+1))*(end-start)+"%;left:" + 100/(60*(max-min+1))*(start-(60*min))  + "%;\"></div> <div class=\"hour_end\" style=\"width:"+100/(60*(max-min+1))*(event_duration)+"%;left:" + 100/(60*(max-min+1))*(end-(60*min))  + "%;\"></div>"
     }
     event_div += "</div>"
     event_div += "</div>"
