@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -142,8 +142,22 @@
             <div id="calendar-results" class="calender_results">
                 <div id="hours" class="hours"></div>
                 <div id="times" class="times"></div>
+                
             </div>
         </div>
+    </div>
+    <div id="add_form" class="add_form">
+        <div class="row">
+        Event: <input type="text" disabled name="" id="form_event_name">
+        Duration: <input type="text" disabled name="" id="form_event_duration">
+        </div>
+        <div class="row">
+        Start time: <input type="time" name="" id="form_start_time">
+        End time: <input type="time" disabled id="form_end_time">
+        </div>
+        <input type="text" name="" id="form_info">
+        <button id="form_book">Book</button>
+        <button id="form_cancel" onclick="form_cancel()">Cancel</button>
     </div>
 </div>
 

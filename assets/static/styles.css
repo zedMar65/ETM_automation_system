@@ -251,3 +251,25 @@ h4{
     border-bottom-right-radius: 10px;
     background-color: rgba(72, 72, 221, 0.492);
 }
+
+.add_form{
+    display: none;
+    position: absolute;
+    z-index: 3;
+    height: 300px;
+    width: 600px;
+    border: solid 3px hsl( 283, 39%, 53% );
+    background-color: hsla(284, 39%, 63%, 0.562);
+    border-radius: 10px;
+    backdrop-filter: blur(10px); /* the blur effect */
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.add_form > #form_info{
+    width: 90%;
+    height: 50%;
+}
+
+#form_start_time, #form_end_time{
+    min-width: 80px;
+}

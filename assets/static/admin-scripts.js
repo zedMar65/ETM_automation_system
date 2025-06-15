@@ -400,6 +400,10 @@ async function calendar_filter(dateStr) {
 
   } catch (error) {
     console.error("Failed to Mod:", error);
+    let times = document.getElementById("hours");
+    times.innerHTML = "";
+    times = document.getElementById("times")
+    times.innerHTML = "";
   }
 }
 
@@ -440,16 +444,100 @@ async function update_callender(data) {
       start = parseInt(start.slice(0, 2)*60)+parseInt(start.slice(2))
       // console.log(parseInt(end.slice(2)))
       event_duration = parseInt(event_duration.slice(0, 2)*60)+parseInt(event_duration.slice(2))
-      end = parseInt((parseInt(end.slice(0, 2))+1)*60)+parseInt(end.slice(2))
+      end = parseInt((parseInt(end.slice(0, 2))+1)*60)+parseInt(end.slice(2))-60
       // console.log(end)
-      event_div += "<div class=\"hour_event\" style=\"width:"+100/(60*(max-min+1))*(end-start)+"%;left:" + 100/(60*(max-min+1))*(start-(60*min))  + "%;\"></div> <div class=\"hour_end\" style=\"width:"+100/(60*(max-min+1))*(event_duration)+"%;left:" + 100/(60*(max-min+1))*(end-(60*min))  + "%;\"></div>"
+      event_div += "<div class=\"hour_event\" onclick=\"form('"+data[key][i]["start"]+"', '"+data[key][i]["length"]+"', '"+key+"', '"+data[key][i]["end"]+"')\" style=\"width:"+100/(60*(max-min+1))*(end-start)+"%;left:" + 100/(60*(max-min+1))*(start-(60*min))  + "%;\"></div> <div class=\"hour_end\" style=\"width:"+100/(60*(max-min+1))*(event_duration)+"%;left:" + 100/(60*(max-min+1))*(end-(60*min))  + "%;\"></div>";
     }
-    event_div += "</div>"
-    event_div += "</div>"
-    times.innerHTML += event_div
+    event_div += "</div>";
+    event_div += "</div>";
+    times.innerHTML += event_div;
   }
    
 }
 
+function form(start, duration, event_name, end){
+  let form = document.getElementById("add_form")
+  form.style.display = "block";
+
+    // Temporarily show form offscreen to measure width
+    form.style.left = "-9999px";
+    form.style.top = "0px"; // Safe temp spot
+    form.style.display = "block";
+
+    const formWidth = form.offsetWidth;
+
+    const pageWidth = window.innerWidth;
+
+    // Calculate adjusted position
+    let posX = mousePos.x;
+    let posY = mousePos.y-50;
+
+    // If the form would go off the right edge, move it left
+    if (posX + formWidth > pageWidth) {
+      posX = pageWidth - formWidth - 10; // Add small padding
+    }
+
+    
+
+    // Apply adjusted position
+    form.style.left = `${Math.max(10, posX)}px`; // Ensure it's not too far left
+    form.style.top = `${Math.max(10, posY)}px`;
+    document.getElementById("form_event_name").value = event_name
+    document.getElementById("form_event_duration").value = duration.slice(0, 2)+":"+duration.slice(2)
+    document.getElementById("form_start_time").value = start.slice(8, 10)+":"+start.slice(10);
+    let end_time = parseInt(start.slice(10))+parseInt(duration.slice(2));
+    let hour = 0;
+    while(end_time >= 60){
+      end_time -= 60;
+      hour += 1;
+    }
+    end_time = (hour+parseInt(duration.slice(0, 2))+parseInt(start.slice(8, 10))).toString()+":"+end_time.toString();
+    document.getElementById("form_end_time").value = end_time;
+    document.getElementById("form_start_time").min = start.slice(8, 10)+":"+start.slice(10);
+    console.log(end);
+    document.getElementById("form_start_time").max = end.slice(8, 10)+":"+end.slice(10);
+  return;
+}
+
+function form_cancel(){
+  let form = document.getElementById("add_form")
+  form.style.display = "None";
+}
+
+let mousePos = { x: 0, y: 0 };
+
+  // Track mouse position globally
+document.addEventListener("mousemove", function(e) {
+  mousePos.x = e.pageX;
+  mousePos.y = e.pageY;
+});
+
+const input = document.getElementById("form_start_time");
+
+input.addEventListener("input", () => {
+  const time = input.value;
+  if (time < input.min) {
+    input.value = input.min;
+  }else if(time > input.max){
+    input.value = input.max
+  } else {
+    input.setCustomValidity("");
+  }
+  let end_time = parseInt(input.value.slice(3))+parseInt(document.getElementById("form_event_duration").value.slice(3));
+  let hour = parseInt(input.value.slice(0, 2))+parseInt(document.getElementById("form_event_duration").value.slice(0, 2));
+  while(end_time >= 60){
+    end_time -= 60;
+    hour += 1;
+  }
+  if(end_time.toString().length < 2){
+    end_time = "0"+end_time.toString()
+  }else{
+    end_time = end_time.toString()
+  }
+  end_time = hour.toString()+":"+end_time;
+  console.log(end_time);
+  document.getElementById("form_end_time").value = end_time;
+
+  });
 
 update_all()

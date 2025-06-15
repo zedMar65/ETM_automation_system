@@ -212,8 +212,6 @@ class Process:
 
             if len(events) < 1:
                 events = [None]
-            else:
-                events = events[1:]
             # convert data from js format
             time[0] = time[0][:2]+time[0][3:]
             time[1] = time[1][:2]+time[1][3:]
