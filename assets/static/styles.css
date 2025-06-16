@@ -88,7 +88,7 @@ input:not(.numInput):focus, button:focus, select:not(.flatpickr-monthDropdown-mo
     outline: none;
 }
 
-input:not(.numInput) {
+input:not(.numInput):not(.checkbox) {
     width: 9vw;
     box-shadow: inset 1px 2px 4px 0 rgba(0,0,0,0.3);
 }

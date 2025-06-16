@@ -66,13 +66,13 @@ async function update_event_list() {
     let list2 = document.getElementById("event-guide-event-name")
     list2.innerHTML = "";
     let list3 = document.getElementById("callendar-event-list")
-    list3.innerHTML = "<div class=\"row_flex\"><input type=\"checkbox\" checked=\"true\" id=\"check_all\" onclick=\"check_all()\"><div class=\"alligned_name\">Check all</div></div>";
+    list3.innerHTML = "<div class=\"row_flex\"><input type=\"checkbox\" class=\"checkbox\" checked=\"true\" id=\"check_all\" onclick=\"check_all()\"><div class=\"alligned_name\">Check all</div></div>";
     for (let key in events) {
 
         const event = events[key];
         list1.innerHTML += "<option value=\""+event["name"]+"\">"+event["name"]+"</option>"
         list2.innerHTML += "<option value=\""+event["name"]+"\">"+event["name"]+"</option>"
-        list3.innerHTML += "<div class=\"row_flex\"><input type=\"checkbox\" checked=\"true\" id=\""+event["id"]+"\"><div class=\"alligned_name\">"+event["name"]+"</div></div>"
+        list3.innerHTML += "<div class=\"row_flex\"><input type=\"checkbox\" class=\"checkbox\" checked=\"true\" id=\""+event["id"]+"\"><div class=\"alligned_name\">"+event["name"]+"</div></div>"
         event_list.innerHTML +=  `
 <div class=\"row\">
 <input class="num" type=\"text\" value=\"${event["id"]}\" disabled id=\"event-id-${event["id"]}\">
