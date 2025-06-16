@@ -91,6 +91,7 @@ input:not(.numInput):focus, button:focus, select:not(.flatpickr-monthDropdown-mo
 input:not(.numInput):not(.checkbox) {
     width: 120px;
     box-shadow: inset 1px 2px 4px 0 rgba(0,0,0,0.3);
+    text-align: left;
 }
 
 button, select:not(.flatpickr-monthDropdown-months) {
