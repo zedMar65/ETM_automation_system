@@ -174,7 +174,7 @@ input[type=number] {
 
 .calendar-inputs{
     width: calc(95% - 310px);
-    margin-left: 5%;
+    margin: 0;
     /* border:red solid 5px; */
 }
 
@@ -183,26 +183,18 @@ h4{
     padding: 0px;
 }
 
-.alligned_name{
-    /* margin-left: auto;
-    margin-right: auto; */
-    width: 100px;
+.alligned_name.check_all {
+    font-weight: bold;
 }
 
 .row_flex{
     /* background-color: azure; */
+    padding: 5px 0;
     display: flex;
-    padding-bottom: 5px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 5px;
-    width: 90%;
+    flex-direction: row;
     border-bottom: 2px solid black;
-}
-
-.row_flex input{
-    margin-left: 30%;
-    /* margin-right: auto; */
+    margin: 0 20px;
+    gap: 10px;
 }
 
 .list_small{
