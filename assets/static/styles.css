@@ -243,7 +243,7 @@ h4{
     background-color: rgba(46, 237, 46, 0.622);
 }
 
-.hour_end{
+.hour_end {
     position: absolute;
     z-index: 1;
     height: 100%;
@@ -252,17 +252,21 @@ h4{
     background-color: rgba(72, 72, 221, 0.492);
 }
 
-.add_form{
+.add_form {
     display: none;
     position: absolute;
     z-index: 3;
     height: 300px;
     width: 600px;
-    border: solid 3px hsl( 283, 39%, 53% );
     background-color: hsla(284, 39%, 63%, 0.562);
+    box-shadow: 1px 2px 6px 1px rgba(0,0,0,0.3);
     border-radius: 10px;
     backdrop-filter: blur(10px); /* the blur effect */
     -webkit-backdrop-filter: blur(10px);
+}
+
+.add_form > textarea {
+    resize: none;
 }
 
 .add_form > #form_info{
