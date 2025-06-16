@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
 cd "$(dirname "$0")"
-cd assets
-../bin/python main.py
+set -a
+source .env
+set +a
+cd $BASE_FOLDER
+python3 main.py

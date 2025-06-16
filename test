@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
-find tests -mindepth 1 ! -name 'backend-test.py' -exec rm -rf {} +
-cp -r assets/* tests/
 cd "$(dirname "$0")"
-cd tests
-../bin/python backend-test.py
+set -a
+source .env
+set +a
+find $TEST_FOLDER -mindepth 1 ! -name 'backend-test.py' -exec rm -rf {} +
+cp -r $BASE_FOLDER/* $TEST_FOLDER/
+cd $TEST_FOLDER
+python3 backend-test.py
 cd ..
-find tests -mindepth 1 ! -name 'backend-test.py' -exec rm -rf {} +
+find $TEST_FOLDER -mindepth 1 ! -name 'backend-test.py' -exec rm -rf {} +
