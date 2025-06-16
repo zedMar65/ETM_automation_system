@@ -20,7 +20,7 @@ async function update_user_list() {
 
         user_list.innerHTML +=  `
 <div class=\"row\">
-<input class="num" type=\"text\" value=\"${user["id"]}\" disabled id=\"user-id-${user["id"]}\">
+<input class="num" type=\"number\" value=\"${user["id"]}\" disabled id=\"user-id-${user["id"]}\">
 <input type=\"text\" value=\"${user["email"]}\" id=\"user-email-${user["id"]}\">
 <input type=\"text\" value=\"${user["name"]}\" id=\"user-name-${user["id"]}\">
 <select name="user-auth" id="user-auth-${user["id"]}">
@@ -48,7 +48,7 @@ async function update_room_list() {
         list.innerHTML += "<option value=\""+room["name"]+"\">"+room["name"]+"</option>"
         room_list.innerHTML +=  `
 <div class=\"row\">
-<input class="num" type=\"text\" value=\"${room["id"]}\" disabled id=\"room-id-${room["id"]}\">
+<input class="num" type=\"number\" value=\"${room["id"]}\" disabled id=\"room-id-${room["id"]}\">
 <input type=\"text\" value=\"${room["name"]}\" id=\"room-name-${room["id"]}\">
 <input class="num" type="number" value="${room["capacity"]}" id="room-capacity-${room["id"]}">
 <button onclick=\"mod('${room["id"]}', 'room')\">Set</button>
@@ -75,7 +75,7 @@ async function update_event_list() {
         list3.innerHTML += "<div class=\"row_flex\"><input type=\"checkbox\" class=\"checkbox\" checked=\"true\" id=\""+event["id"]+"\"><div class=\"alligned_name\">"+event["name"]+"</div></div>"
         event_list.innerHTML +=  `
 <div class=\"row\">
-<input class="num" type=\"text\" value=\"${event["id"]}\" disabled id=\"event-id-${event["id"]}\">
+<input class="num" type=\"number\" value=\"${event["id"]}\" disabled id=\"event-id-${event["id"]}\">
 <input type=\"text\" value=\"${event["name"]}\" id=\"event-name-${event["id"]}\">
 <input class="num" type=\"number\" value=\"${event["duration"]}\" id=\"event-duration-${event["id"]}\">
 <button onclick=\"mod('${event["id"]}', 'event')\">Set</button>
@@ -93,7 +93,7 @@ async function update_guide_hour_list() {
         const guide_hour = guide_hours[key];
         guide_hour_list.innerHTML +=  `
 <div class=\"row\">
-<input class="num" type=\"text\" value=\"${guide_hour["id"]}\" disabled id=\"guide-hour-id-${guide_hour["id"]}\">
+<input class="num" type=\"number\" value=\"${guide_hour["id"]}\" disabled id=\"guide-hour-id-${guide_hour["id"]}\">
 <input disabled locked type=\"text\" value=\"${guide_hour["name"]}\" id=\"guide-hour-name-${guide_hour["id"]}\">
 <select name="guide-hour-day" value="${guide_hour["day"]}" id="guide-hour-day-${guide_hour["id"]}">
             <option ${guide_hour["day"] === 1 ? "selected" : ""} value="1">Monday</option>
@@ -123,7 +123,7 @@ async function update_even_room_list() {
 
         event_list.innerHTML +=  `
 <div class=\"row\">
-<input class="num" type=\"text\" value=\"${event["id"]}\" disabled id=\"event-room-id-${event["id"]}\">
+<input class="num" type=\"number\" value=\"${event["id"]}\" disabled id=\"event-room-id-${event["id"]}\">
 <input disabled type=\"text\" value=\"${event["event-name"]}\" id=\"event-room-event-name-${event["id"]}\">
 <input disabled type=\"text\" value=\"${event["room-name"]}\" id=\"event-room-room-name-${event["id"]}\">
 <button onclick=\"remove('${[event["event-name"], event["room-name"]]}', 'event-room')\">Delete</button>
@@ -143,7 +143,7 @@ async function update_event_guide_list() {
 
         event_list.innerHTML +=  `
 <div class=\"row\">
-<input class="num" type=\"text\" value=\"${event["id"]}\" disabled id=\"event-guide-id-${event["id"]}\">
+<input class="num" type=\"number\" value=\"${event["id"]}\" disabled id=\"event-guide-id-${event["id"]}\">
 <input disabled type=\"text\" value=\"${event["event-name"]}\" id=\"event-guide-event-name-${event["id"]}\">
 <input disabled type=\"text\" value=\"${event["guide-name"]}\" id=\"event-guide-guide-name-${event["id"]}\">
 <button onclick=\"remove('${[event["event-name"], event["guide-name"]]}', 'event-guide')\">Delete</button>
