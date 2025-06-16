@@ -504,6 +504,13 @@ function form_cancel(){
   form.style.display = "None";
 }
 
+window.onclick = function(event) {
+  let form = document.getElementById("add_form");
+  if (!form.contains(event.target) && !event.target.matches(".hour_event")) {
+    form_cancel();
+  }
+}
+
 let mousePos = { x: 0, y: 0 };
 
   // Track mouse position globally
