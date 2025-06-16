@@ -11,16 +11,15 @@
     <h1>Admin Page</h1>
     
 <!-- guests section -->
-<div class="column">
-<div class="section">
+<div class="section users">
     <h4>Users</h4>
     <div class="list" id="user-list">
     </div>
     <h4>New user</h4>
     <div class="row">
-        <input type="email" name="user-email" id="user-email">
-        <input type="text" name="user-name" id="user-name">
-        <input type="password" name="user-password" id="user-password">
+        <input type="email" name="user-email" id="user-email" placeholder="Email">
+        <input type="text" name="user-name" id="user-name" placeholder="Name">
+        <input type="password" name="user-password" id="user-password" placeholder="Password">
         <select name="user-auth" id="user-auth">
             <option value="admin">Admin</option>
             <option value="mod">Mod</option>
@@ -31,34 +30,32 @@
 </div>
 <!-- events section -->
 
-<div class="section">
+<div class="section events">
     <h4>Events</h4>
     <div class="list" id="event-list">
     </div>
     <h4>New event</h4>
     <div class="row">
-        <input type="text" name="event-name" id="event-name">
-        <input class="num" type="number" name="event-duration" id="event-duration">
+        <input type="text" name="event-name" id="event-name" placeholder="Name">
+        <input class="num" type="number" name="event-duration" id="event-duration" placeholder="Duration">
         <button onclick="cnew('event')">Create</button>
     </div>
 </div>
-</div>
 <!-- rooms section -->
-<div class="column">
-<div class="section">
+<div class="section rooms">
     <h4>Rooms</h4>
     <div class="list" id="room-list">
     </div>
     <h4>New room</h4>
     <div class="row">
-        <input type="text" name="room-name" id="room-name">
-        <input class="num" type="number" name="room-capacity" id="room-capacity">
+        <input type="text" name="room-name" id="room-name" placeholder="Name">
+        <input class="num" type="number" name="room-capacity" id="room-capacity" placeholder="Capacity">
         <button onclick="cnew('room')">Create</button>
     </div>
 </div>
 
 <!-- Intersection section -->
-<div class="section">
+<div class="section room-event-relation">
     <h4>Room Event relation</h4>
     <div class="list" id="event-room-list">
     </div>
@@ -69,10 +66,8 @@
         <button onclick="cnew('event-room')">Create</button>
     </div>
 </div>
-</div>
-<div class="column">
 <!-- Event+Guide -->
-<div class="section">
+<div class="section room-guide-relation">
     <h4>Room Guide relation</h4>
     <div class="list" id="event-guide-list">
     </div>
@@ -87,7 +82,7 @@
 </div>
 
 <!-- Guide Off hours -->
-<div class="section">
+<div class="section work-hours">
     <h4>Guide work hours</h4>
     <div class="list" id="guide-hour-list">
     </div>
@@ -111,54 +106,53 @@
         <button onclick="full_update()">Commit off hours</button>
     </div>
 </div>
-</div>
 
-<div class="column">
-    <div class="section-full">
-        <h4>Calendar</h4>
-        <div class="row">
-            <div class="dada_class">
-                <div class="calendar-cont" >
-                    <div class="row" style="margin-bottom:5px;">
-                        <h4>Choose time</h4>
+<div class="section-full">
+    <h4>Calendar</h4>
+    <div class="row">
+        <div class="dada_class">
+            <div class="calendar-cont" >
+                <div class="row" style="margin-bottom:5px;">
+                    <h4>Choose time</h4>
+                </div>
+                <label class="small_label">
+                    Time Frame: 
+                </label>
+                <div class="time-input-cont">
+                    <input type=    "time" value="10:00" class="time" id="calendar-start-time">
+                    -
+                    <input type="time" value="18:00" class="time" id="calendar-end-time">
+                </div>
+                <div id="calendar-container"></div>
+            </div>
+            <div class="calendar-inputs">
+                    <h4>Choose events</h4>
+                <br>                        
+                    <div class="list_small" id="callendar-event-list">
                     </div>
-                    <label class="small_label">
-                            Time Frame: 
-                            <input type="time" value="10:00" class="time" id="calendar-start-time">
-                            -
-                            <input type="time" value="18:00" class="time" id="calendar-end-time">
-                    </label>
-                    <div id="calendar-container"></div>
-                </div>
-                <div class="calendar-inputs">
-                        <h4>Choose events</h4>
-                    <br>                        
-                        <div class="list_small" id="callendar-event-list">
-                        </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">        
-            <div id="calendar-results" class="calender_results">
-                <div id="hours" class="hours"></div>
-                <div id="times" class="times"></div>
-                
             </div>
         </div>
     </div>
-    <div id="add_form" class="add_form">
-        <div class="row">
-        Event: <input type="text" disabled name="" id="form_event_name">
-        Duration: <input type="text" disabled name="" id="form_event_duration">
+    <div class="row">        
+        <div id="calendar-results" class="calender_results">
+            <div id="hours" class="hours"></div>
+            <div id="times" class="times"></div>
+            
         </div>
-        <div class="row">
-        Start time: <input type="time" name="" id="form_start_time">
-        End time: <input type="time" disabled id="form_end_time">
-        </div>
-        <input type="text" name="" id="form_info">
-        <button id="form_book">Book</button>
-        <button id="form_cancel" onclick="form_cancel()">Cancel</button>
     </div>
+</div>
+<div id="add_form" class="add_form">
+    <div class="row">
+    Event: <input type="text" disabled name="" id="form_event_name">
+    Duration: <input type="text" disabled name="" id="form_event_duration">
+    </div>
+    <div class="row">
+    Start time: <input type="time" name="" id="form_start_time">
+    End time: <input type="time" disabled id="form_end_time">
+    </div>
+    <textarea name="" id="form_info"></textarea>
+    <button id="form_book">Book</button>
+    <button id="form_cancel" onclick="form_cancel()">Cancel</button>
 </div>
 
 <!-- handle main script -->

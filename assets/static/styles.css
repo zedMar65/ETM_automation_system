@@ -6,6 +6,47 @@ html, body{
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+body {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto 1fr 1fr 1fr auto;
+    grid-column-gap: 20px;
+    grid-row-gap: 20px;
+    margin: 20px;
+}
+
+body > h1 {
+    grid-area: 1 / 1 / 2 / 3;
+}
+
+body > .section.users {
+    grid-area: 2 / 1 / 3 / 2;
+}
+
+body > .section.events {
+    grid-area: 2 / 2 / 3 / 3;
+}
+
+body > .section.rooms {
+    grid-area: 3 / 1 / 4 / 2;
+}
+
+body > .section.room-event-relation {
+    grid-area: 3 / 2 / 4 / 3;
+}
+
+body > .section.room-guide-relation {
+    grid-area: 4 / 1 / 5 / 2;
+}
+
+body > .section.work-hours {
+    grid-area: 4 / 2 / 5 / 3;
+}
+
+body > .section-full {
+    grid-area: 5 / 1 / 6 / 3;
+}
+
 .row{
     /* background-color: azure; */
     padding-bottom: 5px;
@@ -27,21 +68,8 @@ html, body{
     position: relative;
     display: flex;
     flex-direction: column;
-    
-    width: 46%;
     padding: 1%;
-    margin-right:auto;
-    margin-left:auto;
-    margin-top: auto;
-    margin-bottom: 1%;
-    height: 50vh;
-}
-
-.column{
-    display: flex;
-    width: 99%;
-    /* border: red solid 5px; */
-    /* height:auto; */
+    height: 450px;
 }
 
 /* Inputs */
@@ -60,9 +88,18 @@ input:not(.numInput):focus, button:focus, select:not(.flatpickr-monthDropdown-mo
     outline: none;
 }
 
-input:not(.numInput) {
-    width: 9vw;
+input[type="time"] {
+    width: 86px !important;
+}
+
+input[type="number"] {
+    width: 40px !important;
+}
+
+input:not(.numInput):not(.checkbox) {
+    width: 120px;
     box-shadow: inset 1px 2px 4px 0 rgba(0,0,0,0.3);
+    text-align: left;
 }
 
 button, select:not(.flatpickr-monthDropdown-months) {
@@ -138,18 +175,15 @@ input[type=number] {
     position: relative;
     display: block;
     
-    width: 98vw;
     /* padding: 1%; */
     /* margin-right:auto; */
-    margin-left: 1vw;
     padding-top: 2%;
     /* margin-top: auto; */
-    margin-bottom: 1%;
 }
 
 .calendar-inputs{
     width: calc(95% - 310px);
-    margin-left: 5%;
+    margin: 0;
     /* border:red solid 5px; */
 }
 
@@ -158,26 +192,18 @@ h4{
     padding: 0px;
 }
 
-.alligned_name{
-    /* margin-left: auto;
-    margin-right: auto; */
-    width: 100px;
+.alligned_name.check_all {
+    font-weight: bold;
 }
 
 .row_flex{
     /* background-color: azure; */
+    padding: 5px 0;
     display: flex;
-    padding-bottom: 5px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 5px;
-    width: 90%;
+    flex-direction: row;
     border-bottom: 2px solid black;
-}
-
-.row_flex input{
-    margin-left: 30%;
-    /* margin-right: auto; */
+    margin: 0 20px;
+    gap: 10px;
 }
 
 .list_small{
@@ -243,7 +269,7 @@ h4{
     background-color: rgba(46, 237, 46, 0.622);
 }
 
-.hour_end{
+.hour_end {
     position: absolute;
     z-index: 1;
     height: 100%;
@@ -252,17 +278,26 @@ h4{
     background-color: rgba(72, 72, 221, 0.492);
 }
 
-.add_form{
+.calendar-cont > div {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.add_form {
     display: none;
     position: absolute;
     z-index: 3;
     height: 300px;
     width: 600px;
-    border: solid 3px hsl( 283, 39%, 53% );
     background-color: hsla(284, 39%, 63%, 0.562);
+    box-shadow: 1px 2px 6px 1px rgba(0,0,0,0.3);
     border-radius: 10px;
     backdrop-filter: blur(10px); /* the blur effect */
     -webkit-backdrop-filter: blur(10px);
+}
+
+.add_form > textarea {
+    resize: none;
 }
 
 .add_form > #form_info{
