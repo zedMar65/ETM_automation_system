@@ -1,0 +1,275 @@
+html, body{
+    padding: 0px;
+    margin: 0px;
+    align-content: center;
+    text-align: center;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.row{
+    /* background-color: azure; */
+    padding-bottom: 5px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5px;
+    width: 90%;
+    border-bottom: 2px solid black;
+}
+
+.section, .section-full {
+    box-sizing: border-box;
+    border-radius: 10px;
+    background-color: hsl( 283, 39%, 83% );
+    box-shadow: 1px 2px 6px 1px rgba(0,0,0,0.3);
+}
+
+.section{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    
+    width: 46%;
+    padding: 1%;
+    margin-right:auto;
+    margin-left:auto;
+    margin-top: auto;
+    margin-bottom: 1%;
+    height: 50vh;
+}
+
+.column{
+    display: flex;
+    width: 99%;
+    /* border: red solid 5px; */
+    /* height:auto; */
+}
+
+/* Inputs */
+
+input:not(.numInput), button, select:not(.flatpickr-monthDropdown-months) {
+    padding: 5px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 2px solid hsl( 283, 39%, 63% );
+    margin: 3px;
+    transition: box-shadow ease 0.1s, background-color ease 0.1s, transform ease 0.1s;
+}
+
+input:not(.numInput):focus, button:focus, select:not(.flatpickr-monthDropdown-months):focus {
+    transform: scale(1.05);
+    outline: none;
+}
+
+input:not(.numInput) {
+    width: 9vw;
+    box-shadow: inset 1px 2px 4px 0 rgba(0,0,0,0.3);
+}
+
+button, select:not(.flatpickr-monthDropdown-months) {
+    background-color: hsl( 283, 39%, 53% );
+    color: white;
+    box-shadow: 1px 2px 4px 0 rgba(0,0,0,0.3);
+}
+
+button:hover, select:not(.flatpickr-monthDropdown-months):hover {
+    cursor: pointer;
+}
+
+button:hover, button:focus, select:not(.flatpickr-monthDropdown-months):focus, select:not(.flatpickr-monthDropdown-months):hover {
+    background-color: hsl( 283, 39%, 58% );
+    transform: scale(1.05);
+    box-shadow: 1.5px 3px 4px 0 rgba(0,0,0,0.3);
+}
+
+button:active, select:not(.flatpickr-monthDropdown-months):open {
+    background-color: hsl( 283, 39%, 63% );
+    transform: scale(0.95);
+    box-shadow: none;
+}
+
+/* Inputs end */
+
+.num{
+    width: 1vw;
+    min-width: 30px;
+    text-align: center;
+}
+
+input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+.list{
+    /* border:red solid 2px; */
+    overflow-y: scroll;
+    height: 80%;
+}
+
+.datetime{
+    min-width: 200px;
+}
+
+.time{
+    width: 80px;
+}
+
+.dada_class{
+    /* border: blue solid 5px; */
+    width: 100%;
+    display: flex;
+    /* padding: 5px; */
+    margin: 10px;
+}
+
+.flatpickr-calendar.inline {
+    margin-top: 1.5%;
+    width: 310px !important;
+    font-size: 16px; /* Adjust font size */
+    box-sizing: border-box;
+}
+
+.section-full{
+    position: relative;
+    display: block;
+    
+    width: 98vw;
+    /* padding: 1%; */
+    /* margin-right:auto; */
+    margin-left: 1vw;
+    padding-top: 2%;
+    /* margin-top: auto; */
+    margin-bottom: 1%;
+}
+
+.calendar-inputs{
+    width: calc(95% - 310px);
+    margin-left: 5%;
+    /* border:red solid 5px; */
+}
+
+h4{
+    margin: 0px;
+    padding: 0px;
+}
+
+.alligned_name{
+    /* margin-left: auto;
+    margin-right: auto; */
+    width: 100px;
+}
+
+.row_flex{
+    /* background-color: azure; */
+    display: flex;
+    padding-bottom: 5px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5px;
+    width: 90%;
+    border-bottom: 2px solid black;
+}
+
+.row_flex input{
+    margin-left: 30%;
+    /* margin-right: auto; */
+}
+
+.list_small{
+    overflow-y: scroll;
+    height: 320px;
+}
+
+.calender_results{
+    margin-left: 15%;
+
+    height: 500px;
+}
+
+.hours{
+    display: flex;
+    /* flex:auto; */
+    width: 100%;
+    height: 40px;
+    /* border: blue solid 2px; */
+}
+
+.hour{
+    flex:1;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+.cal_event{
+    position: relative;
+    display: flex;
+    width: 123%;
+    left: -23%;
+    /* border: red solid 2px; */
+}
+
+.cal_event > h4{
+    position: relative;
+    width: 23%;
+    /* border: red solid 1px; */
+    margin: 0px;
+}
+
+.small_event{
+    width: 100%;
+    height: 30px;
+    position: relative;
+    border-bottom: black solid 1px;
+    /* display: flex; */
+    /* left: -20%; */
+}
+.hour_event{
+    z-index: 2;
+    position: absolute;
+    height: 100%;
+    background-color: rgba(114, 222, 114, 0.622);
+   
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.hour_event:hover{
+    transform: scale(1.05);
+    background-color: rgba(46, 237, 46, 0.622);
+}
+
+.hour_end{
+    position: absolute;
+    z-index: 1;
+    height: 100%;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    background-color: rgba(72, 72, 221, 0.492);
+}
+
+.add_form{
+    display: none;
+    position: absolute;
+    z-index: 3;
+    height: 300px;
+    width: 600px;
+    border: solid 3px hsl( 283, 39%, 53% );
+    background-color: hsla(284, 39%, 63%, 0.562);
+    border-radius: 10px;
+    backdrop-filter: blur(10px); /* the blur effect */
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.add_form > #form_info{
+    width: 90%;
+    height: 50%;
+}
+
+#form_start_time, #form_end_time{
+    min-width: 80px;
+}

@@ -1,0 +1,45 @@
+from dotenv import load_dotenv
+import os
+from config import Flags, Errors
+from users import Users, Guides
+from utils import *
+from interface import *
+from api import *
+import time
+from server import start_server
+import threading
+
+def init():
+    # load env vars
+    load_dotenv()
+    if os.getenv("LOG") != None:
+        Flags.LOG_FLAG = True
+    if os.getenv("DEBUG") != None:
+        Flags.DEBUG_FLAG = True
+    if os.getenv("TIME_LAST_SHOW") != None:
+        Flags.TIME_LAST_SHOW = int(os.getenv("TIME_LAST_SHOW"))
+    if os.getenv("TIME_FIRST_SHOW") != None:
+        Flags.TIME_FIRST_SHOW = int(os.getenv("TIME_FIRST_SHOW"))
+    if os.getenv("SERVE_PORT") != None:
+        Flags.SERVE_PORT = int(os.getenv("SERVE_PORT"))
+    if os.getenv("SERVE_IP") != None:
+        Flags.SERVE_IP = str(os.getenv("SERVE_IP"))
+    init_log()
+    init_MainDB()
+
+    # load superuser
+    admin_id = Users.new_user(os.getenv("ADMIN_NAME"), os.getenv("ADMIN_EMAIL"), os.getenv("ADMIN_PASSWORD"))
+    Admins.assign(admin_id)
+    log(f"Created superadmin")
+
+def main():
+    log("starting main script")
+    monthly_thread = threading.Thread(target=check_and_run_monthly_task, daemon=True)
+    monthly_thread.start()
+    start_server()
+    pass
+
+if __name__ == "__main__":
+    init()
+    log("main init complete")
+    main()

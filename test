@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+find tests -maxdepth 1 -type f ! -name 'backend-test.py' -exec rm -f {} +
+cp assets/* tests/
+cd "$(dirname "$0")"
+cd tests
+../bin/python backend-test.py
