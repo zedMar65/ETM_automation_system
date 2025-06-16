@@ -308,3 +308,7 @@ h4{
 #form_start_time, #form_end_time{
     min-width: 80px;
 }
+
+.num-id{
+    display: none;
+}
