@@ -494,8 +494,8 @@ function form(start, duration, event_name, end){
     end_time = (hour+parseInt(duration.slice(0, 2))+parseInt(start.slice(8, 10))).toString()+":"+end_time.toString();
     document.getElementById("form_end_time").value = end_time;
     document.getElementById("form_start_time").min = start.slice(8, 10)+":"+start.slice(10);
-    console.log(end);
     document.getElementById("form_start_time").max = end.slice(8, 10)+":"+end.slice(10);
+    document.getElementById("form_book").onclick = () => form_book(start);
   return;
 }
 
@@ -538,6 +538,33 @@ input.addEventListener("input", () => {
   console.log(end_time);
   document.getElementById("form_end_time").value = end_time;
 
+});
+
+function form_book(date){
+  let time = document.getElementById("form_start_time").value
+  let event = document.getElementById("form_event_name").value
+  let info = document.getElementById("form_info").value
+  fetch("/book", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({ 
+    event, 
+    time,
+    date,
+    info
+  })
+  })
+  .then(response => {
+      if (!response.ok) {
+          throw new Error(`Server error: ${response.status}`);
+      }
+      update_all();
+  })
+  .catch(error => {
+    console.error("Failed to book event:", error);
   });
+}
 
 update_all()

@@ -4,7 +4,9 @@ from utils import *
 from users import *
 from interface import *
 import time
+from config import *
 from datetime import datetime, date, timedelta
+import random
 
 class Utility:
     def update(certain_date):
@@ -204,6 +206,34 @@ class Fetch:
             return rooms
 
 class Process:
+    def book(data) -> int:
+        try:
+            time = data["time"]
+            event = data["event"]
+            date = data["date"]
+            info = data["info"]
+            real_time = date[:8]+time[:2]+time[3:]
+            event_id = Events.get_id(event)
+            event_length = Events.get_duration(event_id)
+            end_time = add_times(real_time, str(event_length).zfill(12))
+            possible_events = Available_Events.find(event_id=event_id)
+            if len(possible_events) < 1:
+                raise FailedMethodError(Errors.failed_method)
+            pos = []
+            for i in range(len(possible_events)):
+                temp = Available_Events.get_availability(possible_events[i][0], real_time, end_time)
+                if len(temp) < 1:
+                    continue
+                pos.append(Available_Events.get_availability(possible_events[i][0], real_time, end_time)[0])
+
+            # Choose which option should you book out of avalable options
+            element = random.choice(pos)
+            Occupied_Events.new(element["start"], element["end"], element["id"], comment=info)
+
+            return 1
+        except Exception as e:
+            log(f"Error while booking [{data}]: {e}")
+            return 0
     def handle_inquiry(data) -> [()]:
         try:
             time = data["time"]
@@ -225,7 +255,6 @@ class Process:
                 if len(data) > 0:
                     possible_spots[Events.get_name(int(event))] = data
             
-            print(possible_spots)
             return possible_spots
         except Exception as e:
             log(f"Error while handeling inquiry: {e}")
@@ -322,3 +351,4 @@ def check_and_run_monthly_task():
             log(f"Error in monthly task checker: {e}")
         
         time.sleep(3600)  # check once every hour
+

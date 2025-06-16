@@ -173,15 +173,19 @@ class SecureServer(BaseHTTPRequestHandler):
             if self.path == "/login":
                 self.check_login()
                 return
-
+            
+            # only for admin/mod
+            if not self.auth_mod() and not self.auth_admin():
+                return
             elif self.path == "/filter":
-                if not self.auth_mod() and not self.auth_admin():
-                    return
-                
                 response = Process.handle_inquiry(self.get_content())
                 self.send_json(response)
                 return
-            
+            elif self.path == "/book":                
+                response = Process.book(self.get_content())
+                self.send_json(response)
+                return
+
             # Commands only for adimin:
             if not self.auth_admin():
                 return
