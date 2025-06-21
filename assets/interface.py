@@ -22,13 +22,13 @@ class Events:
             data = MainDB.query("SELECT * FROM events")
             return data
         except Exception as e:
-            log(f"Error while finding rooms: {e}")
+            log(f"Error while finding events: {e}")
             return -1
 
     @classmethod
-    def new_event(self, event_name, duration) -> int:
+    def new_event(self, event_name, duration, event_type) -> int:
         try:
-            event_id = MainDB.execute("INSERT INTO events (event_name, duration) VALUES(?, ?)", (event_name, duration))
+            event_id = MainDB.execute("INSERT INTO events (event_name, duration, event_type) VALUES(?, ?, ?)", (event_name, duration, event_type))
             log(f"Created event [{event_id}]")
             return event_id
         except Exception as e:
@@ -52,6 +52,23 @@ class Events:
             log(f"Error while finding name of event [{event_id}]")
             return ""
     
+    @classmethod
+    def get_type(self, event_id) -> str:
+        try:
+            if event_id < 1:
+                raise ValueError(Errors.id_below_one)
+            data = MainDB.query("SELECT event_type FROM events WHERE event_id = ?", (event_id,))
+            if len(data) > 1:
+                raise FindError(Errors.failed_find)
+            if len(data) < 1:
+                log(f"No events found for event [{event_id}]")
+                return ""
+            log(f"Event type [{data[0][0]}] found for [{event_id}]")
+            return data[0][0]
+        except Exception as e:
+            log(f"Error while finding type of event [{event_id}]")
+            return ""
+
     @classmethod
     def delete_event(self, event_id) -> int:
         try:

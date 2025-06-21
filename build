@@ -3,5 +3,3 @@ cd "$(dirname "$0")"
 set -a
 source .env
 set +a
-cd $BASE_FOLDER
-python3 main.py

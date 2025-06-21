@@ -312,3 +312,19 @@ h4{
 .num-id{
     display: none;
 }
+
+.smaller{
+    float: left;
+    height: 100%;
+    width: 46%;
+    margin: 1%;
+    /* border: red solid 1px; */
+}
+
+.super_small{
+    margin: 0.7%;
+    width: 23%;
+    /* border: red solid 1px; */
+    height: 90%;
+    float: left;
+}

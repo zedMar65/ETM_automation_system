@@ -32,11 +32,32 @@
 
 <div class="section events">
     <h4>Events</h4>
-    <div class="list" id="event-list">
+    <div class="list">
+        <div class="row smaller">
+            <h4>Virsmo S.</h4>
+            <div class="list" id="event-list-virsmo">
+            </div>
+        </div>
+        <div class="row smaller">
+            <h4>Temines</h4>
+            <div class="list" id="event-list-temines">
+            </div>
+        </div>
+        <div class="row smaller">
+            <h4>Edukacines</h4>
+            <div class="list" id="event-list-edukacines">
+            </div>
+        </div>
+        <div class="row smaller">
+            <h4>Kitos</h4>
+            <div class="list" id="event-list-other">
+            </div>
+        </div>
     </div>
     <h4>New event</h4>
     <div class="row">
         <input type="text" name="event-name" id="event-name" placeholder="Name">
+        <input type="text" name="event-type" id="event-type" placeholder="Type">
         <input class="num" type="number" name="event-duration" id="event-duration" placeholder="Duration">
         <button onclick="cnew('event')">Create</button>
     </div>
@@ -121,15 +142,31 @@
                 <div class="time-input-cont">
                     <input type=    "time" value="10:00" class="time" id="calendar-start-time">
                     -
-                    <input type="time" value="18:00" class="time" id="calendar-end-time">
+                    <input type="time" value="18:30" class="time" id="calendar-end-time">
                 </div>
                 <div id="calendar-container"></div>
             </div>
             <div class="calendar-inputs">
                     <h4>Choose events</h4>
-                <br>                        
-                    <div class="list_small" id="callendar-event-list">
+                <br>
+                <div id="callendar-event-list">
+                    <div class="row super_small">
+                        <h4>Edukacinės</h4>
+                        <div class="list" id="calendar-event-edukacines"></div>
                     </div>
+                    <div class="row super_small">
+                        <h4>Teminės</h4>
+                        <div class="list" id="calendar-event-temines"></div>
+                    </div>
+                    <div class="row super_small">
+                        <h4>Virsmo s.</h4>
+                        <div class="list" id="calendar-event-virsmo"></div>
+                    </div>
+                    <div class="row super_small">
+                        <h4>Kitos</h4>
+                        <div class="list" id="calendar-event-other"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -161,11 +198,23 @@
 <!-- handle date picker -->
  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script>
-    flatpickr("#calendar-container", {
-      inline: true,
-      onChange: function(selectedDates, dateStr, instance) {
-        calendar_filter(dateStr);
-      }
+    const calendar = flatpickr("#calendar-container", {
+        inline: true,
+        onChange: function(selectedDates, dateStr, instance) {
+          calendar_filter(dateStr);
+        }
+    });
+    const cal_time = document.getElementById("calendar-start-time");
+    const cal_end = document.getElementById("calendar-end-time");
+    cal_time.addEventListener("input", () => {
+        const formattedDate = calendar.formatDate(calendar.selectedDates[0], calendar.config.dateFormat);
+        calendar_filter(formattedDate);
+
+    });
+    cal_end.addEventListener("input", () => {
+        const formattedDate = calendar.formatDate(calendar.selectedDates[0], calendar.config.dateFormat);
+        calendar_filter(formattedDate);
+
     });
   </script>
 </body>

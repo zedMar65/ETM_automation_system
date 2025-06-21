@@ -178,7 +178,7 @@ class Fetch:
             events = {}
             for da in dat:
                 if len(da) > 0:
-                    events[str(da[0])] = {"id": da[0], "name": da[1], "duration": da[2]}
+                    events[str(da[0])] = {"id": da[0], "name": da[1], "duration": da[2], "type": da[3]}
             return events
         elif option == "event-room":
             dat = Event_Room_Relation.find()
@@ -242,7 +242,11 @@ class Process:
             events = data["events"]
 
             if len(events) < 1:
-                events = [None]
+                Ev = Events.find()
+                for e in Ev:
+                    events.append(e[1])
+            for e in range(len(events)):
+                events[e] = Events.get_id(events[e])
             # convert data from js format
             time[0] = time[0][:2]+time[0][3:]
             time[1] = time[1][:2]+time[1][3:]
@@ -254,7 +258,7 @@ class Process:
             for event in events:
                 data = Fetch.fetch_free_by_find(from_time, to_time, event)
                 if len(data) > 0:
-                    possible_spots[Events.get_name(int(event))] = data
+                    possible_spots[Events.get_name(int(event))+"-"+Events.get_type(int(event))] = data
             
             return possible_spots
         except Exception as e:
@@ -296,7 +300,7 @@ class Commands:
                 Mods.assign(id)
             return id
         elif data["option"] == "event":
-            return Events.new_event(data["name"], data["duration"])
+            return Events.new_event(data["name"], data["duration"], data["type"])
         elif data["option"] == "room":
             return Rooms.new_room(data["name"], data["capacity"])
         elif data["option"] == "event-guide":

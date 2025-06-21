@@ -57,29 +57,37 @@ async function update_room_list() {
 }  
 
 async function update_event_list() {
-    const event_list = document.getElementById("event-list");
+    const event_list_virsmo = document.getElementById("event-list-virsmo");
+    const event_list_edukacines = document.getElementById("event-list-edukacines");
+    const event_list_temines = document.getElementById("event-list-temines");
+    const event_list_other = document.getElementById("event-list-other");
     const events = await query("event");  // Wait for fetch to complete
-    event_list.innerHTML = "";
+    const event_lists = {"virsmo": event_list_virsmo, "edukacines": event_list_edukacines, "temines": event_list_temines, "other": event_list_other};
+    for (let key in event_lists){
+      event_lists[key].innerHTML = '';
+    }
     let list1 = document.getElementById("event-room-event-name")
     list1.innerHTML = "";
     let list2 = document.getElementById("event-guide-event-name")
     list2.innerHTML = "";
-    let list3 = document.getElementById("callendar-event-list")
-    list3.innerHTML = "<div class=\"row_flex\"><input type=\"checkbox\" class=\"checkbox\" checked=\"true\" id=\"check_all\" onclick=\"check_all()\"><div class=\"alligned_name check_all\">Check all</div></div>";
+    // let list3 = document.getElementById("callendar-event-list")
+    // list3.innerHTML = "<div class=\"row_flex\"><input type=\"checkbox\" class=\"checkbox\" checked=\"true\" id=\"check_all\" onclick=\"check_all()\"><div class=\"alligned_name check_all\">Check all</div></div>";
     for (let key in events) {
 
         const event = events[key];
         list1.innerHTML += "<option value=\""+event["name"]+"\">"+event["name"]+"</option>"
         list2.innerHTML += "<option value=\""+event["name"]+"\">"+event["name"]+"</option>"
-        list3.innerHTML += "<div class=\"row_flex\"><input type=\"checkbox\" class=\"checkbox\" checked=\"true\" id=\""+event["id"]+"\"><div class=\"alligned_name\">"+event["name"]+"</div></div>"
+        // list3.innerHTML += "<div class=\"row_flex\"><input type=\"checkbox\" class=\"checkbox\" checked=\"true\" id=\""+event["id"]+"\"><div class=\"alligned_name\">"+event["name"]+"</div></div>"
+        
+        let event_list = event_lists[event["type"]];
         event_list.innerHTML +=  `
-<div class=\"row\">
-<input class="num-id" type=\"number\" value=\"${event["id"]}\" disabled id=\"event-id-${event["id"]}\">
-<input type=\"text\" value=\"${event["name"]}\" id=\"event-name-${event["id"]}\">
-<input class="num" type=\"number\" value=\"${event["duration"]}\" id=\"event-duration-${event["id"]}\">
-<button onclick=\"mod('${event["id"]}', 'event')\">Set</button>
-<button onclick=\"remove('${event["id"]}', 'event')\">Delete</button>
-</div>`;
+          <div class=\"row\">
+          <input class="num-id" type=\"number\" value=\"${event["id"]}\" disabled id=\"event-id-${event["id"]}\">
+          <input type=\"text\" value=\"${event["name"]}\" id=\"event-name-${event["id"]}\">
+          <input class="num" type=\"number\" value=\"${event["duration"]}\" id=\"event-duration-${event["id"]}\">
+          <button onclick=\"mod('${event["id"]}', 'event')\">Set</button>
+          <button onclick=\"remove('${event["id"]}', 'event')\">Delete</button>
+          </div>`;
     }
 }
 
@@ -231,10 +239,12 @@ function cnew(option){
   } else if (option == "event"){
     let namee = document.getElementById("event-name").value
     let namee1 = document.getElementById("event-duration").value
+    let type = document.getElementById("event-type").value
     jsonOBJ = {
       option: option,
       name: namee,
-      duration: namee1 
+      duration: namee1,
+      type: type
     };
   } else if (option == "room"){
     let namee = document.getElementById("room-name").value
@@ -367,11 +377,19 @@ async function calendar_filter(dateStr) {
   let timeStart = document.getElementById("calendar-start-time").value;
   let timeEnd = document.getElementById("calendar-end-time").value;
 
-  let children = document.getElementById("callendar-event-list").children;
-
+  let children1 = document.getElementById("callendar-event-list").children;
+  let children = [];
+  for (let i = 0; i < children1.length; i++){
+    let children2 = children1[i].children;
+    for (let y = 0; y < children2[1].children.length; y++){
+      children.push(children2[1].children[y]);
+    }
+  }
   for (let i = 0; i < children.length; i++) {
-    if (children[i].children[0].checked) {
-      selected_Events.push(children[i].children[0].id);
+    if (children[i].children.length > 0){
+      if (children[i].children[0].checked) {
+        selected_Events.push(children[i].children[0].id);
+      }
     }
   }
 
@@ -407,9 +425,21 @@ async function calendar_filter(dateStr) {
 }
 
 async function update_callender(data) {
+  const event_list_virsmo = document.getElementById("calendar-event-virsmo");
+  const event_list_edukacines = document.getElementById("calendar-event-edukacines");
+  const event_list_temines = document.getElementById("calendar-event-temines");
+  const event_list_other = document.getElementById("calendar-event-other");
+  const event_lists = {"virsmo": event_list_virsmo, "edukacines": event_list_edukacines, "temines": event_list_temines, "other": event_list_other};
+  for (let key in event_lists){
+      event_lists[key].innerHTML = '';
+    }
   let min=2400
   let max= 0
   for (let key in data) {
+    let name = key.split("-")[0];
+    let type = key.split("-")[1];
+    let event_list = event_lists[type];
+    event_list.innerHTML += "<div class=\"row_flex\"><input type=\"checkbox\" class=\"checkbox\" checked=\"true\" id=\""+name+"\"><div class=\"alligned_name\">"+name+"</div></div>";
     for (let key1 in data[key]){
       if (parseInt(data[key][key1]["start"].slice(8)) < min){
         min = parseInt(data[key][key1]["start"].slice(8));
@@ -432,9 +462,10 @@ async function update_callender(data) {
   times = document.getElementById("times")
   times.innerHTML = "";
   for (let key in data) {
+    let name = key.split("-")[0];
     let event_div = "";
     event_div += "<div class=\"cal_event\">"
-    event_div += "<h4>"+key+"</h4>"
+    event_div += "<h4>"+name+"</h4>"
     event_div += "<div class=\"small_event\">"
     for (let i = 0; i < data[key].length; i++){
       let event_duration = data[key][i]["length"];
@@ -445,7 +476,7 @@ async function update_callender(data) {
       event_duration = parseInt(event_duration.slice(0, 2)*60)+parseInt(event_duration.slice(2))
       end = parseInt((parseInt(end.slice(0, 2))+1)*60)+parseInt(end.slice(2))-60
       // console.log(end)
-      event_div += "<div class=\"hour_event\" onclick=\"form('"+data[key][i]["start"]+"', '"+data[key][i]["length"]+"', '"+key+"', '"+data[key][i]["end"]+"')\" style=\"width:"+100/(60*(max-min+1))*(end-start)+"%;left:" + 100/(60*(max-min+1))*(start-(60*min))  + "%;\"></div> <div class=\"hour_end\" style=\"width:"+100/(60*(max-min+1))*(event_duration)+"%;left:" + 100/(60*(max-min+1))*(end-(60*min))  + "%;\"></div>";
+      event_div += "<div class=\"hour_event\" onclick=\"form('"+data[key][i]["start"]+"', '"+data[key][i]["length"]+"', '"+name+"', '"+data[key][i]["end"]+"')\" style=\"width:"+100/(60*(max-min+1))*(end-start)+"%;left:" + 100/(60*(max-min+1))*(start-(60*min))  + "%;\"></div> <div class=\"hour_end\" style=\"width:"+100/(60*(max-min+1))*(event_duration)+"%;left:" + 100/(60*(max-min+1))*(end-(60*min))  + "%;\"></div>";
     }
     event_div += "</div>";
     event_div += "</div>";

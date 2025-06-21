@@ -2,7 +2,8 @@
 CREATE TABLE IF NOT EXISTS events(
     event_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     event_name TEXT,
-    duration INTEGER
+    duration INTEGER,
+    event_type TEXT
 );
 
 CREATE TABLE IF NOT EXISTS rooms(
