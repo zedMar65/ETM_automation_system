@@ -328,3 +328,16 @@ h4{
     height: 90%;
     float: left;
 }
+
+.group-header {
+  background-color: #eee;
+  padding: 8px;
+  cursor: pointer;
+  margin-top: 5px;
+}
+.group-header:hover {
+  background-color: #ddd;
+}
+.group-content {
+  margin-left: 20px;
+}

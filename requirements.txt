@@ -1,8 +1,5 @@
 dotenv
 
-# sections paslaugu
-
 # read only google calander
-# sections gidu darbo laiko
 # redagavimo/ziurejimo lentele
 # is csv importuoti duomenis
