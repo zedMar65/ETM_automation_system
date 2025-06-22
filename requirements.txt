@@ -1,5 +1,5 @@
 dotenv
 
+# sutvarkyti stiliu
 # read only google calander
 # redagavimo/ziurejimo lentele
-# is csv importuoti duomenis

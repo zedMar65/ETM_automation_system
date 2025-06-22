@@ -389,19 +389,6 @@ fetch("/mod", {
 });
 }
 
-function check_all(){
-  let children = document.getElementById("callendar-event-list").children;
-  if (document.getElementById("check_all").checked){
-    for (let i = 0; i < children.length; i++) {
-      children[i].children[0].checked = true;
-    }
-  }else{
-    for (let i = 0; i < children.length; i++) {
-      children[i].children[0].checked = false;
-    }
-  }
-  
-}
 
 async function calendar_filter(dateStr) {
   let selected_Events = [];
@@ -634,6 +621,21 @@ function form_book(date){
   .catch(error => {
     console.error("Failed to book event:", error);
   });
+}
+
+function toggle(typ){
+  let container = document.getElementById("calendar-event-"+typ);
+  let children = container.children;
+  let set = false;
+  set = children[0].children[0].checked;
+  if (set){
+    set = false;
+  }else{
+    set = true;
+  }
+  for (let i = 0; i < children.length; i++){
+    children[i].children[0].checked = set;
+  }
 }
 
 update_all()
