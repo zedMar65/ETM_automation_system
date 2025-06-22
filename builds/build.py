@@ -79,9 +79,7 @@ def load_hours():
             day = line.split(",")[1]
             start_time = "".join(line.split(",")[2].split(":")[:2])
             end_time = "".join(line.split(",")[-1].split(":")[:2])[:-1]
-            print(f"({day})")
-            print(datetime.datetime.strptime(day, "%A").weekday())
-            WorkHours.add(Guides.get_group_id(Users.get_id(e_name)), day, start_time, end_time)
+            WorkHours.add(Guides.get_group_id(Users.get_id(e_name)), name_to_int(day)+1, start_time, end_time)
 
 def super_admin():
     admin_id = Users.new_user(os.getenv("ADMIN_NAME"), os.getenv("ADMIN_EMAIL"), os.getenv("ADMIN_PASSWORD"))

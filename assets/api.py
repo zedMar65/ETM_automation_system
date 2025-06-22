@@ -258,7 +258,10 @@ class Process:
             for event in events:
                 data = Fetch.fetch_free_by_find(from_time, to_time, event)
                 if len(data) > 0:
-                    possible_spots[Events.get_name(int(event))+"-"+Events.get_type(int(event))] = data
+                    e_type = Events.get_type(int(event))
+                    if e_type not in ["other", "temines", "edukacines", "virsmo"]:
+                        e_type = "other"
+                    possible_spots[Events.get_name(int(event))+"-"+e_type] = data
             
             return possible_spots
         except Exception as e:

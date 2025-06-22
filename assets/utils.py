@@ -168,3 +168,15 @@ def time_first(time) -> int:
     time["hours"] = int(Flags.TIME_FIRST_SHOW[:2])
     time["minutes"] = int(Flags.TIME_FIRST_SHOW[2:])
     return time_to_int(time)
+
+def name_to_int(day):
+    weekday_to_number = {
+    "Monday": 0,
+    "Tuesday": 1,
+    "Wednesday": 2,
+    "Thursday": 3,
+    "Friday": 4,
+    "Saturday": 5,
+    "Sunday": 6
+    }
+    return weekday_to_number[day]
