@@ -68,18 +68,15 @@ async function update_event_list() {
     }
     let list1 = document.getElementById("event-room-event-name")
     list1.innerHTML = "";
-    let list2 = document.getElementById("event-guide-event-name")
+    let list2 = document.getElementById("event-guide-event-name") 
     list2.innerHTML = "";
-    // let list3 = document.getElementById("callendar-event-list")
-    // list3.innerHTML = "<div class=\"row_flex\"><input type=\"checkbox\" class=\"checkbox\" checked=\"true\" id=\"check_all\" onclick=\"check_all()\"><div class=\"alligned_name check_all\">Check all</div></div>";
     for (let key in events) {
 
         const event = events[key];
         list1.innerHTML += "<option value=\""+event["name"]+"\">"+event["name"]+"</option>"
         list2.innerHTML += "<option value=\""+event["name"]+"\">"+event["name"]+"</option>"
-        // list3.innerHTML += "<div class=\"row_flex\"><input type=\"checkbox\" class=\"checkbox\" checked=\"true\" id=\""+event["id"]+"\"><div class=\"alligned_name\">"+event["name"]+"</div></div>"
-        
-        let event_list = event_lists[event["type"]];
+        const clean_type = event["type"].replace(/^\uFEFF/, '').trim();
+        let event_list = event_lists[clean_type];
         event_list.innerHTML +=  `
           <div class=\"row\">
           <input class="num-id" type=\"number\" value=\"${event["id"]}\" disabled id=\"event-id-${event["id"]}\">

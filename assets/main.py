@@ -28,11 +28,6 @@ def init():
     init_log()
     init_MainDB()
 
-    # load superuser
-    admin_id = Users.new_user(os.getenv("ADMIN_NAME"), os.getenv("ADMIN_EMAIL"), os.getenv("ADMIN_PASSWORD"))
-    Admins.assign(admin_id)
-    log(f"Created superadmin")
-
 def main():
     log("starting main script")
     monthly_thread = threading.Thread(target=check_and_run_monthly_task, daemon=True)

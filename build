@@ -3,3 +3,13 @@ cd "$(dirname "$0")"
 set -a
 source .env
 set +a
+dir_path=$(dirname "$BUILD_FOLDER/$BUILD_SCRIPT_TIMELINES")
+mkdir -p "$dir_path"
+cp $BASE_FOLDER/$BUILD_SCRIPT_TIMELINES $BUILD_FOLDER/$BUILD_SCRIPT_TIMELINES
+cp $BASE_FOLDER/*.py $BUILD_FOLDER/
+cd $BUILD_FOLDER
+python3 build.py
+cd ..
+cp $BUILD_FOLDER/$TIMELINE_DATABASE $BASE_FOLDER/$TIMELINE_DATABASE
+rm $BUILD_FOLDER/$TIMELINE_DATABASE
+find $(ls $BUILD_FOLDER/*.py) ! -name 'build.py' -exec rm {} +
