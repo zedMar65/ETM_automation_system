@@ -59,8 +59,19 @@ def load_relations():
             guide_id = Guides.get_group_id(Users.get_id(e_name))
             e_events = line.split("\"")[1].split(",")
             for event in e_events:
-                Event_Guide_Relation.add_relation(Events.get_id(event), guide_id)
-
+                ev = " ".join(event.split(" ")[1:])
+                event_id = Events.get_id(ev)
+                Event_Guide_Relation.add_relation(event_id, guide_id)
+    with open(classrooms, "r") as e:
+        for line in e:
+            e_name = line.split(",")[0]
+            room_id = Rooms.get_id(e_name)
+            e_events = line.split(",")[2:]
+            for event in e_events:
+                ev = " ".join(event.split(" ")[1:])
+                event_id = Events.get_id(ev)
+                Event_Room_Relation.add_relation(event_id, room_id)
+    
 def super_admin():
     admin_id = Users.new_user(os.getenv("ADMIN_NAME"), os.getenv("ADMIN_EMAIL"), os.getenv("ADMIN_PASSWORD"))
     Admins.assign(admin_id)
