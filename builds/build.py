@@ -9,6 +9,7 @@ import time
 from server import start_server
 import threading
 from api import check_and_run_monthly_task
+import datetime
 
 classrooms = "./Classrooms-Grid view.csv"
 educations = "./Educations-Grid view.csv"
@@ -71,7 +72,17 @@ def load_relations():
                 ev = " ".join(event.split(" ")[1:])
                 event_id = Events.get_id(ev)
                 Event_Room_Relation.add_relation(event_id, room_id)
-    
+def load_hours():
+    with open(availability) as e:
+        for line in e:
+            e_name = line.split(",")[0]
+            day = line.split(",")[1]
+            start_time = "".join(line.split(",")[2].split(":")[:2])
+            end_time = "".join(line.split(",")[-1].split(":")[:2])[:-1]
+            print(f"({day})")
+            print(datetime.datetime.strptime(day, "%A").weekday())
+            WorkHours.add(Guides.get_group_id(Users.get_id(e_name)), day, start_time, end_time)
+
 def super_admin():
     admin_id = Users.new_user(os.getenv("ADMIN_NAME"), os.getenv("ADMIN_EMAIL"), os.getenv("ADMIN_PASSWORD"))
     Admins.assign(admin_id)
@@ -83,3 +94,4 @@ if __name__ == "__main__":
     load_rooms()
     load_guides()
     load_relations()
+    load_hours()
