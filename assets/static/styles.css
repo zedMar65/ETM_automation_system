@@ -258,6 +258,7 @@ h4{
     /* left: -20%; */
 }
 .hour_event{
+    /* padding-left: 4px; */
     z-index: 2;
     position: absolute;
     height: 100%;

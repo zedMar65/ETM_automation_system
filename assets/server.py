@@ -179,7 +179,6 @@ class SecureServer(BaseHTTPRequestHandler):
                 return
             elif self.path == "/filter":
                 response = Process.handle_inquiry(self.get_content())
-                print(response)
                 self.send_json(response)
                 return
             elif self.path == "/book":                

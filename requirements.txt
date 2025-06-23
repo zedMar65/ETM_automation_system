@@ -1,5 +1,5 @@
 dotenv
 
-# sutvarkyti stiliu
+# lentele bookinimo papildyti
 # read only google calander
 # redagavimo/ziurejimo lentele

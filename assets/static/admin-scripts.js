@@ -444,6 +444,7 @@ async function calendar_filter(dateStr) {
 }
 
 async function update_callender(data) {
+  console.log("ASDASDASD");
   const event_list_virsmo = document.getElementById("calendar-event-virsmo");
   const event_list_edukacines = document.getElementById("calendar-event-edukacines");
   const event_list_temines = document.getElementById("calendar-event-temines");
@@ -495,7 +496,7 @@ async function update_callender(data) {
       event_duration = parseInt(event_duration.slice(0, 2)*60)+parseInt(event_duration.slice(2))
       end = parseInt((parseInt(end.slice(0, 2))+1)*60)+parseInt(end.slice(2))-60
       // console.log(end)
-      event_div += "<div class=\"hour_event\" onclick=\"form('"+data[key][i]["start"]+"', '"+data[key][i]["length"]+"', '"+name+"', '"+data[key][i]["end"]+"')\" style=\"width:"+100/(60*(max-min+1))*(end-start)+"%;left:" + 100/(60*(max-min+1))*(start-(60*min))  + "%;\"></div> <div class=\"hour_end\" style=\"width:"+100/(60*(max-min+1))*(event_duration)+"%;left:" + 100/(60*(max-min+1))*(end-(60*min))  + "%;\"></div>";
+      event_div += "<div class=\"hour_event\" onclick=\"form('"+data[key][i]["start"]+"', '"+data[key][i]["length"]+"', '"+name+"', '"+data[key][i]["end"]+"')\" style=\"width:"+(1+100/(60*(max-min+1))*(end-start))+"%;left:" + 100/(60*(max-min+1))*(start-(60*min)) + "%;\"></div> <div class=\"hour_end\" style=\"width:"+100/(60*(max-min+1))*(event_duration)+"%;left:" + 100/(60*(max-min+1))*(end-(60*min))  + "%;\"></div>";
     }
     event_div += "</div>";
     event_div += "</div>";
@@ -616,7 +617,9 @@ function form_book(date){
       if (!response.ok) {
           throw new Error(`Server error: ${response.status}`);
       }
-      update_all();
+      form_cancel();
+      calendar_filter(calendar.formatDate(calendar.selectedDates[0], calendar.config.dateFormat))
+      
   })
   .catch(error => {
     console.error("Failed to book event:", error);
