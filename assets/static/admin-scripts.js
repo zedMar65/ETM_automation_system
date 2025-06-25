@@ -598,19 +598,23 @@ input.addEventListener("input", () => {
 });
 
 function form_book(date){
-  let time = document.getElementById("form_start_time").value
-  let event = document.getElementById("form_event_name").value
-  let info = document.getElementById("form_info").value
+  let time = document.getElementById("form_start_time").value;
+  let event = document.getElementById("form_event_name").value;
+  let info = document.getElementById("form_info").value;
+  let counts = document.getElementById("form_data").value;
+  let email = document.getElementById("form_email").value;
   fetch("/book", {
   method: "POST",
   headers: {
     "Content-Type": "application/json"
   },
   body: JSON.stringify({ 
-    event, 
+    event,
     time,
     date,
-    info
+    info,
+    counts,
+    email
   })
   })
   .then(response => {

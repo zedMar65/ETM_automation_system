@@ -6,6 +6,12 @@ class Flags:
     SERVE_IP=""
     SERVE_PORT=8000
     MONTHLY_TASK_FILE = "last_monthly_run.txt"
+    EMAIL_SUBJECT = "email subject"
+    EMAIL_BODY = """
+    email body
+
+    order Info:
+    """
 
 class Errors:
     duplicate_found = "Duplicate data line found in database"

@@ -181,8 +181,11 @@ class SecureServer(BaseHTTPRequestHandler):
                 response = Process.handle_inquiry(self.get_content())
                 self.send_json(response)
                 return
-            elif self.path == "/book":                
-                response = Process.book(self.get_content())
+            elif self.path == "/book":  
+                data = self.get_content()    
+                data["booker"] = Users.get_name(self.auth()[0])
+                Process.book(data)
+                response = Utility.email(data)
                 self.send_json(response)
                 return
 

@@ -1,5 +1,4 @@
 dotenv
 
-# lentele bookinimo papildyti
-# read only google calander
-# redagavimo/ziurejimo lentele
+
+# iki penktadienio deadline for google callender suzinoti

@@ -686,7 +686,7 @@ class Occupied_Events:
             return [()]
     
     @classmethod
-    def new(self, busy_from, busy_to, available_event_id, comment = "No comment") -> int:
+    def new(self, busy_from, busy_to, available_event_id, booker, email, counts = 0, comment = "No comment") -> int:
         
         try:
             if available_event_id < 1:
@@ -700,7 +700,7 @@ class Occupied_Events:
             room_oc_id = Rooms.occupie(event[0][2], busy_from, busy_to, f"Event {Events.get_name(event[0][1])} with guide {[Guides.get_group_id(event[0][3])]}")
             if room_oc_id < 1:
                 raise FailedMethodError(Errors.occupie_failed)
-            id = MainDB.execute("INSERT INTO occupied_events (guide_oc_id, room_oc_id, available_event_id, busy_from, busy_to, comment) VALUES(?, ?, ?, ?, ?, ?)", (guide_oc_id, room_oc_id, available_event_id, busy_from, busy_to, comment))
+            id = MainDB.execute("INSERT INTO occupied_events (guide_oc_id, room_oc_id, available_event_id, busy_from, busy_to, responsible, email, counts, comment) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", (guide_oc_id, room_oc_id, available_event_id, busy_from, busy_to, booker, email, counts, comment))
             log(f"Ocupied new event [{id}]")
             return id
         except Exception as e:

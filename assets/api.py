@@ -7,6 +7,9 @@ import time
 from config import *
 from datetime import datetime, date, timedelta
 import random
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 class Utility:
     def update(certain_date):
@@ -77,6 +80,36 @@ class Utility:
         except Exception as e:
             log(f"Error while doing Utility update: {e}")
             return 0
+    def email(data) -> int:
+        return 1 
+        # try:
+        #     time = data["time"]
+        #     event = data["event"]
+        #     date = data["date"]
+        #     email = data["email"]
+
+        #     gmail_user = os.getenv("GMAIL_USER")
+        #     gmail_password = os.getenv("GMAIL_APP_PASSWORD")  # Use App Password if 2FA is enabled
+
+        #     # Create the email
+        #     msg = MIMEMultipart()
+        #     msg['From'] = gmail_user
+        #     msg['To'] = email
+        #     msg['Subject'] = 'lalala'
+
+        #     body = 'asdasdasd'
+        #     msg.attach(MIMEText(body, 'plain'))
+
+        #     # Send the email
+        #     with smtplib.SMTP('smtp.gmail.com', 587) as server:
+        #         server.starttls()  # Secure the connection
+        #         server.login(gmail_user, gmail_password)
+        #         server.sendmail(msg['From'], [msg['To']], msg.as_string())
+        #     return 1
+        # except Exception as e:
+        #     log(f"Error while sending email: {e}")
+        #     return 0
+
 
     def del_guide_off_work():
         guides = Users.find(user_auth="guide")
@@ -213,6 +246,10 @@ class Process:
             event = data["event"]
             date = data["date"]
             info = data["info"]
+            booker = data["booker"]
+            counts = data["counts"]
+            email = data["email"]
+            print(data)
             real_time = date[:8]+time[:2]+time[3:]
             event_id = Events.get_id(event)
             event_length = Events.get_duration(event_id)
@@ -229,8 +266,7 @@ class Process:
 
             # Choose which option should you book out of avalable options
             element = random.choice(pos)
-            Occupied_Events.new(element["start"], element["end"], element["id"], comment=info)
-
+            Occupied_Events.new(element["start"], element["end"], element["id"], booker, email, counts=counts, comment=info)
             return 1
         except Exception as e:
             log(f"Error while booking [{data}]: {e}")
