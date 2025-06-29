@@ -6,6 +6,9 @@ class Flags:
     SERVE_IP=""
     SERVE_PORT=8000
     MONTHLY_TASK_FILE = "last_monthly_run.txt"
+    GOOGLE_CLIENT_ID=0
+    GOOGLE_CLIENT_SECRET=0
+    GOOGLE_REDIRECT_URI=0
     EMAIL_SUBJECT = "email subject"
     EMAIL_BODY = """
     email body

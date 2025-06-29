@@ -4,4 +4,4 @@ set -a
 source .env
 set +a
 cd $BASE_FOLDER
-python3 main.py
+../bin/python3 main.py
