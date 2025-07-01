@@ -180,3 +180,7 @@ def name_to_int(day):
     "Sunday": 6
     }
     return weekday_to_number[day]
+
+def int_to_google_datetime(date_int: int) -> str:
+    dt = datetime.strptime(str(date_int), "%Y%m%d%H%M")
+    return dt.isoformat()

@@ -1,6 +1,7 @@
-from utils import log, min_times, min_times2
+from utils import log, min_times, min_times2, int_to_google_datetime
 from database import MainDB
 from config import Errors, FindError, FailedMethodError
+from callender_api import *
 
 class Events:
     @classmethod
@@ -692,15 +693,27 @@ class Occupied_Events:
             if available_event_id < 1:
                 raise ValueError(config.errors.id_below_one)
             event = Available_Events.find(id=available_event_id)
-            from users import Guides
-
+            from users import Guides, Users
             guide_oc_id = Guides.occupie(event[0][3] , busy_from, busy_to, f"Event {Events.get_name(event[0][1])} at {[Rooms.get_name(event[0][2])]}")
             if guide_oc_id < 1:
                 raise FailedMethodError(Errors.occupie_failed)
-            room_oc_id = Rooms.occupie(event[0][2], busy_from, busy_to, f"Event {Events.get_name(event[0][1])} with guide {[Guides.get_group_id(event[0][3])]}")
+            room_oc_id = Rooms.occupie(event[0][2], busy_from, busy_to, f"Event {Events.get_name(event[0][1])} with guide {Users.get_name(Guides.get_user_id(event[0][3]))}")
             if room_oc_id < 1:
                 raise FailedMethodError(Errors.occupie_failed)
             id = MainDB.execute("INSERT INTO occupied_events (guide_oc_id, room_oc_id, available_event_id, busy_from, busy_to, responsible, email, counts, comment) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", (guide_oc_id, room_oc_id, available_event_id, busy_from, busy_to, booker, email, counts, comment))
+            GoogleCalendarBot.create_event(
+                summary=f"{Events.get_name(event[0][1])}",
+                start_time=int_to_google_datetime(busy_from),
+                end_time=int_to_google_datetime(busy_to),
+                # attendees=[Users.find(user_id=Guides.get_user_id(event[0][3]))[0][2]],
+                description=f"""
+                    Room: {Rooms.get_name(event[0][2])}
+                    Guide: {Users.get_name(Guides.get_user_id(event[0][3]))}
+                    Booker: {booker}
+                    Contact-email: {email}
+                """
+            )
+            
             log(f"Ocupied new event [{id}]")
             return id
         except Exception as e:

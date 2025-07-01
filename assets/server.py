@@ -168,11 +168,18 @@ class SecureServer(BaseHTTPRequestHandler):
             self.logout()
             return
 
+    # def calendar_webhook(self):
+    #     print(f"{self.get_content()}")
+    #     return '', 400
+
     def do_POST(self):
         try:
             if self.path == "/login":
                 self.check_login()
                 return
+            # if self.path == "/google-calendar/webhook":
+            #     self.calendar_webhook()
+            #     return
             
             # only for admin/mod
             if not self.auth_mod() and not self.auth_admin():

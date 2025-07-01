@@ -32,22 +32,17 @@ def init():
         Flags.GOOGLE_REDIRECT_URI = str(os.getenv("GOOGLE_REDIRECT_URI"))
     if os.getenv("GOOGLE_CLIENT_SECRET") != None:
         Flags.GOOGLE_CLIENT_SECRET = str(os.getenv("GOOGLE_CLIENT_SECRET"))
+    
+    GoogleCalendarBot.initialize()
     init_log()
     init_MainDB()
 
 def main():
-    # After user callback:
-    GoogleCalendarBot.initialize()
-    GoogleCalendarBot.create_event(
-        summary="Bot-Scheduled Sync",
-        start_time="2025-07-01T10:00:00",
-        end_time="2025-07-01T10:30:00",
-    )
 
-    # log("starting main script")
-    # monthly_thread = threading.Thread(target=check_and_run_monthly_task, daemon=True)
-    # monthly_thread.start()
-    # start_server()
+    log("starting main script")
+    monthly_thread = threading.Thread(target=check_and_run_monthly_task, daemon=True)
+    monthly_thread.start()
+    start_server()
     return
 
 if __name__ == "__main__":
