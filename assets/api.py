@@ -10,6 +10,38 @@ import random
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from typing import List
+
+class EmailSender:
+    SMTP_HOST = os.getenv("SMTP_HOST")
+    SMTP_PORT = os.getenv("SMTP_PORT")
+    SMTP_USERNAME = os.getenv("SMTP_USERNAME")
+    SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
+
+    @staticmethod
+    def send_email(to_emails: List[str], subject: str, body: str,
+                   from_email: str = None, is_html: bool = False) -> bool:
+        if not from_email:
+            from_email = EmailSender.SMTP_USERNAME
+
+        try:
+            msg = MIMEMultipart()
+            msg["From"] = from_email
+            msg["To"] = ", ".join(to_emails)
+            msg["Subject"] = subject
+            msg.attach(MIMEText(body, "html" if is_html else "plain"))
+
+            server = smtplib.SMTP_SSL(EmailSender.SMTP_HOST, EmailSender.SMTP_PORT)
+            server.login(EmailSender.SMTP_USERNAME, EmailSender.SMTP_PASSWORD)
+            server.sendmail(from_email, to_emails, msg.as_string())
+            server.quit()
+
+            log(f"Email sent to {to_emails}")
+            return True
+
+        except Exception as e:
+            log(f"Failed to send email: {e}")
+            return False
 
 class Utility:
     def update(certain_date):
@@ -80,35 +112,6 @@ class Utility:
         except Exception as e:
             log(f"Error while doing Utility update: {e}")
             return 0
-    def email(data) -> int:
-        return 1 
-        # try:
-        #     time = data["time"]
-        #     event = data["event"]
-        #     date = data["date"]
-        #     email = data["email"]
-
-        #     gmail_user = os.getenv("GMAIL_USER")
-        #     gmail_password = os.getenv("GMAIL_APP_PASSWORD")  # Use App Password if 2FA is enabled
-
-        #     # Create the email
-        #     msg = MIMEMultipart()
-        #     msg['From'] = gmail_user
-        #     msg['To'] = email
-        #     msg['Subject'] = 'lalala'
-
-        #     body = 'asdasdasd'
-        #     msg.attach(MIMEText(body, 'plain'))
-
-        #     # Send the email
-        #     with smtplib.SMTP('smtp.gmail.com', 587) as server:
-        #         server.starttls()  # Secure the connection
-        #         server.login(gmail_user, gmail_password)
-        #         server.sendmail(msg['From'], [msg['To']], msg.as_string())
-        #     return 1
-        # except Exception as e:
-        #     log(f"Error while sending email: {e}")
-        #     return 0
 
 
     def del_guide_off_work():
@@ -249,7 +252,6 @@ class Process:
             booker = data["booker"]
             counts = data["counts"]
             email = data["email"]
-            print(data)
             real_time = date[:8]+time[:2]+time[3:]
             event_id = Events.get_id(event)
             event_length = Events.get_duration(event_id)

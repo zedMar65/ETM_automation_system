@@ -193,7 +193,6 @@ class SecureServer(BaseHTTPRequestHandler):
                 data = self.get_content()    
                 data["booker"] = Users.get_name(self.auth()[0])
                 Process.book(data)
-                response = Utility.email(data)
                 self.send_json(response)
                 return
 

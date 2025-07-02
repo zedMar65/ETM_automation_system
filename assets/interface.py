@@ -713,8 +713,14 @@ class Occupied_Events:
                 """
             )
             id = MainDB.execute("INSERT INTO occupied_events (guide_oc_id, room_oc_id, available_event_id, busy_from, busy_to, responsible, email, counts, comment, calender_id) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (guide_oc_id, room_oc_id, available_event_id, busy_from, busy_to, booker, email, counts, comment, calender_id))
+            # write a full body later
             
-            
+            EmailSender.send_email(
+                to_emails=[email],
+                subject=Flags.EMAIL_SUBJECT,
+                body=Flags.EMAIL_BODY,
+                is_html=False
+            )
             log(f"Ocupied new event [{id}]")
             return id
         except Exception as e:

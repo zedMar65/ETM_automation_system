@@ -39,7 +39,6 @@ def init():
     init_MainDB()
 
 def main():
-
     log("starting main script")
     monthly_thread = threading.Thread(target=check_and_run_monthly_task, daemon=True)
     monthly_thread.start()

@@ -3,5 +3,7 @@ google-api-python-client
 google-auth-httplib2 
 google-auth-oauthlib
 
-# iki treciadienio google callender
-# ka reiskia kad php veikia?
+# kareiskia php veikia?
+# smtp serveris neveikia
+# reikia prod/test https serverio
+# reikia prod/test google callender

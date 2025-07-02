@@ -1,14 +1,22 @@
 class Flags:
+    # flags
     LOG_FLAG = False
     DEBUG_FLAG = False
     TIME_LAST_SHOW = 0
     TIME_FIRST_SHOW = 0
+    
+    # serving data
     SERVE_IP=""
     SERVE_PORT=8000
     MONTHLY_TASK_FILE = "last_monthly_run.txt"
+    
+    # google callender data
     GOOGLE_CLIENT_ID=0
     GOOGLE_CLIENT_SECRET=0
     GOOGLE_REDIRECT_URI=0
+
+    # email data
+    
     EMAIL_SUBJECT = "email subject"
     EMAIL_BODY = """
     email body
