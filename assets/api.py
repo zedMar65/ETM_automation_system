@@ -29,6 +29,8 @@ class EmailSender:
             msg["From"] = from_email
             msg["To"] = ", ".join(to_emails)
             msg["Subject"] = subject
+            
+            session = smtplib.SMTP_SSL(EmailSender.SMTP_HOST, EmailSender)
             msg.attach(MIMEText(body, "html" if is_html else "plain"))
 
             server = smtplib.SMTP_SSL(EmailSender.SMTP_HOST, EmailSender.SMTP_PORT)

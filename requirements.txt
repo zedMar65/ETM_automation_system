@@ -2,8 +2,3 @@ dotenv
 google-api-python-client 
 google-auth-httplib2 
 google-auth-oauthlib
-
-# kareiskia php veikia?
-# smtp serveris neveikia
-# reikia prod/test https serverio
-# reikia prod/test google callender

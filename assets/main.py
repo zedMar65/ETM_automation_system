@@ -39,10 +39,16 @@ def init():
     init_MainDB()
 
 def main():
-    log("starting main script")
-    monthly_thread = threading.Thread(target=check_and_run_monthly_task, daemon=True)
-    monthly_thread.start()
-    start_server()
+    EmailSender.send_email(
+                to_emails=["marius.jedinkus@gmail.com"],
+                subject=Flags.EMAIL_SUBJECT,
+                body=Flags.EMAIL_BODY,
+                is_html=False
+            )
+    # log("starting main script")
+    # monthly_thread = threading.Thread(target=check_and_run_monthly_task, daemon=True)
+    # monthly_thread.start()
+    # start_server()
     return
 
 if __name__ == "__main__":
