@@ -24,7 +24,7 @@ class GoogleCalendarBot:
                      description=None, location=None, attendees=None, color_id=None,
                      extended_properties=None):
         if not GoogleCalendarBot._service:
-            print("Service not initialized")
+            log("Service not initialized")
             return None
         try:
             event = {
@@ -47,15 +47,25 @@ class GoogleCalendarBot:
             calendar_id = os.getenv("GOOGLE_CALENDAR_ID")
             return GoogleCalendarBot._service.events().insert(calendarId=calendar_id, body=event).execute()
         except Exception as e:
-            print(f"Failed to create event: {e}")
+            log(f"Failed to create event: {e}")
             return None
 
 
 def watch_calendar():
+    if not GoogleCalendarBot._service:
+        GoogleCalendarBot.initialize()
+
     calendar_id = os.getenv("GOOGLE_CALENDAR_ID")
     body = {
-        "id": Flags.GOOGLE_CLIENT_ID,  # UUID or something unique
+        "id": os.getenv("GOOGLE_CALENDAR_ID"),  # a UUID
         "type": "web_hook",
         "address": "https://"+os.getenv("SERVE_IP")+"/google-calendar/webhook"
     }
-    return GoogleCalendarBot._service.events().watch(calendarId=calendar_id, body=body).execute()
+
+    try:
+        response = GoogleCalendarBot._service.events().watch(calendarId=calendar_id, body=body).execute()
+        log(f"Watch response: {response}")
+        return response
+    except Exception as e:
+        log(f"Failed to create watch: {e}")
+        return None

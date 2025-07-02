@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS occupied_events (
     email TEXT,
     counts INT,
     comment TEXT,
+    calender_id TEXT,
     FOREIGN KEY (available_event_id) REFERENCES available_events(available_event_id),
     FOREIGN KEY (guide_oc_id) REFERENCES guide_occupation(id),
     FOREIGN KEY (room_oc_id) REFERENCES room_occupation(id)

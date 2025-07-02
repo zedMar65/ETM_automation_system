@@ -168,9 +168,10 @@ class SecureServer(BaseHTTPRequestHandler):
             self.logout()
             return
 
-    # def calendar_webhook(self):
-    #     print(f"{self.get_content()}")
-    #     return '', 400
+    def calendar_webhook(self):
+        print(f"--------------------GOOGLE CALENDAR CALLBACK:---------------------------")
+        print(f"{self.get_content()}")
+        return '', 400
 
     def do_POST(self):
         try:

@@ -9,7 +9,7 @@ import time
 from server import start_server
 import threading
 from api import check_and_run_monthly_task
-from callender_api import GoogleCalendarBot
+from callender_api import *
 
 def init():
     # load env vars
@@ -34,6 +34,7 @@ def init():
         Flags.GOOGLE_CLIENT_SECRET = str(os.getenv("GOOGLE_CLIENT_SECRET"))
     
     GoogleCalendarBot.initialize()
+    watch_calendar()
     init_log()
     init_MainDB()
 

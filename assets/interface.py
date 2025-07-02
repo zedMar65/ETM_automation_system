@@ -700,8 +700,7 @@ class Occupied_Events:
             room_oc_id = Rooms.occupie(event[0][2], busy_from, busy_to, f"Event {Events.get_name(event[0][1])} with guide {Users.get_name(Guides.get_user_id(event[0][3]))}")
             if room_oc_id < 1:
                 raise FailedMethodError(Errors.occupie_failed)
-            id = MainDB.execute("INSERT INTO occupied_events (guide_oc_id, room_oc_id, available_event_id, busy_from, busy_to, responsible, email, counts, comment) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", (guide_oc_id, room_oc_id, available_event_id, busy_from, busy_to, booker, email, counts, comment))
-            GoogleCalendarBot.create_event(
+            calender_id = GoogleCalendarBot.create_event(
                 summary=f"{Events.get_name(event[0][1])}",
                 start_time=int_to_google_datetime(busy_from),
                 end_time=int_to_google_datetime(busy_to),
@@ -713,6 +712,8 @@ class Occupied_Events:
                     Contact-email: {email}
                 """
             )
+            id = MainDB.execute("INSERT INTO occupied_events (guide_oc_id, room_oc_id, available_event_id, busy_from, busy_to, responsible, email, counts, comment, calender_id) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (guide_oc_id, room_oc_id, available_event_id, busy_from, busy_to, booker, email, counts, comment, calender_id))
+            
             
             log(f"Ocupied new event [{id}]")
             return id
