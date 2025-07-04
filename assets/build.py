@@ -10,11 +10,7 @@ from server import start_server
 import threading
 from api import check_and_run_monthly_task
 import datetime
-
-classrooms = "./Classrooms-Grid view.csv"
-educations = "./Educations-Grid view.csv"
-guides = "./Guides-Grid view.csv"
-availability = "./Guides Availability-Grid view.csv"
+import shutil
 
 def init():
     load_dotenv()
@@ -30,7 +26,21 @@ def init():
         Flags.SERVE_PORT = int(os.getenv("SERVE_PORT"))
     if os.getenv("SERVE_IP") != None:
         Flags.SERVE_IP = str(os.getenv("SERVE_IP"))
-    init_MainDB()
+    if os.path.isfile("../backup/database/internal_data.db"):
+        shutil.copyfile("../backup/database/internal_data.db", "./database/internal_data.db")
+    else:
+        init_log()
+    if os.path.isfile("../backup/database/timelines_data.db"):
+        shutil.copyfile("../backup/database/timelines_data.db", "./database/timelines_data.db")
+    else:
+        init_MainDB()
+
+    super_admin()
+    # load_events()
+    # load_rooms()
+    # load_guides()
+    # load_relations()
+    # load_hours()
 
 def load_events():
     with open(educations, "r") as e:
@@ -72,6 +82,7 @@ def load_relations():
                 ev = " ".join(event.split(" ")[1:])
                 event_id = Events.get_id(ev)
                 Event_Room_Relation.add_relation(event_id, room_id)
+
 def load_hours():
     with open(availability) as e:
         for line in e:
@@ -86,10 +97,6 @@ def super_admin():
     Admins.assign(admin_id)
 
 if __name__ == "__main__":
+    log(f"Starting build")
     init()
-    super_admin()
-    load_events()
-    load_rooms()
-    load_guides()
-    load_relations()
-    load_hours()
+    log(f"Build finished")

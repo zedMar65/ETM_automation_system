@@ -12,9 +12,6 @@ def to_dt(s):
 def init_log() -> bool:
     try:
         LoggingDB.connect()
-        with open(os.environ.get("BUILD_SCRIPT_INTERNAL"), "r") as build_file:
-            build_script = build_file.read()
-        LoggingDB.execute_script(build_script)
         log("logging Init complete")
     except Exception as e:
         log(f"Error while initing log: {e}")
@@ -31,9 +28,6 @@ def log(msg, user=-1, ip="internal"):
 def init_MainDB() -> int:
     try:
         MainDB.connect()
-        with open(os.environ.get("BUILD_SCRIPT_TIMELINES"), "r") as build_file:
-            build_script = build_file.read()
-        MainDB.execute_script(build_script)
         log("MainDB init complete")
         return 1
     except Exception as e:

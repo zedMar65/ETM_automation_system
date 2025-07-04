@@ -6,3 +6,6 @@ include
 __*
 *.db
 *.json
+builds/
+app/
+backup/

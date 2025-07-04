@@ -33,10 +33,11 @@ def init():
     if os.getenv("GOOGLE_CLIENT_SECRET") != None:
         Flags.GOOGLE_CLIENT_SECRET = str(os.getenv("GOOGLE_CLIENT_SECRET"))
     
+    init_MainDB()
+    init_log()
+
     GoogleCalendarBot.initialize()
     watch_calendar()
-    init_log()
-    init_MainDB()
 
 def main():
     EmailSender.send_email(
@@ -45,10 +46,10 @@ def main():
                 body=Flags.EMAIL_BODY,
                 is_html=False
             )
-    # log("starting main script")
-    # monthly_thread = threading.Thread(target=check_and_run_monthly_task, daemon=True)
-    # monthly_thread.start()
-    # start_server()
+    log("starting main script")
+    monthly_thread = threading.Thread(target=check_and_run_monthly_task, daemon=True)
+    monthly_thread.start()
+    start_server()
     return
 
 if __name__ == "__main__":

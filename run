@@ -1,7 +1,9 @@
 #!/bin/bash
+echo "Starting server"
 cd "$(dirname "$0")"
 set -a
 source .env
 set +a
-cd $BASE_FOLDER
+cd $PROD_FOLDER
 ../bin/python3 main.py
+echo "Server shutdown"
