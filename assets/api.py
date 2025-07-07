@@ -7,43 +7,7 @@ import time
 from config import *
 from datetime import datetime, date, timedelta
 import random
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from typing import List
 
-class EmailSender:
-    SMTP_HOST = os.getenv("SMTP_HOST")
-    SMTP_PORT = os.getenv("SMTP_PORT")
-    SMTP_USERNAME = os.getenv("SMTP_USERNAME")
-    SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
-
-    @staticmethod
-    def send_email(to_emails: List[str], subject: str, body: str,
-                   from_email: str = None, is_html: bool = False) -> bool:
-        if not from_email:
-            from_email = EmailSender.SMTP_USERNAME
-
-        try:
-            msg = MIMEMultipart()
-            msg["From"] = from_email
-            msg["To"] = ", ".join(to_emails)
-            msg["Subject"] = subject
-            
-            session = smtplib.SMTP_SSL(EmailSender.SMTP_HOST, EmailSender)
-            msg.attach(MIMEText(body, "html" if is_html else "plain"))
-
-            server = smtplib.SMTP_SSL(EmailSender.SMTP_HOST, EmailSender.SMTP_PORT)
-            server.login(EmailSender.SMTP_USERNAME, EmailSender.SMTP_PASSWORD)
-            server.sendmail(from_email, to_emails, msg.as_string())
-            server.quit()
-
-            log(f"Email sent to {to_emails}")
-            return True
-
-        except Exception as e:
-            log(f"Failed to send email: {e}")
-            return False
 
 class Utility:
     def update(certain_date):

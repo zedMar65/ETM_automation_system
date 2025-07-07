@@ -25,7 +25,7 @@ class GoogleCalendarBot:
                      extended_properties=None):
         if not GoogleCalendarBot._service:
             log("Service not initialized")
-            return None
+            return -1
         try:
             event = {
                 'summary': summary,
@@ -45,11 +45,12 @@ class GoogleCalendarBot:
                 event['extendedProperties'] = {'public': extended_properties}
 
             calendar_id = os.getenv("GOOGLE_CALENDAR_ID")
-            return GoogleCalendarBot._service.events().insert(calendarId=calendar_id, body=event).execute()
+            
+            id = GoogleCalendarBot._service.events().insert(calendarId=calendar_id, body=event).execute()
+            return id
         except Exception as e:
             log(f"Failed to create event: {e}")
-            return None
-
+            return -1
 
 def watch_calendar():
     if not GoogleCalendarBot._service:

@@ -2,6 +2,45 @@ from utils import log, min_times, min_times2, int_to_google_datetime
 from database import MainDB
 from config import Errors, FindError, FailedMethodError
 from callender_api import *
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from typing import List
+
+class EmailSender:
+    SMTP_HOST = os.getenv("SMTP_HOST")
+    SMTP_PORT = os.getenv("SMTP_PORT")
+    SMTP_USERNAME = os.getenv("SMTP_USERNAME")
+    SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
+
+    @staticmethod
+    def send_email(to_email, subject: str, body: str,
+                   from_email: str = None, is_html: bool = False) -> bool:
+        if not from_email:
+            from_email = EmailSender.SMTP_USERNAME
+
+        try:
+            # Construct email
+            msg = MIMEMultipart()
+            msg["From"] = from_email
+            msg["To"] = to_email
+            msg["Subject"] = subject
+
+            mime_type = "html" if is_html else "plain"
+            msg.attach(MIMEText(body, mime_type))
+
+            # Use SMTP over SSL
+            with smtplib.SMTP_SSL(EmailSender.SMTP_HOST, int(EmailSender.SMTP_PORT)) as server:
+                server.login(EmailSender.SMTP_USERNAME, EmailSender.SMTP_PASSWORD)
+                server.sendmail(from_email, to_email, msg.as_string())
+            log(f"Email sent to : {to_email}")
+            return True
+
+        except Exception as e:
+            log(f"Failed to send email: {e}")
+            return False
+
+
 
 class Events:
     @classmethod
@@ -688,7 +727,6 @@ class Occupied_Events:
     
     @classmethod
     def new(self, busy_from, busy_to, available_event_id, booker, email, counts = 0, comment = "No comment") -> int:
-        
         try:
             if available_event_id < 1:
                 raise ValueError(config.errors.id_below_one)
@@ -700,7 +738,8 @@ class Occupied_Events:
             room_oc_id = Rooms.occupie(event[0][2], busy_from, busy_to, f"Event {Events.get_name(event[0][1])} with guide {Users.get_name(Guides.get_user_id(event[0][3]))}")
             if room_oc_id < 1:
                 raise FailedMethodError(Errors.occupie_failed)
-            calender_id = GoogleCalendarBot.create_event(
+            
+            GoogleCalendarBot.create_event(
                 summary=f"{Events.get_name(event[0][1])}",
                 start_time=int_to_google_datetime(busy_from),
                 end_time=int_to_google_datetime(busy_to),
@@ -712,11 +751,11 @@ class Occupied_Events:
                     Contact-email: {email}
                 """
             )
-            id = MainDB.execute("INSERT INTO occupied_events (guide_oc_id, room_oc_id, available_event_id, busy_from, busy_to, responsible, email, counts, comment, calender_id) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (guide_oc_id, room_oc_id, available_event_id, busy_from, busy_to, booker, email, counts, comment, calender_id))
+            id = MainDB.execute("INSERT INTO occupied_events (guide_oc_id, room_oc_id, available_event_id, busy_from, busy_to, responsible, email, counts, comment) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", (guide_oc_id, room_oc_id, available_event_id, busy_from, busy_to, booker, email, counts, comment))
             # write a full body later
             
             EmailSender.send_email(
-                to_emails=[email],
+                to_emails=email,
                 subject=Flags.EMAIL_SUBJECT,
                 body=Flags.EMAIL_BODY,
                 is_html=False

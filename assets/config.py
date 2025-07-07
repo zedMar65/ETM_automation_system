@@ -17,11 +17,10 @@ class Flags:
 
     # email data
     
-    EMAIL_SUBJECT = "email subject"
+    EMAIL_SUBJECT = "test email"
     EMAIL_BODY = """
-    email body
-
     order Info:
+    SOME INFO, this is a test email
     """
 
 class Errors:
