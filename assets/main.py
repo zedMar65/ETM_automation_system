@@ -40,16 +40,19 @@ def init():
     watch_calendar()
 
 def main():
-    EmailSender.send_email(
-        to_email="test-vir3ld4k2@srv1.mail-tester.com",
-        subject=Flags.EMAIL_SUBJECT,
-        body=Flags.EMAIL_BODY,
-        is_html=False
-    )
-    # log("starting main script")
-    # monthly_thread = threading.Thread(target=check_and_run_monthly_task, daemon=True)
-    # monthly_thread.start()
-    # start_server()
+<<<<<<< HEAD
+#    EmailSender.send_email(
+#        to_email="test-vir3ld4k2@srv1.mail-tester.com",
+#        subject=Flags.EMAIL_SUBJECT,
+#        body=Flags.EMAIL_BODY,
+#        is_html=False
+#    )
+=======
+>>>>>>> e0a2c1f2d9a133c89b9ad1ef2523a2e0d9e20bc8
+    log("starting main script")
+    monthly_thread = threading.Thread(target=check_and_run_monthly_task, daemon=True)
+    monthly_thread.start()
+    start_server()
     return
 
 if __name__ == "__main__":

@@ -19,8 +19,8 @@ class Flags:
     
     EMAIL_SUBJECT = "test email"
     EMAIL_BODY = """
-    order Info:
-    SOME INFO, this is a test email
+this is a test email sent via python system...
+ignore please!
     """
 
 class Errors:
