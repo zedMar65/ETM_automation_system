@@ -178,9 +178,9 @@ class SecureServer(BaseHTTPRequestHandler):
             if self.path == "/login":
                 self.check_login()
                 return
-            # if self.path == "/google-calendar/webhook":
-            #     self.calendar_webhook()
-            #     return
+            if self.path == "/google-calendar":
+                self.calendar_webhook()
+                return
             
             # only for admin/mod
             if not self.auth_mod() and not self.auth_admin():
@@ -192,7 +192,7 @@ class SecureServer(BaseHTTPRequestHandler):
             elif self.path == "/book":  
                 data = self.get_content()    
                 data["booker"] = Users.get_name(self.auth()[0])
-                Process.book(data)
+                response = Process.book(data)
                 self.send_json(response)
                 return
 

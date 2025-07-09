@@ -60,7 +60,7 @@ def watch_calendar():
     body = {
         "id": os.getenv("GOOGLE_CALENDAR_ID"),  # a UUID
         "type": "web_hook",
-        "address": "https://"+os.getenv("SERVE_IP")+"/google-calendar/webhook"
+        "address": "https://"+os.getenv("SERVE_IP")+"/google-calendar"
     }
 
     try:

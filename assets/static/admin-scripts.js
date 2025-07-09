@@ -600,9 +600,13 @@ input.addEventListener("input", () => {
 function form_book(date){
   let time = document.getElementById("form_start_time").value;
   let event = document.getElementById("form_event_name").value;
-  let info = document.getElementById("form_info").value;
-  let counts = document.getElementById("form_data").value;
+  let istaiga = document.getElementById("form_istaiga").value;
+  let phone = document.getElementById("form_phone").value;
+  let people = document.getElementById("form_people").value;
+  let person = document.getElementById("form_person").value;
   let email = document.getElementById("form_email").value;
+  let pay_method = document.getElementById("form_pay_method").value;
+  let extra_info = document.getElementById("form_info").value
   fetch("/book", {
   method: "POST",
   headers: {
@@ -612,9 +616,13 @@ function form_book(date){
     event,
     time,
     date,
-    info,
-    counts,
-    email
+    istaiga,
+    phone,
+    email,
+    people,
+    person,
+    pay_method,
+    extra_info
   })
   })
   .then(response => {

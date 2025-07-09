@@ -362,3 +362,8 @@ h4{
     left:-23%;
     overflow: scroll;
 }
+
+.input_form_style > .row, .add_form > .row{
+    position: relative;
+    width: 100%;
+}

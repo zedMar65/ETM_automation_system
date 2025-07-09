@@ -187,9 +187,27 @@
     Start time: <input type="time" name="" id="form_start_time">
     End time: <input type="time" disabled id="form_end_time">
     </div>
-    Email: <input type="text" name="" id="form_email">
-    Some Info: <input type="text" name="" id="form_data">
-    <textarea name="" id="form_info"></textarea>
+    <div class="input_form_style">
+        <div class="row">
+            Contact Email: <input type="email" name="" id="form_email">
+            Phone number: <input type="tel" name="" id="form_phone">
+        </div>
+        <div class="row">
+        Istaigos pavadinimas: <input type="text" name="" id="form_istaiga">
+        Number of people: <input type="number" name="" id="form_people">
+        </div>
+        <div class="row">
+        Responsible person: <input type="text" name="" id="form_person">
+        </div>
+        Mokėjimo būdas: 
+        <select name="" id="form_pay_method">
+            <option value="grini pinigai">Grini pinigai</option>
+            <option value="saskaita">Sąskaita</option>
+            <option value="kulturos pasas">Kultūros pasas</option>
+            <option value="garantinis parasas">Garantinis parašas</option>
+        </select>
+    </div>
+    <textarea name="" id="form_info" placeholder="extra info"></textarea>
     <button id="form_book">Book</button>
     <button id="form_cancel" onclick="form_cancel()">Cancel</button>
 </div>

@@ -2,3 +2,9 @@ dotenv
 google-api-python-client 
 google-auth-httplib2 
 google-auth-oauthlib
+
+# TODO:
+# * more choices
+# * fix calander
+# * https support
+# * fix email
