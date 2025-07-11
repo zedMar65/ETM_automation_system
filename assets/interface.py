@@ -39,6 +39,12 @@ class EmailSender:
         except Exception as e:
             log(f"Failed to send email: {e}")
             return False
+    @staticmethod
+    def send_confirmation_email(to_email, event, time, duration) -> bool:
+        if EmailSender.send_email(to_email, Flags.EMAIL_SUBJECT, Flags.EMAIL_BODY, False):
+            return True
+        else:
+            return False
 
 
 
@@ -726,7 +732,7 @@ class Occupied_Events:
             return [()]
     
     @classmethod
-    def new(self, busy_from, busy_to, available_event_id, booker, email, counts = 0, comment = "No comment") -> int:
+    def new(self, busy_from, busy_to, available_event_id, booker, email, phone, pay_method, istaiga, people, person, extra_info) -> int:
         try:
             if available_event_id < 1:
                 raise ValueError(config.errors.id_below_one)
@@ -738,7 +744,10 @@ class Occupied_Events:
             room_oc_id = Rooms.occupie(event[0][2], busy_from, busy_to, f"Event {Events.get_name(event[0][1])} with guide {Users.get_name(Guides.get_user_id(event[0][3]))}")
             if room_oc_id < 1:
                 raise FailedMethodError(Errors.occupie_failed)
-            
+        
+            id = MainDB.execute("INSERT INTO occupied_events (guide_oc_id, room_oc_id, available_event_id, busy_from, busy_to, responsible, email, phone, pay_method, istaiga, people, person, extra_info) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (guide_oc_id, room_oc_id, available_event_id, busy_from, busy_to, booker, email, phone, pay_method, istaiga, people, person, extra_info))
+            # write a full body later
+
             GoogleCalendarBot.create_event(
                 summary=f"{Events.get_name(event[0][1])}",
                 start_time=int_to_google_datetime(busy_from),
@@ -749,16 +758,20 @@ class Occupied_Events:
                     Guide: {Users.get_name(Guides.get_user_id(event[0][3]))}
                     Booker: {booker}
                     Contact-email: {email}
+                    Contact-phone: {phone}
+                    Leading-person: {person}
+                    Number-of-people: {people}
+                    Įstaiga: {istaiga}
+                    Pay-method: {pay_method}
+                    Extra: {extra_info}
                 """
             )
-            id = MainDB.execute("INSERT INTO occupied_events (guide_oc_id, room_oc_id, available_event_id, busy_from, busy_to, responsible, email, counts, comment) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", (guide_oc_id, room_oc_id, available_event_id, busy_from, busy_to, booker, email, counts, comment))
-            # write a full body later
-            
-            EmailSender.send_email(
-                to_emails=email,
-                subject=Flags.EMAIL_SUBJECT,
-                body=Flags.EMAIL_BODY,
-                is_html=False
+
+            EmailSender.send_confirmation_email(
+                to_email=email,
+                event = Events.get_name(event[0][1]),
+                time = int_to_google_datetime(busy_from),
+                duration = Events.get_duration(event[0][1])
             )
             log(f"Ocupied new event [{id}]")
             return id

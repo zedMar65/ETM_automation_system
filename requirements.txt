@@ -3,8 +3,7 @@ google-api-python-client
 google-auth-httplib2 
 google-auth-oauthlib
 
-
-# install pip
-# install requirements
-# open ports
-# run server
+# TODO:
+# * room event/guide event relation skiltys
+# * https support
+# * bring back all choices when clicked on

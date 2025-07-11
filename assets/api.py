@@ -214,10 +214,14 @@ class Process:
             time = data["time"]
             event = data["event"]
             date = data["date"]
-            info = data["info"]
             booker = data["booker"]
-            counts = data["counts"]
             email = data["email"]
+            phone = data["phone"]
+            pay_method = data["pay_method"]
+            istaiga = data["istaiga"]
+            people = data["people"]
+            person = data["person"]
+            extra_info = data["extra_info"]
             real_time = date[:8]+time[:2]+time[3:]
             event_id = Events.get_id(event)
             event_length = Events.get_duration(event_id)
@@ -234,10 +238,22 @@ class Process:
 
             # Choose which option should you book out of avalable options
             element = random.choice(pos)
-            Occupied_Events.new(element["start"], element["end"], element["id"], booker, email, counts=counts, comment=info)
+            Occupied_Events.new(
+                element["start"], 
+                element["end"], 
+                element["id"], 
+                booker, 
+                email,
+                phone,
+                pay_method,
+                istaiga,
+                people,
+                person,
+                extra_info
+                )
             return 1
         except Exception as e:
-            log(f"Error while booking [{data}]: {e}")
+            log(f"Error while booking event: {e}")
             return 0
     def handle_inquiry(data) -> [()]:
         try:
