@@ -4,7 +4,6 @@ google-auth-httplib2
 google-auth-oauthlib
 
 # TODO:
-# * more choices
-# * fix calander
+# * room event/guide event relation skiltys
 # * https support
-# * fix email
+# * bring back all choices when clicked on
