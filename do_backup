@@ -1,0 +1,13 @@
+#!/bin/bash
+echo "Starting backup"
+cd "$(dirname "$0")"
+set -a
+source .env
+set +a
+current_date_time=$(date)
+backup_folder="./backup-$current_date_time"
+dir_tmp=$(dirname "$backup_folder/$TIMELINE_DATABASE")
+mkdir -p "$dir_tmp"
+cp "./$PROD_FOLDER/$TIMELINE_DATABASE" "$dir_tmp/"
+cp "./$PROD_FOLDER/$INTERNAL_DATABASE" "$dir_tmp/"
+echo "Backup done in dir [$dir_tmp]"

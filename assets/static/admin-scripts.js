@@ -63,6 +63,17 @@ async function update_event_list() {
     const event_list_other = document.getElementById("event-list-other");
     const events = await query("event");  // Wait for fetch to complete
     const event_lists = {"virsmo": event_list_virsmo, "edukacines": event_list_edukacines, "temines": event_list_temines, "other": event_list_other};
+    
+    const event_list_virsmo2 = document.getElementById("calendar-event-virsmo");
+    const event_list_edukacines2 = document.getElementById("calendar-event-edukacines");
+    const event_list_temines2 = document.getElementById("calendar-event-temines");
+    const event_list_other2 = document.getElementById("calendar-event-other");
+    const event_lists2 = {"virsmo": event_list_virsmo2, "edukacines": event_list_edukacines2, "temines": event_list_temines2, "other": event_list_other2};
+    for (let key in event_lists){
+        event_lists2[key].innerHTML = '';
+    }
+    
+    
     for (let key in event_lists){
       event_lists[key].innerHTML = '';
     }
@@ -85,6 +96,11 @@ async function update_event_list() {
           <button onclick=\"mod('${event["id"]}', 'event')\">Set</button>
           <button onclick=\"remove('${event["id"]}', 'event')\">Delete</button>
           </div>`;
+
+        let event_list2 = event_lists2[clean_type];
+        event_list2.innerHTML += "<div class=\"row_flex\"><input type=\"checkbox\" class=\"checkbox\" id=\""+event["name"]+"\"><div class=\"alligned_name\">"+event["name"]+"</div></div>";
+        document.getElementById(event["name"]).checked = false;
+    
     }
 }
 
@@ -490,22 +506,13 @@ async function calendar_filter(dateStr) {
 }
 
 async function update_callender(data) {
-  console.log("ASDASDASD");
-  const event_list_virsmo = document.getElementById("calendar-event-virsmo");
-  const event_list_edukacines = document.getElementById("calendar-event-edukacines");
-  const event_list_temines = document.getElementById("calendar-event-temines");
-  const event_list_other = document.getElementById("calendar-event-other");
-  const event_lists = {"virsmo": event_list_virsmo, "edukacines": event_list_edukacines, "temines": event_list_temines, "other": event_list_other};
-  for (let key in event_lists){
-      event_lists[key].innerHTML = '';
-    }
+  await update_event_list();
   let min=2400
   let max= 0
   for (let key in data) {
     let name = key.split("-")[0];
-    let type = key.split("-")[1];
-    let event_list = event_lists[type];
-    event_list.innerHTML += "<div class=\"row_flex\"><input type=\"checkbox\" class=\"checkbox\" checked=\"true\" id=\""+name+"\"><div class=\"alligned_name\">"+name+"</div></div>";
+    // update available choices
+    document.getElementById(name).checked = true;
     for (let key1 in data[key]){
       if (parseInt(data[key][key1]["start"].slice(8)) < min){
         min = parseInt(data[key][key1]["start"].slice(8));
