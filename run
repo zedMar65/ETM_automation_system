@@ -5,5 +5,5 @@ set -a
 source .env
 set +a
 cd $PROD_FOLDER
-nohup python3 main.py > output.log 2>&1 &
+../bin/python3 main.py
 echo "Server shutdown"
