@@ -9,3 +9,4 @@ __*
 builds/
 app/
 backup/
+backup*/*
