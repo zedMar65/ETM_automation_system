@@ -152,43 +152,89 @@ function toggleGroup(groupId) {
 
 
 async function update_even_room_list() {
-    const event_list = document.getElementById("event-room-list");
-    const events = await query("event-room");  // Wait for fetch to complete
-    event_list.innerHTML = "";
+  const event_list = document.getElementById("event-room-list");
+  const events = await query("event-room");
+  event_list.innerHTML = "";
 
-    for (let key in events) {
+  // Group events by room-name
+  const grouped = {};
+  for (let key in events) {
+    const event = events[key];
+    if (!grouped[event["room-name"]]) grouped[event["room-name"]] = [];
+    grouped[event["room-name"]].push(event);
+  }
 
-        const event = events[key];
+  // Render each group
+  for (let room in grouped) {
+    const entries = grouped[room];
+    const groupId = `room-${room.replace(/\s+/g, "-").toLowerCase()}`;
 
-        event_list.innerHTML +=  `
-<div class=\"row\">
-<input class="num-id" type=\"number\" value=\"${event["id"]}\" disabled id=\"event-room-id-${event["id"]}\">
-<input disabled type=\"text\" value=\"${event["event-name"]}\" id=\"event-room-event-name-${event["id"]}\">
-<input disabled type=\"text\" value=\"${event["room-name"]}\" id=\"event-room-room-name-${event["id"]}\">
-<button onclick=\"remove('${[event["event-name"], event["room-name"]]}', 'event-room')\">Delete</button>
-</div>`;
-    }
+    // Add the collapsible header
+    event_list.innerHTML += `
+      <div class="row group-header" onclick="toggleGroup('${groupId}')">
+        <strong>${room}</strong> (${entries.length} event${entries.length > 1 ? 's' : ''}) ▼
+      </div>
+      <div class="group-content" id="${groupId}" style="display: none;">
+      </div>
+    `;
+
+    // Fill in the grouped entries
+    const groupContainer = document.getElementById(groupId);
+    entries.forEach(event => {
+      groupContainer.innerHTML += `
+        <div class="row">
+          <input class="num-id" type="number" value="${event["id"]}" disabled id="event-room-id-${event["id"]}">
+          <input disabled type="text" value="${event["event-name"]}" id="event-room-event-name-${event["id"]}">
+          <input disabled type="text" value="${event["room-name"]}" id="event-room-room-name-${event["id"]}">
+          <button onclick="remove('${[event["event-name"], event["room-name"]]}', 'event-room')">Delete</button>
+        </div>
+      `;
+    });
+  }
 }
 
 async function update_event_guide_list() {
-    const event_list = document.getElementById("event-guide-list");
-    const events = await query("event-guide");  // Wait for fetch to complete
-    // console.log(events);
-    event_list.innerHTML = "";
+  const event_list = document.getElementById("event-guide-list");
+  const events = await query("event-guide");
+  event_list.innerHTML = "";
 
-    for (let key in events) {
+  // Group events by guide-name
+  const grouped = {};
+  for (let key in events) {
+    const event = events[key];
+    if (!grouped[event["guide-name"]]) grouped[event["guide-name"]] = [];
+    grouped[event["guide-name"]].push(event);
+  }
 
-        const event = events[key];
+  // Render each group
+  for (let guide in grouped) {
+    const entries = grouped[guide];
+    const groupId = `guide-${guide.replace(/\s+/g, "-").toLowerCase()}`;
 
-        event_list.innerHTML +=  `
-<div class=\"row\">
-<input class="num-id" type=\"number\" value=\"${event["id"]}\" disabled id=\"event-guide-id-${event["id"]}\">
-<input disabled type=\"text\" value=\"${event["event-name"]}\" id=\"event-guide-event-name-${event["id"]}\">
-<input disabled type=\"text\" value=\"${event["guide-name"]}\" id=\"event-guide-guide-name-${event["id"]}\">
-<button onclick=\"remove('${[event["event-name"], event["guide-name"]]}', 'event-guide')\">Delete</button>
-</div>`;
-    }
+    // Add the collapsible header
+    event_list.innerHTML += `
+      <div class="row group-header" onclick="toggleGroup('${groupId}')">
+        <strong>${guide}</strong> (${entries.length} event${entries.length > 1 ? 's' : ''}) ▼
+      </div>
+      <div class="group-content" id="${groupId}" style="display: none;">
+      </div>
+    `;
+
+    // Fill in the grouped entries
+    const groupContainer = document.getElementById(groupId);
+    entries.forEach(event => {
+      groupContainer.innerHTML += `
+        <div class="row">
+          <input class="num-id" type="number" value="${event["id"]}" disabled id="event-guide-id-${event["id"]}">
+          <input disabled type="text" value="${event["event-name"]}" id="event-guide-event-name-${event["id"]}">
+          <input disabled type="text" value="${event["guide-name"]}" id="event-guide-guide-name-${event["id"]}">
+          <button onclick="remove('${[event["event-name"], event["guide-name"]]}', 'event-guide')">Delete</button>
+        </div>
+      `;
+    });
+  }
 }
+
 
 async function update_all(){
   await update_event_list()
