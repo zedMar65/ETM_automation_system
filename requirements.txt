@@ -5,4 +5,4 @@ google-auth-oauthlib
 
 # TODO:
 # * https support
-# * bring back all choices when clicked on
+# * the whole EDDITING THING

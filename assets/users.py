@@ -206,7 +206,6 @@ class Users:
                 raise FindError(Errors.failed_find)
             if len(user) < 1:
                 raise FindError(Errors.failed_find)
-            log(f"Found cookie [{user[0][6]}] for user [{user_id}]")
             return user[0][6]
         except Exception as e:
             log(f"Error while finding a cookie for user [{user_id}]")
@@ -275,7 +274,6 @@ class Group(ABC):
                 raise ValueError(Errors.id_below_one)
             data =  MainDB.query(f"SELECT {self.get_auth()}_id FROM {self.get_table()} WHERE user_id = ?", (user_id,))
             if len(data) == 1:
-                log(f"Retrieved user's [{user_id}] {self.get_auth()}_id")
                 return data[0][0]
             raise FindError(Errors.failed_find)
         except Exception as e:
@@ -289,7 +287,6 @@ class Group(ABC):
                 raise ValueError(Errors.id_below_one)
             data = MainDB.query(f"SELECT user_id FROM {self.get_table()} WHERE {self.get_auth()}_id = ?", (group_id,))
             if len(data) == 1:
-                log(f"Retrieved {self.get_auth()} user's [{group_id}] user_id")                
                 return data[0][0]
             raise FindError(Errors.failed_find)
         except Exception as e:
@@ -336,7 +333,6 @@ class Guides(Group):
             if guide_id < 1:
                 raise ValueError(Errors.id_below_one)
             id = MainDB.execute("INSERT INTO guide_occupation (guide_id, busy_from, busy_to, reason) VALUES(?, ?, ?, ?)", (guide_id, start_time, end_time, reason))
-            log(f"Added busy details for id [{id}]")
             return id 
         except Exception as e:
             log(f"Error while trying to occupie guide [{guide_id}]: {e}")
@@ -464,7 +460,6 @@ class WorkHours:
                 placeholder += "week_day = ?"
                 values = values + (week_day,)
             data = MainDB.query(f"SELECT * FROM work_hours WHERE {placeholder}", values)
-            log(f"Found {len(data)} available work hours")
             return data
         except Exception as e:
             log(f"Error while finding work hours: {e}")

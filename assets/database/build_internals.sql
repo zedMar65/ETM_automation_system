@@ -5,6 +5,5 @@ CREATE TABLE IF NOT EXISTS logs(
     write_time TEXT DEFAULT (datetime('now', 'localtime')),
     user_id INTEGER,
     user_ip TEXT,
-    message TEXT,
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    message TEXT
 );

@@ -14,8 +14,6 @@ import shutil
 
 def init():
     load_dotenv()
-    if os.getenv("LOG") != None:
-        Flags.LOG_FLAG = True
     if os.getenv("DEBUG") != None:
         Flags.DEBUG_FLAG = True
     if os.getenv("TIME_LAST_SHOW") != None:

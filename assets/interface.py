@@ -59,7 +59,6 @@ class Events:
                 raise FindError(Errors.duplicate_found)
             return data[0][0]
         except Exception as e:
-            log(f"Error while getting event id of [{event_name}]: {e}")
             return -1
     
     @classmethod
@@ -68,7 +67,6 @@ class Events:
             data = MainDB.query("SELECT * FROM events")
             return data
         except Exception as e:
-            log(f"Error while finding events: {e}")
             return -1
 
     @classmethod
@@ -78,7 +76,6 @@ class Events:
             log(f"Created event [{event_id}]")
             return event_id
         except Exception as e:
-            log(f"Error while creating new event [{event_name}]: {e}")
             return -1
 
     @classmethod
@@ -90,9 +87,7 @@ class Events:
             if len(data) > 1:
                 raise FindError(Errors.failed_find)
             if len(data) < 1:
-                log(f"No events found for event [{event_id}]")
                 return ""
-            log(f"Event name [{data[0][0]}] found for [{event_id}]")
             return data[0][0]
         except Exception as e:
             log(f"Error while finding name of event [{event_id}]")
@@ -107,9 +102,7 @@ class Events:
             if len(data) > 1:
                 raise FindError(Errors.failed_find)
             if len(data) < 1:
-                log(f"No events found for event [{event_id}]")
                 return ""
-            log(f"Event type [{data[0][0]}] found for [{event_id}]")
             return data[0][0]
         except Exception as e:
             log(f"Error while finding type of event [{event_id}]")
@@ -129,7 +122,6 @@ class Events:
             for guide in guides:
                 if len(guide) > 0:
                     Event_Guide_Relation.remove_relation(event_id, guide[0])
-            log(f"Removed event [{event_id}]")
             return 1
         except Exception as e:
             log(f"Error while deleting event [{event_id}]: {e}")
@@ -141,7 +133,6 @@ class Events:
             if event_id < 1:
                 raise ValueError(Errors.id_below_one)
             MainDB.execute("UPDATE events SET event_name = ? WHERE event_id = ?", (new_name, event_id))
-            log(f"Renamed event [{event_id}]")
             return 1
         except Exception as e:
             log(f"Error while renaming event [{event_id}]: {e}")
@@ -153,7 +144,6 @@ class Events:
             if event_id < 1:
                 raise ValueError(Errors.id_below_one)
             MainDB.execute("UPDATE events SET duration = ? WHERE event_id = ?", (new_duration, event_id))
-            log(f"Changed duration of event [{event_id}]")
             return 1
         except Exception as e:
             log(f"Error while changing duration of event [{event_id}]: {e}")
@@ -168,7 +158,6 @@ class Events:
             data = MainDB.query("SELECT duration FROM events WHERE event_id = ?", (event_id,))
             if len(data) < 1 or len(data) > 1:
                 raise FindError(Errors.failed_find)
-            log(f"Got duration of event [{event_id}]")
             return data[0][0]
         except Exception as e:
             log(f"Error while getting event [{event_id}] duration: {e}")
@@ -183,7 +172,6 @@ class Rooms:
                 raise FindError(Errors.failed_find)
             if len(data) < 1:
                 raise FindError(Errors.failed_find)
-            log(f"Room id [{data[0][0]}] found for [{room_name}]")
             return data[0][0]
         except Exception as e:
             log(f"Error while finding id of room [{room_name}]: {e}")
@@ -195,7 +183,6 @@ class Rooms:
             data = MainDB.query("SELECT * FROM rooms")
             return data
         except Exception as e:
-            log(f"Error while finding rooms: {e}")
             return -1
     
 
@@ -218,7 +205,6 @@ class Rooms:
                 raise FindError(Errors.failed_find)
             if len(data) < 1:
                 raise FindError(Errors.failed_find)
-            log(f"room name [{data[0][0]}] found for [{room_id}]")
             return data[0][0]
         except Exception as e:
             log(f"Error while finding name of room [{room_id}]: {e}")
@@ -236,7 +222,6 @@ class Rooms:
             for event in events:
                 if len(event) > 0:
                     Event_Room_Relation.remove_relation(event[0], room_id)
-            log(f"Removed room [{room_id}]")
             return 1
         except Exception as e:
             log(f"Error while deleting room [{room_id}]: {e}")
@@ -250,7 +235,6 @@ class Rooms:
             if self.get_name(room_id) == "":
                 raise FindError(Errors.failed_find)
             MainDB.execute("UPDATE rooms SET room_name = ? WHERE room_id = ?", (new_name, room_id))
-            log(f"Renamed room [{room_id}]")
             return 1
         except Exception as e:
             log(f"Error while renaming room [{room_id}]: {e}")
@@ -264,7 +248,6 @@ class Rooms:
             if self.get_name(room_id) == "":
                 raise FindError(Errors.failed_find)
             MainDB.execute("UPDATE rooms SET capacity = ? WHERE room_id = ?", (new_capacity, room_id))
-            log(f"Changed capacity of room [{room_id}]")
             return 1
         except Exception as e:
             log(f"Error while changing capacity of room [{room_id}]: {e}")
@@ -280,7 +263,6 @@ class Rooms:
                 raise FindError(Errors.failed_find)
             if len(data) < 1:
                 raise FindError(Errors.failed_find)
-            log(f"Room capacity [{data[0][0]}] found for [{room_id}]")
             return data[0][0]
         except Exception as e:
             log(f"Error while finding capacity of room [{room_id}]: {e}")
@@ -290,7 +272,6 @@ class Rooms:
     def occupie(self, room_id, start_time, end_time, reason="Užimtas") -> int:
         try:
             id = MainDB.execute("INSERT INTO room_occupation (room_id, busy_from, busy_to, reason) VALUES(?, ?, ?, ?)", (room_id, start_time, end_time, reason))
-            log(f"Added busy details for id [{id}]")
             return id 
         except Exception as e:
             log(f"Error while trying to occupie room [{room_id}]: {e}")
@@ -324,7 +305,6 @@ class Rooms:
                 raise FindError(Errors.failed_find)
             return data
         except Exception as e:
-            log(f"Error while getting occupation room [{id}]: {e}")
             return [()]
 
     @classmethod
@@ -337,7 +317,6 @@ class Rooms:
                 raise FindError(Errors.failed_find)
             return data
         except Exception as e:
-            log(f"Error while getting occupation for room [{room_id}]: {e}")
             return [()]
     
     @classmethod
@@ -405,7 +384,6 @@ class Event_Guide_Relation:
                 raise FindError(Errors.failed_find)
             return 1
         except Exception as e:
-            log(f"Error while checking relation of {event_id}-{guide_id}: {e}")
             return -1
 
     @classmethod
@@ -414,7 +392,6 @@ class Event_Guide_Relation:
             data = MainDB.query("SELECT * FROM event_guide_relation")
             return data
         except Exception as e:
-            log(f"Error while finding event_guide_relations: {e}")
             return -1
 
     @classmethod
@@ -427,7 +404,6 @@ class Event_Guide_Relation:
                 return [()]
             return data
         except Exception as e:
-            log(f"Error while getting guides for event [{event_id}]: {e}")
             return [()]
 
     @classmethod
@@ -440,7 +416,6 @@ class Event_Guide_Relation:
                 return [()]
             return data
         except Exception as e:
-            log(f"Error while getting events for guide [{guide_id}]: {e}")
             return [()]
 
     @classmethod
@@ -469,7 +444,6 @@ class Event_Guide_Relation:
             events = Available_Events.find(event_id = event_id, guide_id = guide_id)
             for event in events:
                 Available_Events.remove(event[0])
-            log(f"Removed relation between guide [{guide_id}] and event [{event_id}]")
             return 1
         except Exception as e:
             log(f"Error while removing relation: {e}")
@@ -486,7 +460,6 @@ class Event_Room_Relation:
                 raise FindError(Errors.failed_find)
             return 1
         except Exception as e:
-            log(f"Error while checking relation of {event_id}-{room_id}: {e}")
             return -1
 
     @classmethod
@@ -495,7 +468,6 @@ class Event_Room_Relation:
             data = MainDB.query("SELECT * FROM room_event_relation")
             return data
         except Exception as e:
-            log(f"Error while finding event_room_relations: {e}")
             return -1
 
     @classmethod
@@ -508,7 +480,6 @@ class Event_Room_Relation:
                 return [()]
             return data
         except Exception as e:
-            log(f"Error while getting rooms for event [{event_id}]: {e}")
             return [()]
 
     @classmethod
@@ -521,7 +492,6 @@ class Event_Room_Relation:
                 return [()]
             return data
         except Exception as e:
-            log(f"Error while getting events for room [{room_id}]: {e}")
             return [()]
 
     @classmethod
@@ -536,7 +506,6 @@ class Event_Room_Relation:
                     Available_Events.new(event_id, room_id, guide[0])
             return 1
         except Exception as e:
-            log(f"Error while adding room relation between [{event_id}]-[{room_id}]: {e}")
             return -1
     
     @classmethod
@@ -550,7 +519,6 @@ class Event_Room_Relation:
             events = Available_Events.find(event_id = event_id, room_id = room_id)
             for event in events:
                 Available_Events.remove(event[0])
-            log(f"Removed relation between room [{room_id}] and event [{event_id}]")
             return 1
         except Exception as e:
             log(f"Error while removing relation: {e}")
@@ -586,7 +554,6 @@ class Available_Events:
             log(f"Found {len(data)} available events")
             return data
         except Exception as e:
-            log(f"Error while finding available event: {e}")
             return [()]
 
     @classmethod
@@ -614,7 +581,6 @@ class Available_Events:
             for occupation in occupations:
                 if len(occupation) > 0:
                     Occupied_Events.delete(occupation[0])
-            log(f"Removed available_event: {id}")
             return 1
         except Exception as e:
             log(f"Error while removing available event {id}: {e}")
@@ -725,10 +691,8 @@ class Occupied_Events:
                 placeholder += "busy_to = ?"
                 values = values + (busy_to,)
             data = MainDB.query(f"SELECT * FROM occupied_events WHERE {placeholder}", values)
-            log(f"Found {len(data)} occupied events")
             return data
         except Exception as e:
-            log(f"Error while finding occupied event: {e}")
             return [()]
     
     @classmethod
@@ -806,7 +770,6 @@ class Occupied_Events:
             if len(self.find(id=id)) < 1:
                 raise FindError(Errors.failed_find)
             MainDB.execute(f"UPDATE occupied_events SET busy_from = ?, busy_to = ? WHERE id = ?", (new_from, new_to, id))
-            log(f"Changed time of occupied event [{id}]")
             return 1
         except Exception as e:
             log(f"Error while changing time of event [{id}]: {e}")
@@ -820,7 +783,6 @@ class Occupied_Events:
             if len(self.find(id=id)) < 1:
                 raise FindError(Errors.failed_find)
             MainDB.execute(f"UPDATE occupied_events SET comment = ? WHERE id = ?", (comment, id))
-            log(f"Changed comment of occupied event [{id}]")
             return 1
         except Exception as e:
             log(f"Error while changing comment of event [{id}]: {e}")
