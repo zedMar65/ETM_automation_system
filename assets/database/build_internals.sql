@@ -6,5 +6,4 @@ CREATE TABLE IF NOT EXISTS logs(
     user_id INTEGER,
     user_ip TEXT,
     message TEXT,
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
 );

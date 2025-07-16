@@ -17,4 +17,4 @@ cp -r $BUILD_FOLDER/* $PROD_FOLDER/
 rm -rf $BUILD_FOLDER
 echo "Finished build"
 
-./run
+#./run
