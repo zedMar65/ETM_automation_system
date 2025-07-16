@@ -390,7 +390,6 @@ class Guides(Group):
                 raise FindError(Errors.failed_find)
             return data
         except Exception as e:
-            log(f"Error while getting occupation for guide [{guide_id}]: {e}")
             return [()]
     
     @classmethod
@@ -460,6 +459,7 @@ class WorkHours:
                 placeholder += "week_day = ?"
                 values = values + (week_day,)
             data = MainDB.query(f"SELECT * FROM work_hours WHERE {placeholder}", values)
+            log(f"Found {len(data)} available work hours")
             return data
         except Exception as e:
             log(f"Error while finding work hours: {e}")

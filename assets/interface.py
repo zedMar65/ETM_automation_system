@@ -551,7 +551,6 @@ class Available_Events:
                 placeholder += "guide_id = ?"
                 values = values + (guide_id,)
             data = MainDB.query(f"SELECT * FROM available_events WHERE {placeholder}", values)
-            log(f"Found {len(data)} available events")
             return data
         except Exception as e:
             return [()]
